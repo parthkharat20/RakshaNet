@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Union
+from uuid import UUID
 from datetime import datetime
 
 class ComplaintCreate(BaseModel):
@@ -16,7 +17,7 @@ class ComplaintCreate(BaseModel):
     description: Optional[str] = "Victim coerced through fraudulent legal threat call."
 
 class ComplaintResponse(BaseModel):
-    id: str
+    id: Union[UUID, str]
     ncrp_ref: str
     fraud_type: str
     amount: float

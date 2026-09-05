@@ -1,9 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
+from uuid import UUID
 from datetime import datetime
 
 class AlertResponse(BaseModel):
-    id: str
+    id: Union[UUID, str]
     alert_code: str
     tier: str
     target_account_no: str
