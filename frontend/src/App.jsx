@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { fetchStats, fetchHeatmapGeoJSON, logFreezeRequest, WS_BASE_URL } from './services/api';
+import { fetchStats, fetchHeatmapGeoJSON, logFreezeRequest } from './services/api';
 
 export default function App() {
   const [stats, setStats] = useState({
@@ -13,40 +13,46 @@ export default function App() {
   const [alerts, setAlerts] = useState([
     {
       alert_code: "RN-9042",
-      tier: "CRITICAL",
+      tier: "HIGH",
       account_no: "888822220001",
       bank: "HDFC Bank",
       amount: 45000,
-      zone: "Bandra-Kurla Complex",
+      zone: "BKC Commercial Corridor",
       atm_code: "ATM-MUM-042",
       score: 89.8,
-      explanation: "Account A/C-0001 flagged with 90% risk (CRITICAL). 2 hops from 2 confirmed mule clusters (+34%), high-density cash-out zone BKC (+26%), zero prior legitimate business history (+18%).",
+      delta_t: "18–32 mins",
+      cert_hash: "BSA63-9F81D4",
+      explanation: "Account A/C-0001 evaluated at 90% Risk Tier (HIGH). Situated 2 hops from 2 confirmed mule clusters (+34%), active within high-risk corridor 'BKC Commercial Corridor' (+26%), zero prior legitimate trade profile (+18%).",
       status: "NEW",
       timestamp: "2 mins ago"
     },
     {
       alert_code: "RN-8114",
-      tier: "CRITICAL",
+      tier: "HIGH",
       account_no: "991122334455",
       bank: "State Bank of India",
       amount: 120000,
-      zone: "Connaught Place",
+      zone: "Connaught Place Radial",
       atm_code: "ATM-DEL-009",
       score: 92.4,
-      explanation: "Rapid fan-out transfer detected. 3 hops from Jamtara cluster (+38%), high ATM velocity (+28%).",
+      delta_t: "12–25 mins",
+      cert_hash: "BSA63-3C77E1",
+      explanation: "Layer-2 transfer detected. 2 hops from Mewat mule syndicate (+38%), high historical ATM cash-out density (+28%).",
       status: "NEW",
       timestamp: "8 mins ago"
     },
     {
       alert_code: "RN-7023",
-      tier: "HIGH",
+      tier: "MEDIUM",
       account_no: "776655443322",
       bank: "ICICI Bank",
       amount: 32000,
       zone: "Koramangala 5th Block",
       atm_code: "ATM-BLR-014",
-      score: 68.5,
-      explanation: "Dormant savings account activated with high withdrawal request (+24%), unusual geo-deviation (+22%).",
+      score: 58.5,
+      delta_t: "35–50 mins",
+      cert_hash: "BSA63-1A90F8",
+      explanation: "Dormant savings account activated with high withdrawal velocity (+24%), unusual geo-deviation (+22%).",
       status: "NEW",
       timestamp: "18 mins ago"
     }
@@ -80,7 +86,7 @@ export default function App() {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
     if (window.L) {
       const map = window.L.map(mapContainerRef.current, {
-        center: [20.5937, 78.9629], // Center India
+        center: [20.5937, 78.9629],
         zoom: 5,
         zoomControl: false,
         attributionControl: false
@@ -90,30 +96,30 @@ export default function App() {
         maxZoom: 19
       }).addTo(map);
 
-      // Add ATM Markers
       const atms = [
-        { lat: 19.0657, lng: 72.8688, code: "ATM-MUM-042", zone: "BKC Mumbai", score: 90, tier: "CRITICAL" },
-        { lat: 28.6139, lng: 77.2090, code: "ATM-DEL-009", zone: "Connaught Place", score: 92, tier: "CRITICAL" },
-        { lat: 12.9352, lng: 77.6245, code: "ATM-BLR-014", zone: "Koramangala", score: 68, tier: "HIGH" },
-        { lat: 17.4399, lng: 78.3758, code: "ATM-HYD-007", zone: "Hitec City", score: 45, tier: "MEDIUM" }
+        { lat: 19.0657, lng: 72.8688, code: "ATM-MUM-042", zone: "BKC Mumbai", score: 90, tier: "HIGH", delta_t: "18–32 mins" },
+        { lat: 28.6139, lng: 77.2090, code: "ATM-DEL-009", zone: "Connaught Place", score: 92, tier: "HIGH", delta_t: "12–25 mins" },
+        { lat: 12.9352, lng: 77.6245, code: "ATM-BLR-014", zone: "Koramangala", score: 58, tier: "MEDIUM", delta_t: "35–50 mins" },
+        { lat: 17.4399, lng: 78.3758, code: "ATM-HYD-007", zone: "Hitec City", score: 32, tier: "LOW", delta_t: "N/A" }
       ];
 
       atms.forEach(atm => {
-        const color = atm.tier === "CRITICAL" ? "#EF4444" : (atm.tier === "HIGH" ? "#F59E0B" : "#14B8A6");
+        const color = atm.tier === "HIGH" ? "#EF4444" : (atm.tier === "MEDIUM" ? "#F59E0B" : "#14B8A6");
         const marker = window.L.circleMarker([atm.lat, atm.lng], {
-          radius: atm.tier === "CRITICAL" ? 10 : 7,
+          radius: atm.tier === "HIGH" ? 10 : 7,
           fillColor: color,
           color: "#FFFFFF",
           weight: 1.5,
           opacity: 0.9,
-          fillOpacity: 0.8
+          fillOpacity: 0.85
         }).addTo(map);
 
         marker.bindPopup(`
           <div style="font-family:Inter,sans-serif; color:#111; padding:4px;">
             <strong>${atm.code}</strong><br/>
             Zone: ${atm.zone}<br/>
-            Risk Score: <b>${atm.score}%</b> (${atm.tier})
+            Risk Score: <b>${atm.score}%</b> (${atm.tier})<br/>
+            Lead-Time Window (Δt): <b>${atm.delta_t}</b>
           </div>
         `);
       });
@@ -132,24 +138,21 @@ export default function App() {
 
     ctx.clearRect(0, 0, w, h);
 
-    // Nodes
     const nodes = [
-      { x: w * 0.15, y: h * 0.5, label: "Victim (Delhi)", color: "#3B82F6", sub: "Source" },
-      { x: w * 0.5, y: h * 0.35, label: `Clean Target ...${selectedAlert.account_no.slice(-4)}`, color: "#EF4444", sub: "2-Hop Bridge" },
-      { x: w * 0.85, y: h * 0.25, label: "Mule Hub 1", color: "#A855F7", sub: "Confirmed Ring" },
-      { x: w * 0.85, y: h * 0.65, label: "Mule Hub 2", color: "#A855F7", sub: "Confirmed Ring" },
-      { x: w * 0.5, y: h * 0.82, label: selectedAlert.atm_code, color: "#F59E0B", sub: "Predicted Cashout" }
+      { x: w * 0.15, y: h * 0.5, label: "Victim (Delhi)", color: "#3B82F6", sub: "Source A/C" },
+      { x: w * 0.5, y: h * 0.35, label: `Clean Target ...${selectedAlert.account_no.slice(-4)}`, color: "#EF4444", sub: "2-Hop Bridge (UVP)" },
+      { x: w * 0.85, y: h * 0.25, label: "Mule Ring 1", color: "#A855F7", sub: "Confirmed Hub" },
+      { x: w * 0.85, y: h * 0.65, label: "Mule Ring 2", color: "#A855F7", sub: "Confirmed Hub" },
+      { x: w * 0.5, y: h * 0.82, label: selectedAlert.atm_code, color: "#F59E0B", sub: `Cashout (Δt: ${selectedAlert.delta_t})` }
     ];
 
-    // Edges
     const edges = [
       { from: 0, to: 1, label: `₹${selectedAlert.amount.toLocaleString('en-IN')}` },
       { from: 1, to: 2, label: "Hop 2" },
       { from: 1, to: 3, label: "Hop 2" },
-      { from: 1, to: 4, label: "ATM Withdrawal" }
+      { from: 1, to: 4, label: "Withdrawal" }
     ];
 
-    // Draw edges
     edges.forEach(e => {
       ctx.beginPath();
       ctx.moveTo(nodes[e.from].x, nodes[e.from].y);
@@ -161,7 +164,6 @@ export default function App() {
       ctx.setLineDash([]);
     });
 
-    // Draw nodes
     nodes.forEach(n => {
       ctx.beginPath();
       ctx.arc(n.x, n.y, 8, 0, Math.PI * 2);
@@ -215,6 +217,19 @@ export default function App() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* SUPREME COURT COMPLIANCE BADGE */}
+          <div style={{
+            background: 'rgba(168, 85, 247, 0.12)',
+            color: '#C084FC',
+            border: '1px solid rgba(168, 85, 247, 0.3)',
+            fontWeight: '600',
+            fontSize: '11px',
+            padding: '4px 10px',
+            borderRadius: '4px'
+          }}>
+            ⚖️ SC SOP Loop · Sec 63 BSA & 106 BNSS
+          </div>
+
           {/* SYNTHETIC DEMO BADGE */}
           <div style={{
             background: 'rgba(59, 130, 246, 0.12)',
@@ -331,14 +346,14 @@ export default function App() {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <span style={{
-                    background: a.tier === "CRITICAL" ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)',
-                    color: a.tier === "CRITICAL" ? '#F87171' : '#FBBF24',
+                    background: a.tier === "HIGH" ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.2)',
+                    color: a.tier === "HIGH" ? '#F87171' : '#FBBF24',
                     padding: '2px 6px',
                     borderRadius: '4px',
                     fontSize: '10px',
                     fontWeight: '800'
                   }}>
-                    {a.tier} · {a.score}% RISK
+                    {a.tier} RISK · {a.score}%
                   </span>
                   <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{a.timestamp}</span>
                 </div>
@@ -346,8 +361,10 @@ export default function App() {
                 <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '4px' }}>
                   ₹{a.amount.toLocaleString('en-IN')} · A/C ...{a.account_no.slice(-4)}
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                  📍 {a.atm_code} ({a.zone})
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                  <span>📍 {a.atm_code}</span>
+                  <span style={{ color: 'var(--amber)', fontWeight: '600' }}>Δt: {a.delta_t}</span>
                 </div>
               </div>
             ))}
@@ -372,7 +389,7 @@ export default function App() {
             {/* Drawer Header */}
             <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Case Investigation</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Interdiction Dossier</span>
                 <div style={{ fontSize: '15px', fontWeight: '800' }}>Alert #{selectedAlert.alert_code}</div>
               </div>
               <button
@@ -385,14 +402,36 @@ export default function App() {
 
             {/* Drawer Body */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '18px' }}>
+              
               {/* Target Profile Card */}
               <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '14px', marginBottom: '14px' }}>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>TARGET INTERMEDIARY ACCOUNT</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>TARGET SUSPECT ACCOUNT</span>
+                  <span style={{ fontSize: '10px', color: '#C084FC', background: 'rgba(168,85,247,0.15)', padding: '1px 6px', borderRadius: '3px' }}>
+                    Cert #{selectedAlert.cert_hash}
+                  </span>
+                </div>
                 <div style={{ fontSize: '16px', fontWeight: '800', fontFamily: 'JetBrains Mono, monospace' }}>
                   {selectedAlert.account_no}
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                  Bank: <strong>{selectedAlert.bank}</strong> · Zero Prior Complaints
+                  Bank: <strong>{selectedAlert.bank}</strong> · Zero Prior Complaint History
+                </div>
+              </div>
+
+              {/* Lead-Time Window & ATM Target */}
+              <div style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '6px', padding: '12px', marginBottom: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: '11px', color: 'var(--amber)', fontWeight: '700' }}>ATM CASH-OUT LEAD TIME (Δt)</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#F8FAFC', marginTop: '2px' }}>
+                      {selectedAlert.delta_t} window
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>PREDICTED LOCATION</div>
+                    <div style={{ fontSize: '12px', fontWeight: '700', color: '#F8FAFC' }}>{selectedAlert.zone}</div>
+                  </div>
                 </div>
               </div>
 
@@ -408,7 +447,7 @@ export default function App() {
               {/* SHAP Explainability Panel */}
               <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '14px', marginBottom: '14px' }}>
                 <div style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '10px' }}>
-                  SHAP ATTRIBUTION (COURT-ADMISSIBLE REASONING)
+                  SHAP ATTRIBUTION (SECTION 63 BSA COMPLIANT EVIDENCE)
                 </div>
                 <div style={{ fontSize: '12px', lineHeight: '1.6', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                   {selectedAlert.explanation}
@@ -416,7 +455,7 @@ export default function App() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '2px' }}>
-                      <span>Network Proximity (Adamic-Adar)</span>
+                      <span>Network Hop Proximity (Adamic-Adar)</span>
                       <strong>+34%</strong>
                     </div>
                     <div style={{ height: '4px', background: 'var(--border)', borderRadius: '2px' }}>
@@ -425,7 +464,7 @@ export default function App() {
                   </div>
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '2px' }}>
-                      <span>ATM Cash-Out Cluster Density</span>
+                      <span>ATM Cluster Cash-Out Density</span>
                       <strong>+26%</strong>
                     </div>
                     <div style={{ height: '4px', background: 'var(--border)', borderRadius: '2px' }}>
@@ -434,7 +473,7 @@ export default function App() {
                   </div>
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '2px' }}>
-                      <span>Account Dormancy / Age Risk</span>
+                      <span>Zero-History Dormancy Risk</span>
                       <strong>+18%</strong>
                     </div>
                     <div style={{ height: '4px', background: 'var(--border)', borderRadius: '2px' }}>
@@ -447,7 +486,7 @@ export default function App() {
               {/* Evidence Log Status */}
               {freezeStatus === "LOGGED" && (
                 <div style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', borderRadius: '6px', padding: '12px', fontSize: '11px', color: '#4ADE80' }}>
-                  🛡️ <strong>Freeze Request Logged</strong> — Dispatched to Nodal Bank via API (Ref #{dispatchRef}). Recorded in Evidence Log Vault.
+                  🛡️ <strong>Digital Lien Request Dispatched</strong> — Sent to Nodal Bank CFCFRMS API (Notice #{dispatchRef} under Section 106 BNSS). Chained hash recorded in Evidence Log Vault.
                 </div>
               )}
             </div>
@@ -478,7 +517,7 @@ export default function App() {
                 {freezeStatus === "LOGGED" ? (
                   "✅ Freeze Request Logged — Dispatched to Bank via API"
                 ) : (
-                  "🛡️ Log Freeze Request"
+                  "🛡️ Log Freeze Request (Section 106 BNSS Notice)"
                 )}
               </button>
             </div>

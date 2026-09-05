@@ -42,18 +42,20 @@ async def log_freeze_request(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Simulates the 1-click interdiction action:
+    Simulates Section 106 BNSS Digital Lien Request Action:
     1. Updates alert status to 'FREEZE_REQUEST_LOGGED'.
     2. Simulates machine-readable dispatch to Nodal Bank CFCFRMS API.
-    3. Records immutable audit record into the Supreme Court SOP Compliance Evidence Vault.
+    3. Records tamper-evident SHA-256 chained entry into Supreme Court SOP Evidence Vault.
     """
     stmt = select(Alert).where(Alert.alert_code == alert_code)
     result = await db.execute(stmt)
     alert = result.scalar_one_or_none()
 
+    dispatch_ref = f"NB-{str(uuid.uuid4())[:4].upper()}"
+    cert_hash = f"BSA63-{str(uuid.uuid4())[:6].upper()}"
+
     if not alert:
-        # If running in mock/demo scenario without seeded DB, return successful simulation payload
-        dispatch_ref = f"NB-{str(uuid.uuid4())[:4].upper()}"
+        # Fallback simulation payload
         return FreezeActionResponse(
             success=True,
             alert_code=alert_code,
@@ -61,26 +63,29 @@ async def log_freeze_request(
             dispatched_to_bank=True,
             bank_dispatch_ref=dispatch_ref,
             audit_timestamp=datetime.utcnow(),
-            message="Freeze Request Logged — Dispatched to Bank via API"
+            message=f"Freeze Request Logged — Dispatched to Nodal Bank via CFCFRMS API (Notice #{dispatch_ref} under Section 106 BNSS)"
         )
 
-    dispatch_ref = f"NB-{str(uuid.uuid4())[:4].upper()}"
     alert.status = "FREEZE_REQUEST_LOGGED"
     alert.actioned_by = payload.officer_id
     alert.actioned_at = datetime.utcnow()
     alert.bank_dispatched = True
     alert.bank_dispatch_ref = dispatch_ref
 
-    # Record in Evidence Log Vault
-    evidence = EvidenceLog(
+    # Find previous record hash for tamper-evident chaining
+    prev_stmt = select(EvidenceLog.record_hash).order_by(desc(EvidenceLog.timestamp)).limit(1)
+    prev_hash_res = await db.execute(prev_stmt)
+    prev_hash = prev_hash_res.scalar_one_or_none() or "00000000000000000000000000000000"
+
+    # Create Chained Evidence Vault Record
+    evidence = EvidenceLog.create_chained_entry(
         alert_code=alert.alert_code,
-        action_taken="FREEZE_REQUEST_LOGGED",
-        officer_id=payload.officer_id,
+        action="FREEZE_REQUEST_LOGGED",
+        officer=payload.officer_id,
         dispatch_ref=dispatch_ref,
-        legal_basis="CrPC Section 102 / BNSS compliant automated lien trigger",
-        shap_snapshot=alert.shap_attribution,
-        notes=payload.notes,
-        timestamp=datetime.utcnow()
+        shap_data=alert.shap_attribution or {},
+        cert_hash=cert_hash,
+        prev_record_hash=prev_hash
     )
     db.add(evidence)
     await db.commit()
@@ -92,5 +97,5 @@ async def log_freeze_request(
         dispatched_to_bank=True,
         bank_dispatch_ref=dispatch_ref,
         audit_timestamp=alert.actioned_at,
-        message="Freeze Request Logged — Dispatched to Bank via API"
+        message=f"Freeze Request Logged — Dispatched to Nodal Bank via CFCFRMS API (Notice #{dispatch_ref} under Section 106 BNSS)"
     )
