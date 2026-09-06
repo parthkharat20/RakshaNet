@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { fetchStats, fetchHeatmapGeoJSON, logFreezeRequest } from './services/api';
 
 export default function App() {
@@ -83,50 +85,105 @@ export default function App() {
 
   // Initialize Leaflet Map
   useEffect(() => {
-    if (!mapContainerRef.current || mapInstanceRef.current) return;
-    if (window.L) {
-      const map = window.L.map(mapContainerRef.current, {
-        center: [20.5937, 78.9629],
-        zoom: 5,
-        zoomControl: false,
-        attributionControl: false
-      });
-
-      window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19
-      }).addTo(map);
-
-      const atms = [
-        { lat: 19.0657, lng: 72.8688, code: "ATM-MUM-042", zone: "BKC Mumbai", score: 90, tier: "HIGH", delta_t: "18–32 mins" },
-        { lat: 28.6139, lng: 77.2090, code: "ATM-DEL-009", zone: "Connaught Place", score: 92, tier: "HIGH", delta_t: "12–25 mins" },
-        { lat: 12.9352, lng: 77.6245, code: "ATM-BLR-014", zone: "Koramangala", score: 58, tier: "MEDIUM", delta_t: "35–50 mins" },
-        { lat: 17.4399, lng: 78.3758, code: "ATM-HYD-007", zone: "Hitec City", score: 32, tier: "LOW", delta_t: "N/A" }
-      ];
-
-      atms.forEach(atm => {
-        const color = atm.tier === "HIGH" ? "#EF4444" : (atm.tier === "MEDIUM" ? "#F59E0B" : "#14B8A6");
-        const marker = window.L.circleMarker([atm.lat, atm.lng], {
-          radius: atm.tier === "HIGH" ? 10 : 7,
-          fillColor: color,
-          color: "#FFFFFF",
-          weight: 1.5,
-          opacity: 0.9,
-          fillOpacity: 0.85
-        }).addTo(map);
-
-        marker.bindPopup(`
-          <div style="font-family:Inter,sans-serif; color:#111; padding:4px;">
-            <strong>${atm.code}</strong><br/>
-            Zone: ${atm.zone}<br/>
-            Risk Score: <b>${atm.score}%</b> (${atm.tier})<br/>
-            Lead-Time Window (Δt): <b>${atm.delta_t}</b>
-          </div>
-        `);
-      });
-
-      mapInstanceRef.current = map;
+    if (!mapContainerRef.current) return;
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
     }
+
+    const map = L.map(mapContainerRef.current, {
+      center: [21.5, 78.9],
+      zoom: 5,
+      zoomControl: true,
+      attributionControl: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(map);
+
+    // Fetch dynamic PostGIS ATM GeoJSON
+    fetchHeatmapGeoJSON().then(geojson => {
+      if (geojson && geojson.features && geojson.features.length > 0) {
+        geojson.features.forEach(feat => {
+          const [lng, lat] = feat.geometry.coordinates;
+          const p = feat.properties;
+          const color = p.risk_tier === "CRITICAL" ? "#EF4444" : (p.risk_tier === "MEDIUM" ? "#F59E0B" : "#14B8A6");
+          const marker = L.circleMarker([lat, lng], {
+            radius: p.is_hotspot ? 10 : (p.risk_tier === "CRITICAL" ? 8 : 5),
+            fillColor: color,
+            color: p.is_hotspot ? "#FFD700" : "#FFFFFF",
+            weight: p.is_hotspot ? 2.5 : 1.2,
+            opacity: 0.95,
+            fillOpacity: 0.85
+          }).addTo(map);
+
+          marker.bindPopup(`
+            <div style="font-family:Inter,sans-serif; color:#0F172A; padding:4px; min-width:160px;">
+              <strong style="font-size:13px;">${p.atm_code}</strong> (${p.bank_name})<br/>
+              <span style="color:#64748B; font-size:11px;">${p.zone}, ${p.city}</span><br/>
+              <div style="margin-top:4px; font-size:11px;">
+                Risk Score: <b style="color:${color}; font-size:12px;">${p.risk_score}%</b> (${p.risk_tier})<br/>
+                ${p.is_hotspot ? '<span style="color:#DC2626; font-weight:700;">⚠️ PREDICTED CASH-OUT HOTSPOT</span><br/>' : ''}
+                Arrival Window (Δt): <b>18–32 mins</b>
+              </div>
+            </div>
+          `);
+        });
+      } else {
+        const fallbackAtms = [
+          { lat: 19.0657, lng: 72.8688, code: "ATM-MUM-042", zone: "BKC Mumbai", score: 90, tier: "CRITICAL", delta_t: "18–32 mins", is_hotspot: true },
+          { lat: 28.6139, lng: 77.2090, code: "ATM-DEL-009", zone: "Connaught Place", score: 92, tier: "CRITICAL", delta_t: "12–25 mins", is_hotspot: true },
+          { lat: 12.9352, lng: 77.6245, code: "ATM-BLR-014", zone: "Koramangala", score: 58, tier: "MEDIUM", delta_t: "35–50 mins", is_hotspot: false },
+          { lat: 17.4399, lng: 78.3758, code: "ATM-HYD-007", zone: "Hitec City", score: 32, tier: "LOW", delta_t: "N/A", is_hotspot: false }
+        ];
+
+        fallbackAtms.forEach(atm => {
+          const color = atm.tier === "CRITICAL" ? "#EF4444" : (atm.tier === "MEDIUM" ? "#F59E0B" : "#14B8A6");
+          const marker = L.circleMarker([atm.lat, atm.lng], {
+            radius: atm.is_hotspot ? 10 : 7,
+            fillColor: color,
+            color: atm.is_hotspot ? "#FFD700" : "#FFFFFF",
+            weight: 1.5,
+            opacity: 0.9,
+            fillOpacity: 0.85
+          }).addTo(map);
+
+          marker.bindPopup(`
+            <div style="font-family:Inter,sans-serif; color:#0F172A; padding:4px;">
+              <strong>${atm.code}</strong><br/>
+              Zone: ${atm.zone}<br/>
+              Risk Score: <b>${atm.score}%</b> (${atm.tier})<br/>
+              Lead-Time Window (Δt): <b>${atm.delta_t}</b>
+            </div>
+          `);
+        });
+      }
+    });
+
+    mapInstanceRef.current = map;
+
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 250);
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
   }, []);
+
+  // Resize map when drawer toggles
+  useEffect(() => {
+    if (mapInstanceRef.current) {
+      setTimeout(() => {
+        mapInstanceRef.current.invalidateSize();
+      }, 200);
+    }
+  }, [isDrawerOpen]);
 
   // Draw 2-Hop Network Graph on Canvas
   useEffect(() => {
@@ -311,7 +368,7 @@ export default function App() {
       <div style={{ display: 'flex', flex: 1, position: 'relative', overflow: 'hidden' }}>
         
         {/* MAP COMPONENT */}
-        <div ref={mapContainerRef} style={{ flex: 1, height: '100%', background: '#000' }} />
+        <div ref={mapContainerRef} style={{ flex: 1, height: '100%', minHeight: '100%', background: '#0B0F17', position: 'relative', zIndex: 1 }} />
 
         {/* ALERT FEED (RIGHT PANEL) */}
         <div style={{
@@ -500,7 +557,6 @@ export default function App() {
                   width: '100%',
                   padding: '12px',
                   borderRadius: '6px',
-                  border: 'none',
                   background: freezeStatus === "LOGGED" ? 'var(--bg-card)' : 'linear-gradient(135deg, #EF4444, #B91C1C)',
                   color: freezeStatus === "LOGGED" ? 'var(--green)' : '#FFFFFF',
                   fontWeight: '700',
