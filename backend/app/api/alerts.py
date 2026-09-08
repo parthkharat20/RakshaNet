@@ -1,0 +1,63 @@
+import logging
+from typing import List, Optional
+from uuid import UUID
+from fastapi import APIRouter, HTTPException, Query, status
+from sqlalchemy import select
+from app.db.postgres import AsyncSessionLocal
+from app.models import Alert, Account
+from app.schemas.account import AccountFreezeRequest, AccountFreezeResponse
+from app.schemas.alert import AlertResponse, AlertStatusUpdate
+from app.services.alert_service import AlertService
+
+logger = logging.getLogger("alerts_api")
+router = APIRouter(prefix="/alerts", tags=["Intelligence Alerts"])
+
+
+@router.get("", response_model=List[AlertResponse])
+async def list_alerts(
+    limit: int = Query(50, ge=1, le=100),
+    status: Optional[str] = None
+):
+    """Retrieves prioritized threat alerts sorted by fused risk score."""
+    return await AlertService.get_alerts(limit=limit, status_filter=status)
+
+
+@router.get("/{alert_id}", response_model=AlertResponse)
+async def get_alert(alert_id: UUID):
+    """Retrieves full intelligence payload for an alert."""
+    async with AsyncSessionLocal() as session:
+        query = select(Alert, Account).outerjoin(Account, Alert.target_account_id == Account.id).where(Alert.id == alert_id)
+        res = (await session.execute(query)).first()
+        if not res:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Alert '{alert_id}' not found.")
+        alert, acc = res
+        return AlertResponse(
+            id=alert.id,
+            alert_type=alert.alert_type,
+            target_account_id=alert.target_account_id,
+            target_account_number=acc.account_number if acc else None,
+            target_holder_name=acc.holder_name if acc else None,
+            target_atm_id=alert.target_atm_id,
+            risk_score=float(alert.risk_score),
+            graph_score=float(alert.graph_score),
+            geo_score=float(alert.geo_score),
+            explanation=alert.explanation,
+            status=alert.status,
+            created_at=alert.created_at
+        )
+
+
+@router.post("/{alert_id}/freeze", response_model=AccountFreezeResponse)
+async def freeze_alert_target(alert_id: UUID, request: AccountFreezeRequest):
+    """Dispatches freeze order against the suspect account flagged in the alert."""
+    async with AsyncSessionLocal() as session:
+        query = select(Alert).where(Alert.id == alert_id)
+        alert = (await session.execute(query)).scalar_one_or_none()
+        if not alert or not alert.target_account_id:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alert or target account not found.")
+
+        # Update alert status
+        alert.status = "FREEZE_DISPATCHED"
+        await session.commit()
+
+    return await AlertService.freeze_account(str(alert.target_account_id), request)
