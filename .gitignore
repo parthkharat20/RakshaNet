@@ -57,3 +57,8 @@ data/
 pgdata/
 neo4j_data/
 redis_data/
+
+# Local College Submissions & Docs
+docs/
+generate_synopsis_docs.py
+
