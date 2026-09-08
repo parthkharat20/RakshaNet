@@ -61,3 +61,12 @@ async def freeze_alert_target(alert_id: UUID, request: AccountFreezeRequest):
         await session.commit()
 
     return await AlertService.freeze_account(str(alert.target_account_id), request)
+
+
+@router.post("/run-scoring")
+async def trigger_scoring_pipeline():
+    """Triggers the full real-time dual-branch AI scoring pipeline."""
+    from app.ai.risk_fusion import run_full_scoring_pipeline
+    summary = await run_full_scoring_pipeline()
+    return {"status": "SUCCESS", "summary": summary}
+
