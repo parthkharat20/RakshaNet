@@ -53,10 +53,11 @@ logs/
 *.log
 
 # Databases & Docker mounts
-data/
+/data/
 pgdata/
 neo4j_data/
 redis_data/
+!backend/app/data/synthetic/
 
 # Local College Submissions & Docs
 docs/
