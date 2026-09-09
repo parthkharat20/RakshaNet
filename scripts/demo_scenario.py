@@ -47,6 +47,22 @@ async def run_scenario():
         print(f"  • API Gateway Status: {health['status'].upper()}")
         print(f"  • Connected Engines: PostgreSQL+PostGIS: {health['databases']['postgres']} | Neo4j: {health['databases']['neo4j']} | Redis: {health['databases']['redis']}")
 
+        # Step 0.5: Law Enforcement Officer Authentication
+        print("\n[0.5/6] >>> Officer Authorization (HMAC-SHA256 & JWT)")
+        print("-" * 50)
+        auth_res = await client.post(
+            f"{API_BASE}/auth/login",
+            json={"badge_id": "LE-CYBER-MUM-4029", "pin": "1234"}
+        )
+        assert auth_res.status_code == 200, f"Auth failed: {auth_res.text}"
+        auth_data = auth_res.json()
+        token = auth_data["access_token"]
+        auth_headers = {"Authorization": f"Bearer {token}"}
+        print(f"  • Authenticated Officer: {auth_data['officer_name']} ({auth_data['officer_rank']})")
+        print(f"  • Badge ID: {auth_data['badge_id']}")
+        print(f"  • Session JWT: {token[:25]}... [SECURED]")
+
+
         # Step 1: NCRP Complaint Ingestion
         print_step(1, "NCRP Ingestion: Defrauded Citizen Reports Cyber Scam")
         complaint_payload = {
@@ -77,7 +93,7 @@ async def run_scenario():
         print("  • Branch B: HDBSCAN Spatial Clustering + XGBoost ATM Cash-Out Classifier...")
         print("  • Decision Engine: Score Fusion (0.60·Graph + 0.40·Geo) & SHAP Explainability...")
 
-        res = await client.post(f"{API_BASE}/alerts/run-scoring")
+        res = await client.post(f"{API_BASE}/alerts/run-scoring", headers=auth_headers)
         assert res.status_code == 200, f"AI run failed: {res.text}"
         ai_summary = res.json()["summary"]
         print(f"  ✅ AI Pipeline Complete: Scored {ai_summary['total_scored']} accounts")
@@ -112,27 +128,31 @@ async def run_scenario():
             role_counts[r] = role_counts.get(r, 0) + 1
         print(f"  • Topology Roles: {role_counts}")
 
-        # Step 5: One-Click Cryptographic Account Freeze
-        print_step(5, "Law Enforcement Action: One-Click Emergency Account Freeze")
+        # Step 5: One-Click Cryptographic Account Freeze & Bank Lien Placement
+        print_step(5, "Law Enforcement Action: One-Click Inter-Bank Freeze & Lien Placement")
         freeze_payload = {
             "officer_badge_id": "LE-CYBER-MUM-4029",
-            "reason": "Section 91 IT Act Emergency Interdiction — Active Cyber Syndicate Cash-Out",
+            "reason": "Section 91 CrPC Emergency Interdiction — Active Cyber Syndicate Cash-Out",
             "notes": "Suspect account flagged by RakshaNet AI with 96.8% risk score and confirmed ATM withdrawals."
         }
-        res = await client.post(f"{API_BASE}/freeze/{suspect_id}", json=freeze_payload)
+        res = await client.post(f"{API_BASE}/freeze/{suspect_id}", json=freeze_payload, headers=auth_headers)
         assert res.status_code == 200, f"Freeze failed: {res.text}"
         freeze_receipt = res.json()
-        print("  🔒 FREEZE ORDER EXECUTED SYNCHRONOUSLY:")
-        print(f"  • Account: {freeze_receipt['account_number']}")
-        print(f"  • Is Frozen: {freeze_receipt['is_frozen']}")
+        print("  🔒 SECTION 91 FREEZE & LIEN CONFIRMED:")
+        print(f"  • Account Number: {freeze_receipt['account_number']}")
+        print(f"  • Bank Name: {freeze_receipt['bank_name']}")
+        print(f"  • Bank Lien Reference: {freeze_receipt.get('bank_lien_reference', 'CONFIRMED')}")
+        if freeze_receipt.get('funds_retained'):
+            print(f"  • Retained Funds Under Lien: ₹{freeze_receipt['funds_retained']:,.2f}")
         print(f"  • Audit Log ID: {freeze_receipt['audit_log_id']}")
         print(f"  • SHA-256 Evidence Signature: {freeze_receipt['hash_signature']}")
-        print(f"  • Timestamp: {freeze_receipt.get('action_taken_at', freeze_receipt.get('timestamp'))}")
+        print(f"  • Action Timestamp: {freeze_receipt.get('action_taken_at', freeze_receipt.get('timestamp'))}")
 
         # Step 6: Frontend Command Center Verification
         print_step(6, "Command Center UI: Ready for Demonstration")
         res = await client.get(FRONTEND_URL)
         assert res.status_code == 200, f"Frontend check failed: {res.status_code}"
+
         print(f"  🌐 Overview & Telemetry Dashboard: {FRONTEND_URL}/")
         print(f"  🎯 Tactical Command Center: {FRONTEND_URL}/command")
         print("  ✅ Frontend Dev Server responding with 100% health.")

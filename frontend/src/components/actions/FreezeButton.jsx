@@ -48,15 +48,21 @@ export const FreezeButton = ({ accountId, accountHolder, isFrozen, onSuccess }) 
     const text = `RAKSHANET ONE-CLICK ACCOUNT FREEZE RECEIPT
 Target Account ID: ${receipt.account_id}
 Account Number: ${receipt.account_number}
+Bank Name: ${receipt.bank_name || 'Beneficiary Core Banking'}
+Bank Lien Reference: ${receipt.bank_lien_reference || 'N/A'}
+CFCFRMS Ack Code: ${receipt.cfcfrms_ack_code || 'N/A'}
+Funds Retained: ₹${receipt.funds_retained ? Number(receipt.funds_retained).toLocaleString('en-IN') : '0.00'}
+Branch IFSC: ${receipt.branch_ifsc || 'N/A'}
 Officer Badge ID: ${officerBadge}
-Timestamp: ${receipt.timestamp}
+Timestamp: ${receipt.action_taken_at || receipt.timestamp}
 Audit Log ID: ${receipt.audit_log_id}
 SHA-256 Signature: ${receipt.hash_signature}
-Status: ACCOUNT FROZEN & ADVICE DISPATCHED UNDER IT ACT SECTION 91`;
+Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
 
   if (isFrozen) {
     return (
@@ -194,13 +200,25 @@ Status: ACCOUNT FROZEN & ADVICE DISPATCHED UNDER IT ACT SECTION 91`;
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-slate-950 border border-white/10 space-y-2 text-[11px]">
+                  {receipt.bank_lien_reference && (
+                    <div className="flex justify-between items-center py-1 px-2 rounded bg-blue-950/60 border border-blue-800/40">
+                      <span className="text-blue-300 font-bold">Bank Lien Ref:</span>
+                      <span className="text-white font-mono font-extrabold text-[12px]">{receipt.bank_lien_reference}</span>
+                    </div>
+                  )}
+                  {receipt.funds_retained && (
+                    <div className="flex justify-between items-center py-0.5">
+                      <span className="text-slate-400">Funds Retained (Lien):</span>
+                      <span className="text-emerald-400 font-mono font-bold">₹{Number(receipt.funds_retained).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-slate-400">Audit Log ID:</span>
                     <span className="text-white font-mono">{receipt.audit_log_id}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">Executed At:</span>
-                    <span className="text-white font-mono">{new Date(receipt.timestamp).toLocaleString()}</span>
+                    <span className="text-white font-mono">{new Date(receipt.action_taken_at || receipt.timestamp).toLocaleString()}</span>
                   </div>
                   <div>
                     <span className="text-slate-400 block mb-1">Cryptographic Evidence SHA-256 Signature:</span>
@@ -209,6 +227,7 @@ Status: ACCOUNT FROZEN & ADVICE DISPATCHED UNDER IT ACT SECTION 91`;
                     </div>
                   </div>
                 </div>
+
 
                 <div className="flex items-center justify-between pt-2">
                   <button

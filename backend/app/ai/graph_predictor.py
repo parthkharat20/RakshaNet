@@ -62,32 +62,39 @@ async def build_transaction_graph() -> Tuple[nx.DiGraph, Dict[str, Dict[str, Any
         """)
         records = await result.data()
         for r in records:
-            nid = r["id"]
+            nid = r["id"] or r["acc_num"]
+            if not nid:
+                continue
             G.add_node(nid)
             node_attrs[nid] = {
-                "account_number": r["acc_num"],
-                "holder_name": r["name"],
-                "risk_score": float(r.get("risk", 0.0)),
-                "account_age_days": int(r.get("age", 365)),
-                "is_mule": bool(r.get("is_mule", False)),
-                "bank_name": r.get("bank", "")
+                "account_number": r["acc_num"] or str(nid),
+                "holder_name": r["name"] or "Unknown",
+                "risk_score": float(r.get("risk") or 0.0),
+                "account_age_days": int(r.get("age") or 365),
+                "is_mule": bool(r.get("is_mule") or False),
+                "bank_name": r.get("bank") or ""
             }
 
         # Pull all transfer edges
         result = await session.run("""
             MATCH (s:Account)-[r:TRANSFERRED]->(t:Account)
-            RETURN s.id AS src, t.id AS tgt, r.amount AS amount,
+            RETURN coalesce(s.id, s.account_number) AS src,
+                   coalesce(t.id, t.account_number) AS tgt,
+                   r.amount AS amount,
                    r.timestamp AS ts, r.is_flagged AS flagged,
                    r.ring_id AS ring_id, r.channel AS channel
         """)
         edges = await result.data()
         for e in edges:
+            if not e["src"] or not e["tgt"]:
+                continue
             G.add_edge(e["src"], e["tgt"],
-                       amount=float(e.get("amount", 0)),
-                       timestamp=e.get("ts", ""),
-                       is_flagged=bool(e.get("flagged", False)),
-                       ring_id=e.get("ring_id", ""),
-                       channel=e.get("channel", "UPI"))
+                       amount=float(e.get("amount") or 0.0),
+                       timestamp=e.get("ts") or "",
+                       is_flagged=bool(e.get("flagged") or False),
+                       ring_id=e.get("ring_id") or "",
+                       channel=e.get("channel") or "UPI")
+
 
     logger.info(f"Built NetworkX DiGraph: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
     return G, node_attrs

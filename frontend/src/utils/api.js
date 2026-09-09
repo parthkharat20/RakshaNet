@@ -127,4 +127,16 @@ export const fetchAccounts = async (params = {}) => {
   return res.data;
 };
 
+// --- Live Demonstration Engine ---
+export const fetchDemoScenarios = async () => {
+  const res = await api.get('/demo/scenarios');
+  return res.data;
+};
+
+export const simulateAttackApi = async (scenarioId) => {
+  const res = await api.post('/demo/simulate-attack', { scenario_id: scenarioId });
+  return res.data;
+};
+
 export default api;
+

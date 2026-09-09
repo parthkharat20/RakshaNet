@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { fetchAlerts, fetchDashboardStats, freezeAccount, triggerAIRun } from '../utils/api';
+import {
+  fetchAlerts,
+  fetchDashboardStats,
+  freezeAccount,
+  triggerAIRun,
+  fetchDemoScenarios,
+  simulateAttackApi
+} from '../utils/api';
 import { useSocket } from '../hooks/useSocket';
+import { tacticalAudio } from '../utils/audio';
 
 const AlertContext = createContext(null);
 
@@ -15,6 +23,23 @@ export const AlertProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [freezeReceipt, setFreezeReceipt] = useState(null);
   const [wsNotification, setWsNotification] = useState(null);
+  const [demoScenarios, setDemoScenarios] = useState([]);
+  const [isAudioMuted, setIsAudioMuted] = useState(tacticalAudio.isMuted());
+
+  const toggleMuteAudio = () => {
+    const muted = tacticalAudio.toggleMute();
+    setIsAudioMuted(muted);
+    return muted;
+  };
+
+  const loadScenarios = useCallback(async () => {
+    try {
+      const data = await fetchDemoScenarios();
+      setDemoScenarios(data || []);
+    } catch (err) {
+      console.error('Failed to load demo scenarios:', err);
+    }
+  }, []);
 
   const loadData = useCallback(async () => {
     try {
@@ -40,10 +65,11 @@ export const AlertProvider = ({ children }) => {
 
   useEffect(() => {
     loadData();
+    loadScenarios();
     // Auto-refresh every 30 seconds as fallback
     const interval = setInterval(loadData, 30000);
     return () => clearInterval(interval);
-  }, [loadData]);
+  }, [loadData, loadScenarios]);
 
   // --- WebSocket Real-Time Event Handler ---
   const handleWsEvent = useCallback((event) => {
@@ -51,19 +77,17 @@ export const AlertProvider = ({ children }) => {
 
     switch (event_type) {
       case 'ALERT_BATCH':
-        // AI pipeline completed — refresh alerts immediately
         console.log('[WS] Received ALERT_BATCH:', payload);
+        tacticalAudio.playTacticalAlert();
         setWsNotification({
           type: 'ALERT_BATCH',
           message: `AI Pipeline: ${payload.critical_count} critical, ${payload.elevated_count} elevated alerts generated.`,
           timestamp
         });
-        // Refresh data to get the new alerts
         loadData();
         break;
 
       case 'FREEZE_EXECUTED':
-        // Account frozen — update local state immediately
         console.log('[WS] Received FREEZE_EXECUTED:', payload);
         setAlerts(prev => prev.map(a => {
           if (a.target_account_id === payload.account_id) {
@@ -76,19 +100,43 @@ export const AlertProvider = ({ children }) => {
           message: `Account ${payload.account_number} (${payload.holder_name}) frozen by ${payload.officer_badge_id}.`,
           timestamp
         });
-        // Refresh stats for updated frozen count
         fetchDashboardStats().then(s => s && setStats(s)).catch(() => {});
+        break;
+
+      case 'LIEN_CONFIRMED':
+        console.log('[WS] Received LIEN_CONFIRMED:', payload);
+        tacticalAudio.playLienConfirmed();
+        setAlerts(prev => prev.map(a => {
+          if (a.target_account_number === payload.account_number) {
+            return { ...a, status: 'FREEZE_CONFIRMED', bank_lien_reference: payload.bank_lien_reference };
+          }
+          return a;
+        }));
+        setWsNotification({
+          type: 'LIEN_CONFIRMED',
+          message: `Bank Lien Placed by ${payload.bank_name} (${payload.bank_lien_reference}) — Retained ₹${Number(payload.funds_retained).toLocaleString('en-IN')}`,
+          timestamp
+        });
         break;
 
       case 'COMPLAINT_INGESTED':
         console.log('[WS] Received COMPLAINT_INGESTED:', payload);
         setWsNotification({
           type: 'COMPLAINT_INGESTED',
-          message: `New NCRP Complaint ${payload.acknowledgement_no}: ₹${payload.loss_amount.toLocaleString()} (${payload.city})`,
+          message: `New NCRP Complaint ${payload.acknowledgement_no}: ₹${payload.loss_amount.toLocaleString('en-IN')} (${payload.city})`,
           timestamp
         });
-        // Refresh stats
         fetchDashboardStats().then(s => s && setStats(s)).catch(() => {});
+        break;
+
+      case 'ATTACK_SIMULATED':
+        console.log('[WS] Received ATTACK_SIMULATED:', payload);
+        tacticalAudio.playTacticalAlert();
+        setWsNotification({
+          type: 'ATTACK_SIMULATED',
+          message: `Incident Injected: ${payload.scenario_name} (₹${Number(payload.loss_amount).toLocaleString('en-IN')})`,
+          timestamp
+        });
         break;
 
       case 'PIPELINE_PROGRESS':
@@ -107,6 +155,7 @@ export const AlertProvider = ({ children }) => {
         console.log('[WS] Unknown event:', event_type);
     }
   }, [loadData]);
+
 
   // Connect WebSocket
   const { isConnected: wsConnected } = useSocket(handleWsEvent);
@@ -148,7 +197,11 @@ export const AlertProvider = ({ children }) => {
 
       // Update selected alert if active
       if (selectedAlert && selectedAlert.target_account_id === accountId) {
-        setSelectedAlert(prev => ({ ...prev, status: 'FREEZE_DISPATCHED' }));
+        setSelectedAlert(prev => ({
+          ...prev,
+          status: 'FREEZE_CONFIRMED',
+          bank_lien_reference: receipt.bank_lien_reference
+        }));
       }
 
       // Refresh stats
@@ -159,11 +212,20 @@ export const AlertProvider = ({ children }) => {
     }
   };
 
+  const simulateAttack = async (scenarioId) => {
+    try {
+      const result = await simulateAttackApi(scenarioId);
+      return result;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   const filteredAlerts = alerts.filter(a => {
     // Filter by type / status
     if (filter === 'CRITICAL' && a.risk_score < 0.75) return false;
     if (filter === 'ELEVATED' && (a.risk_score >= 0.75 || a.risk_score < 0.40)) return false;
-    if (filter === 'FROZEN' && a.status !== 'FREEZE_DISPATCHED') return false;
+    if (filter === 'FROZEN' && a.status !== 'FREEZE_DISPATCHED' && a.status !== 'FREEZE_CONFIRMED') return false;
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -197,8 +259,14 @@ export const AlertProvider = ({ children }) => {
     setWsNotification,
     refreshData: loadData,
     runScoring,
-    dispatchFreeze
+    dispatchFreeze,
+    demoScenarios,
+    fetchScenarios: loadScenarios,
+    simulateAttack,
+    isAudioMuted,
+    toggleMuteAudio
   };
+
 
   return (
     <AlertContext.Provider value={value}>

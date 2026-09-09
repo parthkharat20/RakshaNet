@@ -40,3 +40,8 @@ class AccountFreezeResponse(BaseModel):
     hash_signature: str
     action_taken_at: datetime
     message: str
+    bank_lien_reference: Optional[str] = None
+    cfcfrms_ack_code: Optional[str] = None
+    funds_retained: Optional[float] = None
+    branch_ifsc: Optional[str] = None
+

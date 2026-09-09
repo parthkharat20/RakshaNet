@@ -84,3 +84,36 @@ async def dispatch_pipeline_progress(stage: str, progress_pct: int, message: str
         "progress_pct": progress_pct,
         "message": message
     })
+
+
+async def dispatch_lien_confirmed_event(
+    account_number: str,
+    bank_name: str,
+    bank_lien_reference: str,
+    funds_retained: float,
+    cfcfrms_ack_code: str
+):
+    """Broadcast after core banking system confirms Section 91 lien placement."""
+    from app.realtime.socket_server import ws_manager
+
+    await ws_manager.broadcast_event("LIEN_CONFIRMED", {
+        "account_number": account_number,
+        "bank_name": bank_name,
+        "bank_lien_reference": bank_lien_reference,
+        "funds_retained": funds_retained,
+        "cfcfrms_ack_code": cfcfrms_ack_code
+    })
+    logger.info(f"📡 Dispatched LIEN_CONFIRMED event for {account_number}: {bank_lien_reference}")
+
+
+async def dispatch_attack_simulated_event(scenario_name: str, victim_city: str, loss_amount: float):
+    """Broadcast when a live attack scenario is injected."""
+    from app.realtime.socket_server import ws_manager
+
+    await ws_manager.broadcast_event("ATTACK_SIMULATED", {
+        "scenario_name": scenario_name,
+        "victim_city": victim_city,
+        "loss_amount": loss_amount
+    })
+    logger.info(f"📡 Dispatched ATTACK_SIMULATED event: {scenario_name}")
+

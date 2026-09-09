@@ -61,5 +61,7 @@ redis_data/
 
 # Local College Submissions & Docs
 docs/
+!docs/SIH_PITCH_AND_DEMO_GUIDE.md
 generate_synopsis_docs.py
+
 

@@ -11,7 +11,8 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
   if (!selectedAlert) return null;
 
   const isCritical = selectedAlert.risk_score >= 0.75;
-  const isFrozen = selectedAlert.status === 'FREEZE_DISPATCHED';
+  const isFrozen = selectedAlert.status === 'FREEZE_DISPATCHED' || selectedAlert.status === 'FREEZE_CONFIRMED';
+  const hasLienRef = selectedAlert.bank_lien_reference || (isFrozen && 'SBI-CFCFRMS-CONFIRMED');
 
   return (
     <div className="glass-panel flex flex-col h-full overflow-hidden border-white/10 bg-slate-950/90">
@@ -69,13 +70,24 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
           <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-white/5 text-[11px]">
             <div className="flex items-center gap-1.5 text-slate-300">
               <Building className="w-3.5 h-3.5 text-slate-400" />
-              <span>Target Bank: <strong className="text-white">Active Node</strong></span>
+              <span>Target Bank: <strong className="text-white">{selectedAlert.bank_name || 'Active Node'}</strong></span>
             </div>
             <div className="flex items-center gap-1.5 text-slate-300">
               <Calendar className="w-3.5 h-3.5 text-slate-400" />
               <span>Reported: <strong className="text-white">{formatDateTime(selectedAlert.created_at)}</strong></span>
             </div>
           </div>
+
+          {/* Bank Lien Confirmation Badge */}
+          {selectedAlert.bank_lien_reference && (
+            <div className="mt-3 p-2 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 flex items-center justify-between text-[11px]">
+              <span className="flex items-center gap-1.5 font-bold">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                CFCFRMS Lien Confirmed:
+              </span>
+              <span className="font-mono font-bold text-white">{selectedAlert.bank_lien_reference}</span>
+            </div>
+          )}
         </div>
 
         {/* Action Bar */}
@@ -84,7 +96,7 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
             <span className="text-slate-400 text-[11px]">Interdiction Status:</span>
             {isFrozen ? (
               <span className="pill pill-success text-[10px]">
-                <CheckCircle2 className="w-3 h-3" /> FREEZE DISPATCHED
+                <CheckCircle2 className="w-3 h-3" /> {selectedAlert.status === 'FREEZE_CONFIRMED' ? 'LIEN CONFIRMED' : 'FREEZE DISPATCHED'}
               </span>
             ) : (
               <span className="pill pill-critical text-[10px]">
@@ -99,6 +111,7 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
             isFrozen={isFrozen}
           />
         </div>
+
 
         {/* Tactical Deep Dive Link */}
         {onOpenCommandCenter && (

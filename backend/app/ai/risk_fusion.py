@@ -18,13 +18,15 @@ import asyncio
 import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from app.ai.graph_predictor import run_graph_scoring
 from app.ai.geo_hotspot import run_geo_scoring
 from app.ai.shap_explainer import generate_shap_explanation
+from sqlalchemy import select, text
 from app.db.postgres import AsyncSessionLocal
 from app.models import Alert, Account
+
 
 logger = logging.getLogger("risk_fusion")
 
@@ -161,11 +163,19 @@ async def write_alerts_to_db(
             "AND status NOT IN ('FREEZE_DISPATCHED', 'ARCHIVED', 'RESOLVED');"
         ))
 
+        async def resolve_target_uuid(id_val: str) -> Optional[uuid.UUID]:
+            try:
+                return uuid.UUID(str(id_val))
+            except (ValueError, TypeError):
+                res = await session.execute(select(Account.id).where(Account.account_number == str(id_val)))
+                return res.scalar_one_or_none()
+
         for acc_id in critical_ids:
             data = fused_results[acc_id]
+            target_uuid = await resolve_target_uuid(acc_id)
             alert = Alert(
                 alert_type="MULE_RING",
-                target_account_id=uuid.UUID(acc_id),
+                target_account_id=target_uuid,
                 risk_score=data["fused_score"],
                 graph_score=data["graph_score"],
                 geo_score=data["geo_score"],
@@ -177,9 +187,10 @@ async def write_alerts_to_db(
 
         for acc_id in elevated_ids:
             data = fused_results[acc_id]
+            target_uuid = await resolve_target_uuid(acc_id)
             alert = Alert(
                 alert_type="SURVEILLANCE",
-                target_account_id=uuid.UUID(acc_id),
+                target_account_id=target_uuid,
                 risk_score=data["fused_score"],
                 graph_score=data["graph_score"],
                 geo_score=data["geo_score"],
@@ -190,6 +201,7 @@ async def write_alerts_to_db(
             count += 1
 
         await session.commit()
+
 
     logger.info(f"✅ Wrote {count} alerts to PostgreSQL")
     return count
@@ -202,12 +214,27 @@ async def update_account_risk_scores(fused_results: Dict[str, Dict[str, Any]]):
     # 1. Update PostgreSQL
     async with AsyncSessionLocal() as session:
         from sqlalchemy import text
+        now_ts = datetime.now(timezone.utc)
         for acc_id, data in fused_results.items():
             if data["fused_score"] > 0.01:
-                await session.execute(
-                    text("UPDATE accounts SET risk_score = :score, updated_at = :now WHERE id = :id"),
-                    {"score": data["fused_score"], "now": datetime.now(timezone.utc), "id": acc_id}
-                )
+                is_valid_uuid = False
+                target_uuid = None
+                try:
+                    target_uuid = uuid.UUID(str(acc_id))
+                    is_valid_uuid = True
+                except (ValueError, TypeError):
+                    is_valid_uuid = False
+
+                if is_valid_uuid:
+                    await session.execute(
+                        text("UPDATE accounts SET risk_score = :score, updated_at = :now WHERE id = :id"),
+                        {"score": data["fused_score"], "now": now_ts, "id": target_uuid}
+                    )
+                else:
+                    await session.execute(
+                        text("UPDATE accounts SET risk_score = :score, updated_at = :now WHERE account_number = :acc_num"),
+                        {"score": data["fused_score"], "now": now_ts, "acc_num": str(acc_id)}
+                    )
         await session.commit()
     logger.info(f"✅ Updated risk_score for {len(fused_results)} accounts in PostgreSQL")
 
@@ -222,10 +249,12 @@ async def update_account_risk_scores(fused_results: Dict[str, Dict[str, Any]]):
         async with neo_driver.session() as session:
             await session.run("""
                 UNWIND $updates AS u
-                MATCH (a:Account {id: u.id})
+                MATCH (a:Account)
+                WHERE a.id = u.id OR a.account_number = u.id
                 SET a.risk_score = u.score
             """, updates=neo_updates)
         logger.info(f"✅ Synchronized risk_score for {len(neo_updates)} accounts in Neo4j")
+
     except Exception as e:
         logger.warning(f"Failed to sync risk_score to Neo4j: {e}")
 

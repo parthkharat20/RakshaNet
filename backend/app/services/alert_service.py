@@ -82,7 +82,7 @@ class AlertService:
 
             if account.is_frozen:
                 logger.warning(f"Account {account.account_number} is already frozen. Skipping duplicate freeze.")
-                # Still return success for idempotency
+                clean_bank = (account.bank_name or "BANK").split()[0].upper()
                 return AccountFreezeResponse(
                     success=True,
                     account_id=account.id,
@@ -93,21 +93,36 @@ class AlertService:
                     audit_log_id=UUID("00000000-0000-0000-0000-000000000000"),
                     hash_signature="already_frozen",
                     action_taken_at=now,
-                    message=f"Account {account.account_number} was already frozen."
+                    message=f"Account {account.account_number} was already frozen.",
+                    bank_lien_reference=f"{clean_bank}-CFCFRMS-ACTIVE-LIEN"
                 )
+
+
+            # 2. Inter-Bank CFCFRMS Lien Placement
+            from app.services.bank_gateway import BankGateway
+            lien_receipt = await BankGateway.place_lien(
+                account_number=account.account_number,
+                bank_name=account.bank_name,
+                officer_badge_id=req.officer_badge_id,
+                account_balance=float(account.balance)
+            )
 
             # Mark frozen
             account.is_frozen = True
             account.updated_at = now
 
-            # 2. Generate SHA-256 cryptographic audit log entry
+            # 3. Generate SHA-256 cryptographic audit log entry with Bank Lien Reference
             details = {
                 "reason": req.reason,
                 "notes": req.notes,
                 "previous_risk_score": float(account.risk_score),
                 "account_number": account.account_number,
                 "bank_name": account.bank_name,
-                "client_ip": client_ip
+                "client_ip": client_ip,
+                "bank_lien_reference": lien_receipt["bank_lien_reference"],
+                "cfcfrms_ack_code": lien_receipt["cfcfrms_ack_code"],
+                "funds_retained": lien_receipt["funds_retained"],
+                "branch_ifsc": lien_receipt["branch_ifsc"]
             }
             timestamp_str = now.isoformat()
             signature = AuditLog.compute_signature(
@@ -124,7 +139,7 @@ class AlertService:
                 target_type="ACCOUNT",
                 target_id=str(account.id),
                 details=details,
-                ip_address=client_ip,  # Fixed: Real client IP instead of hardcoded 127.0.0.1
+                ip_address=client_ip,
                 timestamp=now,
                 hash_signature=signature
             )
@@ -133,7 +148,7 @@ class AlertService:
             await session.refresh(account)
             await session.refresh(audit_log)
 
-        # 3. Synchronize with Neo4j
+        # 4. Synchronize with Neo4j
         try:
             driver = get_neo4j_driver()
             async with driver.session() as n_session:
@@ -148,8 +163,28 @@ class AlertService:
             logger.error(f"⚠️ Neo4j freeze sync failed for {account.account_number}: {e}. "
                         f"PostgreSQL freeze is committed. Schedule async reconciliation.")
 
+        # 5. Broadcast real-time WebSocket events
+        try:
+            from app.realtime.dispatcher import dispatch_freeze_event, dispatch_lien_confirmed_event
+            await dispatch_freeze_event(
+                account_id=str(account.id),
+                account_number=account.account_number,
+                holder_name=account.holder_name,
+                officer_badge_id=req.officer_badge_id,
+                hash_signature=signature
+            )
+            await dispatch_lien_confirmed_event(
+                account_number=account.account_number,
+                bank_name=account.bank_name,
+                bank_lien_reference=lien_receipt["bank_lien_reference"],
+                funds_retained=lien_receipt["funds_retained"],
+                cfcfrms_ack_code=lien_receipt["cfcfrms_ack_code"]
+            )
+        except Exception as e:
+            logger.warning(f"WebSocket broadcast failed for freeze: {e}")
+
         logger.info(f"🛡️ FREEZE DISPATCHED: Account {account.account_number} frozen by "
-                    f"{req.officer_badge_id} from IP {client_ip} (Signature: {signature[:12]}...)")
+                    f"{req.officer_badge_id} from IP {client_ip} | Lien: {lien_receipt['bank_lien_reference']}")
 
         return AccountFreezeResponse(
             success=True,
@@ -161,5 +196,10 @@ class AlertService:
             audit_log_id=audit_log.id,
             hash_signature=signature,
             action_taken_at=now,
-            message=f"Account {account.account_number} successfully frozen across banking gateway and Neo4j graph."
+            message=f"Section 91 freeze executed. Lien confirmed by {account.bank_name} ({lien_receipt['bank_lien_reference']}). Retained ₹{lien_receipt['funds_retained']:,.2f}.",
+            bank_lien_reference=lien_receipt["bank_lien_reference"],
+            cfcfrms_ack_code=lien_receipt["cfcfrms_ack_code"],
+            funds_retained=lien_receipt["funds_retained"],
+            branch_ifsc=lien_receipt["branch_ifsc"]
         )
+
