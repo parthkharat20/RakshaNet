@@ -12,7 +12,9 @@ import {
   WifiOff,
   Zap,
   Volume2,
-  VolumeX
+  VolumeX,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { getStoredOfficer, logoutOfficer } from '../../utils/api';
@@ -28,15 +30,18 @@ export const TopBar = () => {
     wsConnected,
     wsNotification,
     isAudioMuted,
-    toggleMuteAudio
+    toggleMuteAudio,
+    theme,
+    toggleTheme
   } = useAlertContext();
   const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false);
   const location = useLocation();
   const officer = getStoredOfficer();
+  const isDark = theme === 'dark';
 
   return (
     <>
-      <header className="h-16 border-b border-white/10 bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-50">
+      <header className="h-16 border-b border-white/10 bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-50 text-white">
         {/* Brand & Emblem */}
         <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center gap-3 group">
@@ -93,7 +98,7 @@ export const TopBar = () => {
           {/* WebSocket Connection Status */}
           <div className={`hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono ${
             wsConnected 
-              ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400' 
+              ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400'
               : 'bg-amber-950/40 border-amber-800/40 text-amber-400'
           }`}>
             <span className="relative flex h-2 w-2">
@@ -114,7 +119,7 @@ export const TopBar = () => {
             onClick={toggleMuteAudio}
             className={`p-2 rounded-lg border transition-colors ${
               isAudioMuted
-                ? 'text-slate-500 border-white/5 hover:text-slate-300 hover:bg-white/5'
+                ? (isDark ? 'text-slate-500 border-white/5 hover:text-slate-300 hover:bg-white/5' : 'text-slate-400 border-slate-200 hover:bg-slate-100')
                 : 'text-amber-400 border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20'
             }`}
             title={isAudioMuted ? 'Unmute Tactical Chimes' : 'Mute Tactical Chimes'}

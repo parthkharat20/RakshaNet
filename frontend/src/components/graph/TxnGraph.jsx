@@ -155,7 +155,7 @@ export const TxnGraph = ({ accountId, onNodeClick }) => {
       </div>
 
       {/* Graph Canvas */}
-      <div className="flex-1 relative w-full h-full min-h-[380px] bg-slate-950">
+      <div className="flex-1 relative w-full h-full min-h-0 bg-slate-950">
         {isLoading && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-xs text-slate-400">
             <RefreshCw className="w-6 h-6 animate-spin text-blue-400 mb-2" />

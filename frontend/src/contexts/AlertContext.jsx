@@ -21,6 +21,7 @@ export const AlertProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isScoring, setIsScoring] = useState(false);
   const [filter, setFilter] = useState('ALL'); // ALL, CRITICAL, ELEVATED, FROZEN
+  const [cityFilter, setCityFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [freezeReceipt, setFreezeReceipt] = useState(null);
@@ -28,6 +29,18 @@ export const AlertProvider = ({ children }) => {
   const [wsNotification, setWsNotification] = useState(null);
   const [demoScenarios, setDemoScenarios] = useState([]);
   const [isAudioMuted, setIsAudioMuted] = useState(tacticalAudio.isMuted());
+  const theme = 'dark';
+
+  const toggleTheme = () => {
+    // Theme locked to dark per user preference
+  };
+
+  useEffect(() => {
+    localStorage.setItem('rakshanet_theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+  }, []);
 
   const toggleMuteAudio = () => {
     const muted = tacticalAudio.toggleMute();
@@ -245,11 +258,22 @@ export const AlertProvider = ({ children }) => {
     }
   };
 
+  // Unique city list derived from raw alerts
+  const availableCities = ['ALL', ...Array.from(
+    new Set(alerts.map(a => a.city || a.target_city || '').filter(Boolean))
+  ).sort()];
+
   const filteredAlerts = alerts.filter(a => {
     // Filter by type / status
     if (filter === 'CRITICAL' && a.risk_score < 0.75) return false;
     if (filter === 'ELEVATED' && (a.risk_score >= 0.75 || a.risk_score < 0.40)) return false;
     if (filter === 'FROZEN' && a.status !== 'FREEZE_DISPATCHED' && a.status !== 'FREEZE_CONFIRMED') return false;
+
+    // Filter by city
+    if (cityFilter !== 'ALL') {
+      const alertCity = (a.city || a.target_city || '').toLowerCase();
+      if (alertCity !== cityFilter.toLowerCase()) return false;
+    }
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -257,7 +281,8 @@ export const AlertProvider = ({ children }) => {
       const holder = (a.target_holder_name || '').toLowerCase();
       const accNum = (a.target_account_number || '').toLowerCase();
       const type = (a.alert_type || '').toLowerCase();
-      return holder.includes(q) || accNum.includes(q) || type.includes(q);
+      const city = (a.city || a.target_city || '').toLowerCase();
+      return holder.includes(q) || accNum.includes(q) || type.includes(q) || city.includes(q);
     }
 
     return true;
@@ -273,6 +298,9 @@ export const AlertProvider = ({ children }) => {
     isScoring,
     filter,
     setFilter,
+    cityFilter,
+    setCityFilter,
+    availableCities,
     searchQuery,
     setSearchQuery,
     error,
@@ -291,7 +319,9 @@ export const AlertProvider = ({ children }) => {
     fetchScenarios: loadScenarios,
     simulateAttack,
     isAudioMuted,
-    toggleMuteAudio
+    toggleMuteAudio,
+    theme,
+    toggleTheme
   };
 
 

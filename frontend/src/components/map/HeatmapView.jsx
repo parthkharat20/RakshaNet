@@ -155,7 +155,7 @@ export const HeatmapView = () => {
       </div>
 
       {/* Leaflet Map Canvas */}
-      <div className="flex-1 relative w-full h-full min-h-[380px]">
+      <div className="flex-1 relative w-full h-full min-h-0">
         {isLoading && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-xs text-slate-400">
             <RefreshCw className="w-6 h-6 animate-spin text-emerald-400 mb-2" />
@@ -166,7 +166,7 @@ export const HeatmapView = () => {
         <MapContainer
           center={selectedCorridor.coords}
           zoom={selectedCorridor.zoom}
-          style={{ width: '100%', height: '100%', minHeight: '380px' }}
+          style={{ width: '100%', height: '100%', minHeight: '100%' }}
           zoomControl={true}
         >
           <MapController center={selectedCorridor.coords} zoom={selectedCorridor.zoom} />

@@ -205,7 +205,7 @@ export const PatrolDispatchModal = ({
                     No active patrol units located within 15 km perimeter.
                   </div>
                 ) : (
-                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                  <div className="space-y-1.5 max-h-[260px] overflow-y-auto overscroll-contain pr-1.5 border border-white/10 rounded-xl p-2 bg-black/30">
                     {nearbyUnits.map((unit, idx) => {
                       const isSelected = selectedUnitId === unit.id;
                       return (
@@ -214,13 +214,13 @@ export const PatrolDispatchModal = ({
                           onClick={() => setSelectedUnitId(unit.id)}
                           className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
                             isSelected
-                              ? 'bg-blue-600/15 border-blue-500 shadow-md'
+                              ? 'bg-blue-600/20 border-blue-500 shadow-md shadow-blue-500/10'
                               : 'bg-white/5 border-white/10 hover:bg-white/10'
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className="text-slate-500 font-bold text-xs">#{idx + 1}</div>
-                            <div className={`w-3 h-3 rounded-full ${isSelected ? 'bg-blue-400' : 'bg-slate-600'}`} />
+                            <div className="text-slate-500 font-bold text-xs shrink-0">#{idx + 1}</div>
+                            <div className={`w-3 h-3 rounded-full shrink-0 ${isSelected ? 'bg-blue-400 ring-2 ring-blue-500/50' : 'bg-slate-600'}`} />
                             <div>
                               <div className="font-bold text-white text-xs flex items-center gap-2">
                                 <span>{unit.callsign}</span>
@@ -234,7 +234,7 @@ export const PatrolDispatchModal = ({
                             </div>
                           </div>
 
-                          <div className="text-right space-y-0.5">
+                          <div className="text-right space-y-0.5 shrink-0">
                             <div className="font-bold text-cyan-300 text-xs">
                               {unit.distance_km} km
                             </div>

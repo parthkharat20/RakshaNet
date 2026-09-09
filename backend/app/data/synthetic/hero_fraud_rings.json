@@ -2,20 +2,20 @@
   "HERO_RING_STAR_01": {
     "name": "Star Hub Fraud Ring",
     "topology": "Star (Hub-and-Spoke)",
-    "hub_mule_id": "08bf676b-241e-4f6a-beeb-c7c8dfa857b7",
+    "hub_mule_id": "ba074607-01b7-4fa3-99fc-1368c30a32f3",
     "hub_mule_acc": "67356271327",
     "victim_ids": [
-      "caedf215-8878-4f40-b429-54f9c52b14f1",
-      "9f47a41f-18da-494a-8408-77c957c360c9",
-      "245ccbff-a968-4302-b72b-eeb0b8e918a7",
-      "f5829d7a-517c-4f58-bf4d-d9905382c48c",
-      "c309bb3d-542e-4138-b02c-3a81bc44f9ae",
-      "6f1ff45a-a023-4429-ad0f-c0f7828567da",
-      "0faca7fb-fd53-499d-ad91-14754f3d02a3",
-      "5fcd34d6-0707-4587-bd17-9363511c4fdf"
+      "28f762ad-fc03-4c1c-9dcf-f814b5589a2e",
+      "a0361870-b4a3-49ff-a164-1555c70548a7",
+      "0644aa95-c726-43fe-9b2a-366daa4e76aa",
+      "356ba19d-cf91-45d1-a3ba-7074f0604a0f",
+      "8e8b5dd0-e75e-4388-868f-280473eb28dc",
+      "909cf8e8-f882-4100-84a3-a52950512d1c",
+      "e8c2fb81-c2b2-4fed-85e3-06f8c7829268",
+      "6ff0d004-2c33-46b3-a17b-14adff7591a7"
     ],
-    "layer2_mule_id": "5d8c392e-83c8-49b3-a961-f2bf16487e8b",
-    "clean_neighbor_id": "3b965ca9-021d-40af-9dcd-37f4830ffa4b",
+    "layer2_mule_id": "5cc85eda-ce00-415c-a00e-a15a3f86ede9",
+    "clean_neighbor_id": "b3503e49-2978-493d-a6b1-3e621e9e6cb4",
     "total_inflow": 432242.07000000007,
     "consolidated_outflow": 410629.97,
     "category": "UPI QR Code / Payment Request Fraud"
@@ -23,31 +23,31 @@
   "HERO_RING_CHAIN_01": {
     "name": "Chain Layering Fraud Ring",
     "topology": "Chain (Sequential 4-Hop)",
-    "victim_id": "945db93f-83cc-4f6c-ae17-81d4ed685d86",
+    "victim_id": "6fffa77a-da6d-4ac6-8c2b-3ac5a0587d44",
     "mule_chain_ids": [
-      "1ba917f6-23e5-4d4d-9d51-7dc7d19449e0",
-      "580261ad-5c72-4b4f-bd85-25f2179b81e2",
-      "789a0f2a-fa81-48c5-8c68-e107261cbfa6",
-      "41db83c9-032b-4008-a9a8-08c3514f77cd"
+      "c6e4bc25-d7de-49e4-9e0b-c19c1f4fd4f6",
+      "d3d16de1-0f29-4b92-9c48-84b227de4b1c",
+      "809672ca-9643-4fb8-8da1-d941688c60f1",
+      "8ce9c0da-0637-4ae2-ab59-5e14ba9d93b4"
     ],
-    "clean_neighbor_id": "6f32bc5d-ac3d-4056-a4ff-30af97fd2056",
+    "clean_neighbor_id": "5f116d1e-3343-41be-8436-b6fdb7323463",
     "initial_loss": 540000.0,
-    "terminal_mule_id": "41db83c9-032b-4008-a9a8-08c3514f77cd",
+    "terminal_mule_id": "8ce9c0da-0637-4ae2-ab59-5e14ba9d93b4",
     "category": "Digital Arrest Scam"
   },
   "HERO_RING_FANOUT_01": {
     "name": "Smurfing Fan-Out Fraud Ring",
     "topology": "Fan-Out (Threshold Evasion)",
-    "victim_id": "4539b806-e757-4758-b158-69f5247e273a",
-    "aggregator_id": "92b1019e-0633-43b2-8b91-8b2a0809e567",
+    "victim_id": "bed1055b-4826-461a-91ed-c53ce8d688e6",
+    "aggregator_id": "53e15991-1f50-42d4-ab8f-0d97df0c90b4",
     "leaf_mule_ids": [
-      "9293b47b-4003-4247-86a1-97edc73d08ae",
-      "3131522f-5719-4b6d-b091-7cd7434f5a9b",
-      "a3d45688-5cfb-4aa0-8648-4d0f728abff8",
-      "1da1e0ad-9a64-4741-a873-254ba299a84d",
-      "1c72bd1b-dd55-4028-a1bb-cc6029c070f5",
-      "6b09349a-69ae-489b-88b8-d23779234e8b",
-      "7b81f6f7-8356-43e4-83ef-dc6a44cd700d"
+      "5c34a5ce-1c9c-4224-b96f-0a1eb2693c1a",
+      "d0b7fb9f-d018-4792-9bcd-0b6ed3e880a7",
+      "14dd2a3c-4d93-4986-a482-1de39c8b08a1",
+      "868bb405-fe5c-4d39-81c1-17f030619534",
+      "c83fd36d-a209-4352-9bfa-ece128349215",
+      "f9d74496-1a48-492f-b8db-453ab800ef05",
+      "67e76f64-6093-4ba9-9b62-4332657db1ff"
     ],
     "initial_loss": 330000.0,
     "category": "Investment / Stock Trading Scam"

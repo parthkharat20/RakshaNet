@@ -1,6 +1,6 @@
 [
   {
-    "id": "31a2b7d5-3222-4a83-b18e-c0edfcadae68",
+    "id": "6c88b98d-a3eb-4fca-9f84-5d54d6b3afc3",
     "terminal_id": "ATM_PUN_SBIN_1000",
     "bank_name": "State Bank of India",
     "address": "Near Bakshi Zila, Commercial Zone, Pune",
@@ -11,10 +11,10 @@
     "cash_out_frequency": 80,
     "risk_score": 0.1,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434094+00:00"
+    "created_at": "2026-09-09T18:00:03.670198+00:00"
   },
   {
-    "id": "89cb81af-66b7-47d5-880d-479b7734b49f",
+    "id": "33aa85b8-7540-400b-bf27-4d83e48c613a",
     "terminal_id": "ATM_MUM_HDFC_1001",
     "bank_name": "HDFC Bank",
     "address": "Near Konda Road, Commercial Zone, Mumbai",
@@ -25,10 +25,10 @@
     "cash_out_frequency": 149,
     "risk_score": 0.89,
     "is_hotspot": true,
-    "created_at": "2026-09-08T07:25:33.434127+00:00"
+    "created_at": "2026-09-09T18:00:03.670355+00:00"
   },
   {
-    "id": "5ee92beb-a37e-48f8-868e-e7a4559ccaa5",
+    "id": "1459b21a-25ae-4b09-a670-4db48357c0bf",
     "terminal_id": "ATM_BEN_SBIN_1002",
     "bank_name": "State Bank of India",
     "address": "Near Dewan Ganj, Commercial Zone, Bengaluru",
@@ -39,10 +39,10 @@
     "cash_out_frequency": 33,
     "risk_score": 0.09,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434146+00:00"
+    "created_at": "2026-09-09T18:00:03.670476+00:00"
   },
   {
-    "id": "d66c2bed-522e-4da4-81ac-eb6dc2c6ca95",
+    "id": "d0c3fdf2-8509-4ef2-9e21-27c62c17eaa5",
     "terminal_id": "ATM_HYD_SBIN_1003",
     "bank_name": "State Bank of India",
     "address": "Near Chahal Zila, Commercial Zone, Hyderabad",
@@ -53,10 +53,10 @@
     "cash_out_frequency": 60,
     "risk_score": 0.19,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434161+00:00"
+    "created_at": "2026-09-09T18:00:03.670579+00:00"
   },
   {
-    "id": "fd5fe4e6-f143-4c3a-972f-1e502e9a35d3",
+    "id": "674e3473-4da8-4c57-b227-0b201f5e88f5",
     "terminal_id": "ATM_KOL_KKBK_1004",
     "bank_name": "Kotak Mahindra Bank",
     "address": "Near Sami, Commercial Zone, Kolkata",
@@ -67,10 +67,10 @@
     "cash_out_frequency": 66,
     "risk_score": 0.14,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434174+00:00"
+    "created_at": "2026-09-09T18:00:03.670695+00:00"
   },
   {
-    "id": "e84b2ca0-1857-4ad4-9d11-302a3dc11973",
+    "id": "7d675e78-821e-439a-a16f-d22483717d44",
     "terminal_id": "ATM_DEL_SBIN_1005",
     "bank_name": "State Bank of India",
     "address": "Near Balan Nagar, Commercial Zone, Delhi-NCR",
@@ -81,10 +81,10 @@
     "cash_out_frequency": 50,
     "risk_score": 0.19,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434186+00:00"
+    "created_at": "2026-09-09T18:00:03.670831+00:00"
   },
   {
-    "id": "534181ae-c187-47bd-a8ac-523b6162ba2b",
+    "id": "8b47ec65-7f6f-4ce8-bd66-92a599615375",
     "terminal_id": "ATM_DEL_ICIC_1006",
     "bank_name": "ICICI Bank",
     "address": "Near Kamdar Zila, Commercial Zone, Delhi-NCR",
@@ -95,10 +95,10 @@
     "cash_out_frequency": 65,
     "risk_score": 0.24,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434198+00:00"
+    "created_at": "2026-09-09T18:00:03.670933+00:00"
   },
   {
-    "id": "6c407041-be1e-43d6-8abb-a303994b7df4",
+    "id": "c0c807ec-d222-41e0-8488-59551ecf0786",
     "terminal_id": "ATM_DEL_HDFC_1007",
     "bank_name": "HDFC Bank",
     "address": "Near Tiwari Ganj, Commercial Zone, Delhi-NCR",
@@ -109,10 +109,10 @@
     "cash_out_frequency": 107,
     "risk_score": 0.07,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434208+00:00"
+    "created_at": "2026-09-09T18:00:03.671020+00:00"
   },
   {
-    "id": "5a93b6c0-b836-49ad-9770-de77e849ce26",
+    "id": "2adb1433-b4a2-48a8-b2a6-cb65f9e4b1dc",
     "terminal_id": "ATM_JAI_UBIN_1008",
     "bank_name": "Union Bank of India",
     "address": "Near Bala, Commercial Zone, Jaipur",
@@ -123,10 +123,10 @@
     "cash_out_frequency": 77,
     "risk_score": 0.21,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434219+00:00"
+    "created_at": "2026-09-09T18:00:03.671103+00:00"
   },
   {
-    "id": "073624af-7f59-438e-9f49-fdfd6bd56fc1",
+    "id": "5e735046-ea5e-4113-90ba-1494034a0015",
     "terminal_id": "ATM_KOL_CNRB_1009",
     "bank_name": "Canara Bank",
     "address": "Near Issac Circle, Commercial Zone, Kolkata",
@@ -137,10 +137,10 @@
     "cash_out_frequency": 41,
     "risk_score": 0.24,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434231+00:00"
+    "created_at": "2026-09-09T18:00:03.671187+00:00"
   },
   {
-    "id": "e495d3b8-779e-4e48-9213-1b762fa0a7f4",
+    "id": "8e224683-cd55-4fd9-b3f5-80e152633a0b",
     "terminal_id": "ATM_BEN_CNRB_1010",
     "bank_name": "Canara Bank",
     "address": "Near Saini Circle, Commercial Zone, Bengaluru",
@@ -151,10 +151,10 @@
     "cash_out_frequency": 85,
     "risk_score": 0.22,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434241+00:00"
+    "created_at": "2026-09-09T18:00:03.671272+00:00"
   },
   {
-    "id": "34893977-d01a-426c-a5b5-9e8a6e2bd314",
+    "id": "68ae6065-ee3e-40d0-9437-9107ae19068a",
     "terminal_id": "ATM_PUN_BARB_1011",
     "bank_name": "Bank of Baroda",
     "address": "Near Sen Ganj, Commercial Zone, Pune",
@@ -165,10 +165,10 @@
     "cash_out_frequency": 59,
     "risk_score": 0.19,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434252+00:00"
+    "created_at": "2026-09-09T18:00:03.671360+00:00"
   },
   {
-    "id": "36d12dff-6d8c-444e-b9b1-e2ddd7c84998",
+    "id": "a65c97be-d418-4e8e-aadd-187afa8879f1",
     "terminal_id": "ATM_MUM_UTIB_1012",
     "bank_name": "Axis Bank",
     "address": "Near Mall, Commercial Zone, Mumbai",
@@ -179,10 +179,10 @@
     "cash_out_frequency": 84,
     "risk_score": 0.89,
     "is_hotspot": true,
-    "created_at": "2026-09-08T07:25:33.434262+00:00"
+    "created_at": "2026-09-09T18:00:03.671442+00:00"
   },
   {
-    "id": "a94fdfd7-008a-4946-ba37-cfa3ffbd85e5",
+    "id": "dda309d7-f87d-47c4-bfd0-a4631e8d6c3e",
     "terminal_id": "ATM_JAI_HDFC_1013",
     "bank_name": "HDFC Bank",
     "address": "Near Dutta Nagar, Commercial Zone, Jaipur",
@@ -193,10 +193,10 @@
     "cash_out_frequency": 107,
     "risk_score": 0.11,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434273+00:00"
+    "created_at": "2026-09-09T18:00:03.671524+00:00"
   },
   {
-    "id": "d396fc7b-f1b0-4a55-ae52-5fdacd063882",
+    "id": "8c5f0723-2e5f-4bd9-a386-69fb801d45f8",
     "terminal_id": "ATM_PUN_BARB_1014",
     "bank_name": "Bank of Baroda",
     "address": "Near Oak Marg, Commercial Zone, Pune",
@@ -207,10 +207,10 @@
     "cash_out_frequency": 51,
     "risk_score": 0.12,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434284+00:00"
+    "created_at": "2026-09-09T18:00:03.671618+00:00"
   },
   {
-    "id": "53ceb651-ff58-4277-a41e-5b242932560a",
+    "id": "b52e8665-f697-445b-b4e7-66375ba62993",
     "terminal_id": "ATM_DEL_PUNB_1015",
     "bank_name": "Punjab National Bank",
     "address": "Near Dugal Road, Commercial Zone, Delhi-NCR",
@@ -221,10 +221,10 @@
     "cash_out_frequency": 28,
     "risk_score": 0.17,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434295+00:00"
+    "created_at": "2026-09-09T18:00:03.671700+00:00"
   },
   {
-    "id": "ba7bbb48-4905-4e4f-b83f-7e1f1af44e72",
+    "id": "9265f3ab-3d70-443d-845c-53626bbdfe30",
     "terminal_id": "ATM_MUM_UTIB_1016",
     "bank_name": "Axis Bank",
     "address": "Near Nayar Ganj, Commercial Zone, Mumbai",
@@ -235,10 +235,10 @@
     "cash_out_frequency": 51,
     "risk_score": 0.89,
     "is_hotspot": true,
-    "created_at": "2026-09-08T07:25:33.434305+00:00"
+    "created_at": "2026-09-09T18:00:03.671785+00:00"
   },
   {
-    "id": "a930f739-686a-47d3-92ea-9633c75d249e",
+    "id": "13bfaf0a-44f9-4e7b-a624-c725ca255a8f",
     "terminal_id": "ATM_DEL_CNRB_1017",
     "bank_name": "Canara Bank",
     "address": "Near Chanda Zila, Commercial Zone, Delhi-NCR",
@@ -249,10 +249,10 @@
     "cash_out_frequency": 66,
     "risk_score": 0.19,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434316+00:00"
+    "created_at": "2026-09-09T18:00:03.671865+00:00"
   },
   {
-    "id": "25d47915-8a8b-40ea-9251-b9b5f4c31291",
+    "id": "d816d6f2-2dac-4271-be26-44e37072a217",
     "terminal_id": "ATM_JAI_SBIN_1018",
     "bank_name": "State Bank of India",
     "address": "Near Chatterjee Marg, Commercial Zone, Jaipur",
@@ -263,10 +263,10 @@
     "cash_out_frequency": 68,
     "risk_score": 0.21,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434326+00:00"
+    "created_at": "2026-09-09T18:00:03.671944+00:00"
   },
   {
-    "id": "41cb0477-9d69-45ca-bf8e-1341e1fa8c72",
+    "id": "1a38442f-39ff-4104-a41a-b6b028db0dd3",
     "terminal_id": "ATM_CHE_KKBK_1019",
     "bank_name": "Kotak Mahindra Bank",
     "address": "Near Padmanabhan Path, Commercial Zone, Chennai",
@@ -277,10 +277,10 @@
     "cash_out_frequency": 78,
     "risk_score": 0.06,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434336+00:00"
+    "created_at": "2026-09-09T18:00:03.672027+00:00"
   },
   {
-    "id": "17fff3c5-99fb-43f2-aa77-19b032a9fbe7",
+    "id": "7cd606f5-20c0-43f4-8f49-d0add8763c1e",
     "terminal_id": "ATM_SUR_UBIN_1020",
     "bank_name": "Union Bank of India",
     "address": "Near Lalla, Commercial Zone, Surat",
@@ -291,10 +291,10 @@
     "cash_out_frequency": 90,
     "risk_score": 0.09,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434346+00:00"
+    "created_at": "2026-09-09T18:00:03.672108+00:00"
   },
   {
-    "id": "b3e14115-1d84-4e64-9e08-c659002be901",
+    "id": "ac6a2245-9004-4bb5-8910-bf9231603a91",
     "terminal_id": "ATM_BEN_YESB_1021",
     "bank_name": "Yes Bank",
     "address": "Near Sharaf Nagar, Commercial Zone, Bengaluru",
@@ -305,10 +305,10 @@
     "cash_out_frequency": 46,
     "risk_score": 0.1,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434357+00:00"
+    "created_at": "2026-09-09T18:00:03.672188+00:00"
   },
   {
-    "id": "43065c75-ea42-458b-99df-085f70c6fae6",
+    "id": "84b296ff-0ed9-4fc7-b544-59e989497aa6",
     "terminal_id": "ATM_DEL_CNRB_1022",
     "bank_name": "Canara Bank",
     "address": "Near Dash Circle, Commercial Zone, Delhi-NCR",
@@ -319,10 +319,10 @@
     "cash_out_frequency": 147,
     "risk_score": 0.1,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434369+00:00"
+    "created_at": "2026-09-09T18:00:03.672270+00:00"
   },
   {
-    "id": "c0dafb3a-575f-42dd-add6-3b81ceb4cca6",
+    "id": "776c176d-8e5b-4f69-b2ba-80f7ce20a47c",
     "terminal_id": "ATM_HYD_UBIN_1023",
     "bank_name": "Union Bank of India",
     "address": "Near Brar Marg, Commercial Zone, Hyderabad",
@@ -333,10 +333,10 @@
     "cash_out_frequency": 112,
     "risk_score": 0.12,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434379+00:00"
+    "created_at": "2026-09-09T18:00:03.672360+00:00"
   },
   {
-    "id": "15bf092a-ebac-4ee5-a768-1f5de82b202e",
+    "id": "5cda6ddc-bfa5-48ff-a362-7982fc443c73",
     "terminal_id": "ATM_JAM_ICIC_1024",
     "bank_name": "ICICI Bank",
     "address": "Near Memon Circle, Commercial Zone, Jamtara-Deoghar",
@@ -347,10 +347,10 @@
     "cash_out_frequency": 140,
     "risk_score": 0.15,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434389+00:00"
+    "created_at": "2026-09-09T18:00:03.672444+00:00"
   },
   {
-    "id": "42ea9ece-52f9-4990-9e83-f8e94557f01a",
+    "id": "909764a7-225c-4383-be2a-b27e35d0a905",
     "terminal_id": "ATM_AHM_HDFC_1025",
     "bank_name": "HDFC Bank",
     "address": "Near Pathak, Commercial Zone, Ahmedabad",
@@ -361,10 +361,10 @@
     "cash_out_frequency": 49,
     "risk_score": 0.18,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434399+00:00"
+    "created_at": "2026-09-09T18:00:03.672532+00:00"
   },
   {
-    "id": "4946d0be-7461-420d-983d-f30e06f62e66",
+    "id": "4d11e91f-774b-4053-8c0f-b3b9c515a821",
     "terminal_id": "ATM_CHE_KKBK_1026",
     "bank_name": "Kotak Mahindra Bank",
     "address": "Near Handa, Commercial Zone, Chennai",
@@ -375,10 +375,10 @@
     "cash_out_frequency": 26,
     "risk_score": 0.13,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434410+00:00"
+    "created_at": "2026-09-09T18:00:03.672627+00:00"
   },
   {
-    "id": "be0da964-7503-4977-958e-95f95b286d6c",
+    "id": "3d5a689c-dd9a-4c3b-b869-2a51a71f6ac3",
     "terminal_id": "ATM_HYD_YESB_1027",
     "bank_name": "Yes Bank",
     "address": "Near Bath Zila, Commercial Zone, Hyderabad",
@@ -389,10 +389,10 @@
     "cash_out_frequency": 145,
     "risk_score": 0.1,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434419+00:00"
+    "created_at": "2026-09-09T18:00:03.672705+00:00"
   },
   {
-    "id": "1489f713-60c1-40d6-b41a-97358670fd71",
+    "id": "e66372c7-fd42-4f24-8c04-7ee7fadb0831",
     "terminal_id": "ATM_HYD_SBIN_1028",
     "bank_name": "State Bank of India",
     "address": "Near Mann Ganj, Commercial Zone, Hyderabad",
@@ -403,10 +403,10 @@
     "cash_out_frequency": 39,
     "risk_score": 0.19,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434431+00:00"
+    "created_at": "2026-09-09T18:00:03.672830+00:00"
   },
   {
-    "id": "f75c29cc-829d-4596-b862-40ba117a6009",
+    "id": "dc83e8a3-fafd-427c-ac5f-ee29335b5fdd",
     "terminal_id": "ATM_HYD_PUNB_1029",
     "bank_name": "Punjab National Bank",
     "address": "Near Kaul Zila, Commercial Zone, Hyderabad",
@@ -417,10 +417,10 @@
     "cash_out_frequency": 97,
     "risk_score": 0.07,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434441+00:00"
+    "created_at": "2026-09-09T18:00:03.672918+00:00"
   },
   {
-    "id": "30e7c365-130b-4ace-a80f-1197cacdd228",
+    "id": "8e8bdf3f-dedd-4c07-8316-3ebcf928715c",
     "terminal_id": "ATM_BEN_YESB_1030",
     "bank_name": "Yes Bank",
     "address": "Near Rai Zila, Commercial Zone, Bengaluru",
@@ -431,10 +431,10 @@
     "cash_out_frequency": 10,
     "risk_score": 0.24,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434451+00:00"
+    "created_at": "2026-09-09T18:00:03.673003+00:00"
   },
   {
-    "id": "0d7a63ec-4dca-470b-a46d-5f424eec5a45",
+    "id": "b5554fb9-3da1-45f7-a019-52b120e8a661",
     "terminal_id": "ATM_JAI_PUNB_1031",
     "bank_name": "Punjab National Bank",
     "address": "Near Setty Road, Commercial Zone, Jaipur",
@@ -445,10 +445,10 @@
     "cash_out_frequency": 138,
     "risk_score": 0.2,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434461+00:00"
+    "created_at": "2026-09-09T18:00:03.673083+00:00"
   },
   {
-    "id": "73c3145b-5239-4df3-8fc8-5f8cc6c4f755",
+    "id": "f0b1818a-a919-40cc-a128-49e9e32da789",
     "terminal_id": "ATM_HYD_HDFC_1032",
     "bank_name": "HDFC Bank",
     "address": "Near Gaba Path, Commercial Zone, Hyderabad",
@@ -459,10 +459,10 @@
     "cash_out_frequency": 86,
     "risk_score": 0.22,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434471+00:00"
+    "created_at": "2026-09-09T18:00:03.673165+00:00"
   },
   {
-    "id": "b91286a7-4a80-41ff-9561-ee74bf897473",
+    "id": "142bf441-90cb-49ae-9e3e-97e97e03e82c",
     "terminal_id": "ATM_HYD_UTIB_1033",
     "bank_name": "Axis Bank",
     "address": "Near Pant Path, Commercial Zone, Hyderabad",
@@ -473,10 +473,10 @@
     "cash_out_frequency": 49,
     "risk_score": 0.12,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434481+00:00"
+    "created_at": "2026-09-09T18:00:03.673245+00:00"
   },
   {
-    "id": "ef66b25c-0b55-4873-83be-25a8cd89feac",
+    "id": "54669c2b-b22d-4a49-b951-15d1becaadfe",
     "terminal_id": "ATM_MUM_CNRB_1034",
     "bank_name": "Canara Bank",
     "address": "Near Loke Ganj, Commercial Zone, Mumbai",
@@ -487,10 +487,10 @@
     "cash_out_frequency": 10,
     "risk_score": 0.17,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434491+00:00"
+    "created_at": "2026-09-09T18:00:03.673323+00:00"
   },
   {
-    "id": "ff317164-9e2a-4417-be0e-4f034499739b",
+    "id": "f59dad76-5c7b-451e-ba24-44b7527b61ac",
     "terminal_id": "ATM_BEN_HDFC_1035",
     "bank_name": "HDFC Bank",
     "address": "Near Garg Zila, Commercial Zone, Bengaluru",
@@ -501,10 +501,10 @@
     "cash_out_frequency": 102,
     "risk_score": 0.23,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434500+00:00"
+    "created_at": "2026-09-09T18:00:03.673399+00:00"
   },
   {
-    "id": "842cb5df-9835-4c76-8102-8add76effa22",
+    "id": "050f3b06-5889-4dea-b3f7-814815bf31d3",
     "terminal_id": "ATM_CHE_PUNB_1036",
     "bank_name": "Punjab National Bank",
     "address": "Near Konda Circle, Commercial Zone, Chennai",
@@ -515,10 +515,10 @@
     "cash_out_frequency": 71,
     "risk_score": 0.06,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434509+00:00"
+    "created_at": "2026-09-09T18:00:03.673494+00:00"
   },
   {
-    "id": "58c9dacc-c901-4034-a7ec-d76e8b7b32c5",
+    "id": "93bb91c8-2c14-479a-ae36-12a5676c95ee",
     "terminal_id": "ATM_JAI_HDFC_1037",
     "bank_name": "HDFC Bank",
     "address": "Near Shere Street, Commercial Zone, Jaipur",
@@ -529,10 +529,10 @@
     "cash_out_frequency": 31,
     "risk_score": 0.2,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434519+00:00"
+    "created_at": "2026-09-09T18:00:03.673572+00:00"
   },
   {
-    "id": "23213ab2-fc86-4b2b-802b-59fbefd63fb7",
+    "id": "970cfe95-87fe-40b0-b9c6-074fa2917aa7",
     "terminal_id": "ATM_CHE_CNRB_1038",
     "bank_name": "Canara Bank",
     "address": "Near Madan Marg, Commercial Zone, Chennai",
@@ -543,10 +543,10 @@
     "cash_out_frequency": 42,
     "risk_score": 0.08,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434531+00:00"
+    "created_at": "2026-09-09T18:00:03.673656+00:00"
   },
   {
-    "id": "a6e8a8a3-6289-45f5-8063-e45277cdb2d0",
+    "id": "d1ac49eb-e562-40d5-9617-f2d5425aa970",
     "terminal_id": "ATM_BEN_CNRB_1039",
     "bank_name": "Canara Bank",
     "address": "Near Kanda Circle, Commercial Zone, Bengaluru",
@@ -557,10 +557,10 @@
     "cash_out_frequency": 52,
     "risk_score": 0.1,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434541+00:00"
+    "created_at": "2026-09-09T18:00:03.673735+00:00"
   },
   {
-    "id": "33a52232-4165-474a-8545-f48c837d2cac",
+    "id": "fbf7ad79-a57c-4526-9ef1-ca67b307d7e4",
     "terminal_id": "ATM_JAI_KKBK_1040",
     "bank_name": "Kotak Mahindra Bank",
     "address": "Near Bhalla Path, Commercial Zone, Jaipur",
@@ -571,10 +571,10 @@
     "cash_out_frequency": 64,
     "risk_score": 0.24,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434551+00:00"
+    "created_at": "2026-09-09T18:00:03.673815+00:00"
   },
   {
-    "id": "65e00540-ab05-437c-9dff-e762dc05809b",
+    "id": "b20c9f05-08b4-4326-9329-3a9ff9dd9ec4",
     "terminal_id": "ATM_AHM_UTIB_1041",
     "bank_name": "Axis Bank",
     "address": "Near Balay Ganj, Commercial Zone, Ahmedabad",
@@ -585,10 +585,10 @@
     "cash_out_frequency": 89,
     "risk_score": 0.13,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434561+00:00"
+    "created_at": "2026-09-09T18:00:03.673891+00:00"
   },
   {
-    "id": "4d61a6c8-04c2-403b-81b0-7d64fc951b7b",
+    "id": "6f9fa795-e07d-4b3a-bf0e-dd7f6c398fb2",
     "terminal_id": "ATM_PUN_BARB_1042",
     "bank_name": "Bank of Baroda",
     "address": "Near Rattan Path, Commercial Zone, Pune",
@@ -599,10 +599,10 @@
     "cash_out_frequency": 122,
     "risk_score": 0.23,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434570+00:00"
+    "created_at": "2026-09-09T18:00:03.673968+00:00"
   },
   {
-    "id": "30a97616-3c83-4e8f-8476-8ab5eb9d85b7",
+    "id": "7a729247-112e-499a-b96b-1bce754b19f7",
     "terminal_id": "ATM_BEN_UTIB_1043",
     "bank_name": "Axis Bank",
     "address": "Near Bhatti Road, Commercial Zone, Bengaluru",
@@ -613,10 +613,10 @@
     "cash_out_frequency": 67,
     "risk_score": 0.06,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434580+00:00"
+    "created_at": "2026-09-09T18:00:03.674047+00:00"
   },
   {
-    "id": "6583cd00-273a-4d1b-9ede-c9c133833040",
+    "id": "ce30b27d-68c7-44a8-b9f1-ff9eb66b0d78",
     "terminal_id": "ATM_MUM_CNRB_1044",
     "bank_name": "Canara Bank",
     "address": "Near Murty Ganj, Commercial Zone, Mumbai",
@@ -627,10 +627,10 @@
     "cash_out_frequency": 68,
     "risk_score": 0.17,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434589+00:00"
+    "created_at": "2026-09-09T18:00:03.674125+00:00"
   },
   {
-    "id": "0dfbe248-72d9-4335-97e9-637ee9d5296e",
+    "id": "804b4fbd-cfd7-48ac-9f87-60fd3f09224f",
     "terminal_id": "ATM_MUM_SBIN_1045",
     "bank_name": "State Bank of India",
     "address": "Near Tata Ganj, Commercial Zone, Mumbai",
@@ -641,10 +641,10 @@
     "cash_out_frequency": 68,
     "risk_score": 0.06,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434599+00:00"
+    "created_at": "2026-09-09T18:00:03.674200+00:00"
   },
   {
-    "id": "b2702f67-466b-4108-b1f9-607d6ab918ef",
+    "id": "67952ba9-9c07-4478-bbc2-3679fc605869",
     "terminal_id": "ATM_MUM_BARB_1046",
     "bank_name": "Bank of Baroda",
     "address": "Near Shanker Marg, Commercial Zone, Mumbai",
@@ -655,10 +655,10 @@
     "cash_out_frequency": 28,
     "risk_score": 0.15,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434608+00:00"
+    "created_at": "2026-09-09T18:00:03.674285+00:00"
   },
   {
-    "id": "dc9f3912-4a5e-4f32-9e1f-374e27227c65",
+    "id": "76972a22-a39b-4fc3-b78f-132c48777a0c",
     "terminal_id": "ATM_DEL_YESB_1047",
     "bank_name": "Yes Bank",
     "address": "Near Lanka Street, Commercial Zone, Delhi-NCR",
@@ -669,10 +669,10 @@
     "cash_out_frequency": 64,
     "risk_score": 0.16,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434618+00:00"
+    "created_at": "2026-09-09T18:00:03.674360+00:00"
   },
   {
-    "id": "73b5b829-ccbe-441d-b9bd-e0e01d0d3aa5",
+    "id": "f08590c8-07bd-4f18-974a-28a06e6fa0d7",
     "terminal_id": "ATM_KOL_UBIN_1048",
     "bank_name": "Union Bank of India",
     "address": "Near Koshy Street, Commercial Zone, Kolkata",
@@ -683,10 +683,10 @@
     "cash_out_frequency": 131,
     "risk_score": 0.1,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434627+00:00"
+    "created_at": "2026-09-09T18:00:03.674435+00:00"
   },
   {
-    "id": "043259ec-354f-4b64-a48a-8ead3bd57e4d",
+    "id": "e6b68670-9e6b-4492-a822-4f5881ca8545",
     "terminal_id": "ATM_BEN_KKBK_1049",
     "bank_name": "Kotak Mahindra Bank",
     "address": "Near Yohannan Circle, Commercial Zone, Bengaluru",
@@ -697,6 +697,6 @@
     "cash_out_frequency": 58,
     "risk_score": 0.07,
     "is_hotspot": false,
-    "created_at": "2026-09-08T07:25:33.434637+00:00"
+    "created_at": "2026-09-09T18:00:03.674510+00:00"
   }
 ]
