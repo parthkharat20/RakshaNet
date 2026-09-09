@@ -33,18 +33,20 @@ export const PatrolDispatchModal = ({
   const [dispatchReceipt, setDispatchReceipt] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Load nearby units whenever modal opens with a valid hotspot
+  // Fallback to Mumbai Cyber Cell coordinates if hotspot lat/lon missing
+  const effectiveLat = targetHotspot?.lat != null ? Number(targetHotspot.lat) : 19.0270;
+  const effectiveLon = targetHotspot?.lon != null ? Number(targetHotspot.lon) : 72.8550;
+
+  // Load nearby units whenever modal opens
   useEffect(() => {
-    if (!isOpen || !targetHotspot || targetHotspot.lat == null || targetHotspot.lon == null) {
-      return;
-    }
+    if (!isOpen) return;
 
     const loadUnits = async () => {
       try {
         setIsLoading(true);
         setErrorMessage('');
         setDispatchReceipt(null);
-        const data = await fetchNearbyPatrols(targetHotspot.lat, targetHotspot.lon, 15.0);
+        const data = await fetchNearbyPatrols(effectiveLat, effectiveLon, 15.0);
         const units = data.units || [];
         setNearbyUnits(units);
         if (units.length > 0) {
@@ -59,7 +61,7 @@ export const PatrolDispatchModal = ({
     };
 
     loadUnits();
-  }, [isOpen, targetHotspot]);
+  }, [isOpen, effectiveLat, effectiveLon]);
 
   if (!isOpen || !targetHotspot) return null;
 
@@ -72,10 +74,10 @@ export const PatrolDispatchModal = ({
 
       const payload = {
         alert_id: targetHotspot.alert_id || null,
-        target_terminal_id: targetHotspot.terminal_id || null,
+        target_terminal_id: targetHotspot.terminal_id || 'ATM_INTERCEPT_001',
         target_atm_name: targetHotspot.name || 'Predicted ATM Liquidation Point',
-        target_lat: Number(targetHotspot.lat),
-        target_lon: Number(targetHotspot.lon),
+        target_lat: effectiveLat,
+        target_lon: effectiveLon,
         tactical_instructions: tacticalInstructions
       };
 

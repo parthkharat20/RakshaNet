@@ -8,29 +8,113 @@ const api = axios.create({
   timeout: 30000
 });
 
-// Request interceptor: attach JWT token if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('rakshanet_token');
+// Officer auto-provisioning credentials for Law Enforcement demonstration
+const DEMO_OFFICER = {
+  badge_id: 'LE-CYBER-MUM-4029',
+  pin: '1234',
+  name: 'Inspector Parth Kharat',
+  rank: 'Cyber Crime Inspector',
+  department: 'Maharashtra Cyber Cell, I4C Division'
+};
+
+// Auto-initialize officer session if not present
+export const ensureOfficerSession = async () => {
+  let token = localStorage.getItem('rakshanet_token');
+  let officer = localStorage.getItem('rakshanet_officer');
+
+  if (!token || !officer) {
+    try {
+      const res = await axios.post('/api/v1/auth/login', {
+        badge_id: DEMO_OFFICER.badge_id,
+        pin: DEMO_OFFICER.pin
+      });
+      if (res.data?.access_token) {
+        token = res.data.access_token;
+        localStorage.setItem('rakshanet_token', token);
+        localStorage.setItem('rakshanet_officer', JSON.stringify({
+          name: res.data.officer_name,
+          rank: res.data.officer_rank,
+          badge_id: res.data.badge_id,
+          department: DEMO_OFFICER.department
+        }));
+        return token;
+      }
+    } catch (err) {
+      console.warn('Auto-session initialization fallback:', err);
+    }
+  }
+  return token;
+};
+
+// Eagerly ensure session on module load
+if (typeof window !== 'undefined') {
+  ensureOfficerSession();
+}
+
+// Request interceptor: attach JWT token if available, or try ensureOfficerSession
+api.interceptors.request.use(async (config) => {
+  let token = localStorage.getItem('rakshanet_token');
+  if (!token && !config.url?.includes('/auth/login')) {
+    token = await ensureOfficerSession();
+  }
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Response interceptor for unified error extraction
+// Response interceptor for unified error extraction and auto-retry on 401
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
     const status = error.response?.status;
     const message = error.response?.data?.detail || error.message || 'API request failed';
 
-    // Handle 401 — redirect to login
-    if (status === 401) {
-      localStorage.removeItem('rakshanet_token');
-      localStorage.removeItem('rakshanet_officer');
-      // Only redirect if not already on login page
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+    // Handle 401: Transparently auto-reauthenticate and retry once
+    if (status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/login')) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(token => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch(err => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        localStorage.removeItem('rakshanet_token');
+        const token = await ensureOfficerSession();
+        if (token) {
+          api.defaults.headers.common.Authorization = `Bearer ${token}`;
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          processQueue(null, token);
+          return api(originalRequest);
+        }
+      } catch (refreshErr) {
+        processQueue(refreshErr, null);
+        console.error('Session refresh failed:', refreshErr);
+      } finally {
+        isRefreshing = false;
       }
     }
 

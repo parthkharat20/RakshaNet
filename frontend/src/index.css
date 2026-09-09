@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ==========================================================================
    RakshaNet Design System — Tactical Cybercrime Command Center
    Aesthetic: Utilitarian / High-Density Technical with Sleek Dark Glass
@@ -51,6 +55,15 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
 }
 
 body {
@@ -267,3 +280,99 @@ body {
 .leaflet-popup-tip {
   background: var(--bg-tertiary) !important;
 }
+
+/* ==========================================================================
+   National Cyber Command Center — Indian LEA Design Elements
+   ========================================================================== */
+
+/* Tiranga National Accent Ribbon (Saffron, White, India Green) */
+.tiranga-ribbon {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    #ff9933 0%,
+    #ff9933 33.33%,
+    #ffffff 33.33%,
+    #ffffff 66.66%,
+    #138808 66.66%,
+    #138808 100%
+  );
+  box-shadow: 0 0 12px rgba(255, 153, 51, 0.4), 0 0 12px rgba(19, 136, 8, 0.4);
+  position: relative;
+  z-index: 100;
+}
+
+/* Ashoka Navy Accent Badge */
+.ashoka-badge {
+  background: rgba(0, 0, 128, 0.35);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+/* Tactical Corner Brackets (HUD Reticle Frame) */
+.tactical-frame {
+  position: relative;
+}
+
+.tactical-frame::before,
+.tactical-frame::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tactical-frame::before {
+  top: 0;
+  left: 0;
+  border-top: 2px solid rgba(59, 130, 246, 0.7);
+  border-left: 2px solid rgba(59, 130, 246, 0.7);
+}
+
+.tactical-frame::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.7);
+  border-right: 2px solid rgba(59, 130, 246, 0.7);
+}
+
+.tactical-frame-critical::before {
+  border-top-color: rgba(239, 68, 68, 0.85);
+  border-left-color: rgba(239, 68, 68, 0.85);
+}
+
+.tactical-frame-critical::after {
+  border-bottom-color: rgba(239, 68, 68, 0.85);
+  border-right-color: rgba(239, 68, 68, 0.85);
+}
+
+/* Police / LEA Classification Banner */
+.lea-classification-banner {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(239, 68, 68, 0.12),
+    rgba(239, 68, 68, 0.12) 10px,
+    rgba(0, 0, 0, 0.3) 10px,
+    rgba(0, 0, 0, 0.3) 20px
+  );
+  border-bottom: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Gold / Amber Police Insignia Accent */
+.gold-badge {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(180, 83, 9, 0.1));
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fcd34d;
+}
+
+/* Grid overlay background */
+.tactical-grid-bg {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
