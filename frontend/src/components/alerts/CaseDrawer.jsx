@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2, Radio } from 'lucide-react';
+import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2, Radio, Scale, FileText } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { ExplainPanel } from '../explain/ExplainPanel';
 import { FreezeButton } from '../actions/FreezeButton';
 import { PatrolDispatchModal } from '../patrols/PatrolDispatchModal';
+import { LegalDossierModal } from '../dossier/LegalDossierModal';
 import { maskAccountNumber, formatDateTime, formatINR } from '../../utils/constants';
 
 export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
   const { selectedAlert } = useAlertContext();
   const [patrolModalOpen, setPatrolModalOpen] = useState(false);
+  const [dossierModalOpen, setDossierModalOpen] = useState(false);
+
 
 
   if (!selectedAlert) return null;
@@ -108,7 +111,16 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setDossierModalOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold font-mono flex items-center gap-1.5 transition-colors"
+              title="Generate court-admissible Section 65B Electronic Evidence Brief & Section 91 Notice"
+            >
+              <FileText className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Export Sec 65B Dossier</span>
+            </button>
+
             <button
               onClick={() => setPatrolModalOpen(true)}
               className="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-bold font-mono flex items-center gap-1.5 transition-colors"
@@ -159,7 +171,15 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
           lon: selectedAlert.target_lon || (selectedAlert.city === 'Delhi' ? 77.2260 : selectedAlert.city === 'Bengaluru' ? 77.6245 : 72.8550)
         }}
       />
+
+      {/* Court-Admissible Electronic Evidence Dossier Modal */}
+      <LegalDossierModal
+        isOpen={dossierModalOpen}
+        onClose={() => setDossierModalOpen(false)}
+        alertId={selectedAlert.id}
+      />
     </div>
   );
 };
+
 

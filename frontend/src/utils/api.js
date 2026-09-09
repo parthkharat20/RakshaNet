@@ -159,6 +159,18 @@ export const dispatchPatrolApi = async (unitId, payload) => {
   return res.data;
 };
 
+// --- Forensic Legal Dossier & Syndicate Intelligence ---
+export const fetchCourtDossier = async (alertId) => {
+  const res = await api.get(`/dossier/${alertId}`);
+  return res.data;
+};
+
+export const fetchSyndicates = async () => {
+  const res = await api.get('/syndicates');
+  return res.data;
+};
+
 export default api;
+
 
 

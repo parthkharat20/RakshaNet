@@ -8,6 +8,7 @@ from app.api.alerts import router as alerts_router
 from app.api.auth import router as auth_router
 from app.api.demo import router as demo_router
 from app.api.patrols import router as patrols_router
+from app.api.dossier import router as dossier_router
 
 api_router = APIRouter()
 
@@ -20,5 +21,7 @@ api_router.include_router(freeze_router)
 api_router.include_router(alerts_router)
 api_router.include_router(demo_router)
 api_router.include_router(patrols_router)
+api_router.include_router(dossier_router)
+
 
 

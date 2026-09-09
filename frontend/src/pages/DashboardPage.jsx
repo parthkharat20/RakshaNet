@@ -5,13 +5,15 @@ import { AlertFeed } from '../components/alerts/AlertFeed';
 import { CaseDrawer } from '../components/alerts/CaseDrawer';
 import { TxnGraph } from '../components/graph/TxnGraph';
 import { HeatmapView } from '../components/map/HeatmapView';
+import { SyndicateHub } from '../components/syndicates/SyndicateHub';
 import { useAlertContext } from '../contexts/AlertContext';
-import { Network, MapPin, FileText, ChevronRight } from 'lucide-react';
+import { Network, MapPin, FileText, ChevronRight, Flame } from 'lucide-react';
 
 export const DashboardPage = () => {
   const navigate = useNavigate();
   const { selectedAlert } = useAlertContext();
-  const [activeTab, setActiveTab] = useState('GRAPH'); // GRAPH, MAP, DOSSIER
+  const [activeTab, setActiveTab] = useState('GRAPH'); // GRAPH, MAP, DOSSIER, SYNDICATES
+
 
   const handleOpenCommand = (alert) => {
     navigate('/command', { state: { selectedAccountId: alert?.target_account_id } });
@@ -69,6 +71,18 @@ export const DashboardPage = () => {
                 <FileText className="w-3.5 h-3.5" />
                 <span>SHAP Evidence Dossier</span>
               </button>
+
+              <button
+                onClick={() => setActiveTab('SYNDICATES')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition-all ${
+                  activeTab === 'SYNDICATES'
+                    ? 'bg-red-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Flame className="w-3.5 h-3.5" />
+                <span>Organized Syndicates</span>
+              </button>
             </div>
 
             {/* Jump to Fullscreen Tactical Command */}
@@ -99,7 +113,14 @@ export const DashboardPage = () => {
                 onOpenCommandCenter={handleOpenCommand}
               />
             )}
+
+            {activeTab === 'SYNDICATES' && (
+              <div className="h-full overflow-y-auto">
+                <SyndicateHub />
+              </div>
+            )}
           </div>
+
         </div>
       </div>
     </div>
