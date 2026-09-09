@@ -1,16 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldAlert, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
-import { DEFAULT_OFFICER_BADGE } from '../utils/constants';
+import { ShieldAlert, Lock, User, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
+import { loginOfficer, isAuthenticated } from '../utils/api';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const [badgeId, setBadgeId] = useState(DEFAULT_OFFICER_BADGE);
-  const [pin, setPin] = useState('••••');
+  const [badgeId, setBadgeId] = useState('LE-CYBER-MUM-4029');
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    navigate('/');
+    setError(null);
+
+    if (!badgeId.trim() || !pin.trim()) {
+      setError('Badge ID and Security PIN are required.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const data = await loginOfficer(badgeId.trim(), pin.trim());
+      console.log('✅ Authenticated:', data.officer_name, data.officer_rank);
+      navigate('/');
+    } catch (err) {
+      setError(err.message || 'Authentication failed. Verify your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -39,6 +64,14 @@ export const LoginPage = () => {
           </div>
         </div>
 
+        {/* Error Banner */}
+        {error && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-950/60 border border-red-800/40 text-red-300 text-xs animate-in fade-in duration-200">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4 text-xs">
           <div>
@@ -52,7 +85,9 @@ export const LoginPage = () => {
                 value={badgeId}
                 onChange={(e) => setBadgeId(e.target.value)}
                 className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-slate-900 border border-white/10 text-white focus:border-blue-500 focus:outline-none"
+                placeholder="LE-CYBER-MUM-4029"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -68,23 +103,40 @@ export const LoginPage = () => {
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-slate-900 border border-white/10 text-white focus:border-blue-500 focus:outline-none tracking-widest"
+                placeholder="••••"
                 required
+                disabled={isLoading}
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full btn-primary py-2.5 flex items-center justify-center gap-2 text-xs font-bold mt-2"
+            disabled={isLoading}
+            className="w-full btn-primary py-2.5 flex items-center justify-center gap-2 text-xs font-bold mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span>Authenticate Secure Session</span>
-            <ArrowRight className="w-4 h-4" />
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Authenticating...</span>
+              </>
+            ) : (
+              <>
+                <span>Authenticate Secure Session</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
         </form>
 
-        <p className="text-[10px] text-center text-slate-500">
-          Authorized under Section 91 CrPC and Information Technology Act 2000. All queries are audited and cryptographically hashed.
-        </p>
+        {/* Demo Credentials Hint */}
+        <div className="text-[10px] text-center text-slate-500 space-y-1">
+          <p>Authorized under Section 91 CrPC and Information Technology Act 2000.</p>
+          <p>All queries are audited and cryptographically hashed.</p>
+          <div className="mt-2 px-3 py-1.5 rounded bg-slate-900/60 border border-white/5 text-slate-400">
+            Demo: Badge <span className="text-blue-400 font-bold">LE-CYBER-MUM-4029</span> / PIN <span className="text-blue-400 font-bold">1234</span>
+          </div>
+        </div>
       </div>
     </div>
   );

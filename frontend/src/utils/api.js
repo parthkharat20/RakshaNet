@@ -8,16 +8,70 @@ const api = axios.create({
   timeout: 30000
 });
 
+// Request interceptor: attach JWT token if available
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('rakshanet_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Response interceptor for unified error extraction
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const status = error.response?.status;
     const message = error.response?.data?.detail || error.message || 'API request failed';
+
+    // Handle 401 — redirect to login
+    if (status === 401) {
+      localStorage.removeItem('rakshanet_token');
+      localStorage.removeItem('rakshanet_officer');
+      // Only redirect if not already on login page
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
+
     console.error('API Error:', message, error);
     return Promise.reject(new Error(message));
   }
 );
 
+// --- Auth ---
+export const loginOfficer = async (badgeId, pin) => {
+  const res = await api.post('/auth/login', { badge_id: badgeId, pin: pin });
+  const data = res.data;
+  localStorage.setItem('rakshanet_token', data.access_token);
+  localStorage.setItem('rakshanet_officer', JSON.stringify({
+    name: data.officer_name,
+    rank: data.officer_rank,
+    badge_id: data.badge_id
+  }));
+  return data;
+};
+
+export const logoutOfficer = () => {
+  localStorage.removeItem('rakshanet_token');
+  localStorage.removeItem('rakshanet_officer');
+  window.location.href = '/login';
+};
+
+export const getStoredOfficer = () => {
+  try {
+    const data = localStorage.getItem('rakshanet_officer');
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
+};
+
+export const isAuthenticated = () => {
+  return !!localStorage.getItem('rakshanet_token');
+};
+
+// --- Dashboard ---
 export const fetchDashboardStats = async () => {
   const res = await api.get('/stats/dashboard');
   return res.data;

@@ -134,6 +134,13 @@ async def run_full_scoring_pipeline() -> Dict[str, Any]:
     logger.info(f"   Alerts Written to DB: {alerts_written}")
     logger.info("==================================================")
 
+    # 6. Broadcast results to Command Center via WebSocket
+    try:
+        from app.realtime.dispatcher import dispatch_alert_batch
+        await dispatch_alert_batch(summary)
+    except Exception as e:
+        logger.warning(f"WebSocket dispatch failed (non-critical): {e}")
+
     return summary
 
 
@@ -142,12 +149,17 @@ async def write_alerts_to_db(
     critical_ids: List[str],
     elevated_ids: List[str]
 ) -> int:
-    """Writes intelligence alerts to PostgreSQL for critical and elevated accounts."""
+    """Writes intelligence alerts to PostgreSQL for critical and elevated accounts.
+    Archives previous AI-generated alerts instead of deleting them to preserve investigation history."""
     count = 0
     async with AsyncSessionLocal() as session:
-        # Clear old AI-generated alerts
+        # Archive old AI-generated alerts (preserve investigation history, don't destroy)
         from sqlalchemy import text
-        await session.execute(text("DELETE FROM alerts WHERE alert_type IN ('MULE_RING', 'SURVEILLANCE', 'ATM_CASHOUT_SURGE');"))
+        await session.execute(text(
+            "UPDATE alerts SET status = 'ARCHIVED' "
+            "WHERE alert_type IN ('MULE_RING', 'SURVEILLANCE', 'ATM_CASHOUT_SURGE') "
+            "AND status NOT IN ('FREEZE_DISPATCHED', 'ARCHIVED', 'RESOLVED');"
+        ))
 
         for acc_id in critical_ids:
             data = fused_results[acc_id]

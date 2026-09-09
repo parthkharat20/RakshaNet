@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { fetchAlerts, fetchDashboardStats, freezeAccount, triggerAIRun } from '../utils/api';
+import { useSocket } from '../hooks/useSocket';
 
 const AlertContext = createContext(null);
 
@@ -13,6 +14,7 @@ export const AlertProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [freezeReceipt, setFreezeReceipt] = useState(null);
+  const [wsNotification, setWsNotification] = useState(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -38,15 +40,91 @@ export const AlertProvider = ({ children }) => {
 
   useEffect(() => {
     loadData();
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds as fallback
     const interval = setInterval(loadData, 30000);
     return () => clearInterval(interval);
   }, [loadData]);
+
+  // --- WebSocket Real-Time Event Handler ---
+  const handleWsEvent = useCallback((event) => {
+    const { event_type, payload, timestamp } = event;
+
+    switch (event_type) {
+      case 'ALERT_BATCH':
+        // AI pipeline completed — refresh alerts immediately
+        console.log('[WS] Received ALERT_BATCH:', payload);
+        setWsNotification({
+          type: 'ALERT_BATCH',
+          message: `AI Pipeline: ${payload.critical_count} critical, ${payload.elevated_count} elevated alerts generated.`,
+          timestamp
+        });
+        // Refresh data to get the new alerts
+        loadData();
+        break;
+
+      case 'FREEZE_EXECUTED':
+        // Account frozen — update local state immediately
+        console.log('[WS] Received FREEZE_EXECUTED:', payload);
+        setAlerts(prev => prev.map(a => {
+          if (a.target_account_id === payload.account_id) {
+            return { ...a, status: 'FREEZE_DISPATCHED' };
+          }
+          return a;
+        }));
+        setWsNotification({
+          type: 'FREEZE_EXECUTED',
+          message: `Account ${payload.account_number} (${payload.holder_name}) frozen by ${payload.officer_badge_id}.`,
+          timestamp
+        });
+        // Refresh stats for updated frozen count
+        fetchDashboardStats().then(s => s && setStats(s)).catch(() => {});
+        break;
+
+      case 'COMPLAINT_INGESTED':
+        console.log('[WS] Received COMPLAINT_INGESTED:', payload);
+        setWsNotification({
+          type: 'COMPLAINT_INGESTED',
+          message: `New NCRP Complaint ${payload.acknowledgement_no}: ₹${payload.loss_amount.toLocaleString()} (${payload.city})`,
+          timestamp
+        });
+        // Refresh stats
+        fetchDashboardStats().then(s => s && setStats(s)).catch(() => {});
+        break;
+
+      case 'PIPELINE_PROGRESS':
+        setWsNotification({
+          type: 'PIPELINE_PROGRESS',
+          message: `${payload.stage}: ${payload.message} (${payload.progress_pct}%)`,
+          timestamp
+        });
+        break;
+
+      case 'CONNECTED':
+        console.log('[WS] Server greeting:', payload.message);
+        break;
+
+      default:
+        console.log('[WS] Unknown event:', event_type);
+    }
+  }, [loadData]);
+
+  // Connect WebSocket
+  const { isConnected: wsConnected } = useSocket(handleWsEvent);
+
+  // Auto-dismiss WS notifications after 8 seconds
+  useEffect(() => {
+    if (wsNotification) {
+      const timer = setTimeout(() => setWsNotification(null), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [wsNotification]);
 
   const runScoring = async () => {
     try {
       setIsScoring(true);
       await triggerAIRun();
+      // Data will auto-refresh via WebSocket ALERT_BATCH event
+      // Fallback: also load manually
       await loadData();
     } catch (err) {
       setError(`AI pipeline execution failed: ${err.message}`);
@@ -114,6 +192,9 @@ export const AlertProvider = ({ children }) => {
     error,
     freezeReceipt,
     setFreezeReceipt,
+    wsConnected,
+    wsNotification,
+    setWsNotification,
     refreshData: loadData,
     runScoring,
     dispatchFreeze

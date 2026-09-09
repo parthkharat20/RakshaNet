@@ -24,7 +24,10 @@ async def ingest_complaint(data: ComplaintCreate):
         return await IngestionService.ingest_complaint(data)
     except Exception as e:
         logger.error(f"Complaint ingestion failed: {e}")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Complaint ingestion failed. Please verify the input data and try again."
+        )
 
 
 @router.get("", response_model=List[ComplaintResponse])
@@ -36,7 +39,9 @@ async def list_complaints(
     async with AsyncSessionLocal() as session:
         query = select(Complaint)
         if category:
-            query = query.where(Complaint.category.ilike(f"%{category}%"))
+            # Fixed: Escape special SQL pattern characters to prevent injection
+            safe_category = category.replace("%", r"\%").replace("_", r"\_")
+            query = query.where(Complaint.category.ilike(f"%{safe_category}%"))
         query = query.order_by(Complaint.reported_time.desc()).limit(limit)
         results = (await session.execute(query)).scalars().all()
 
@@ -67,7 +72,10 @@ async def get_complaint(complaint_id: str):
     """Retrieves full case dossier for a complaint by UUID or NCRP acknowledgment number."""
     async with AsyncSessionLocal() as session:
         if len(complaint_id) == 36:
-            query = select(Complaint).where(Complaint.id == UUID(complaint_id))
+            try:
+                query = select(Complaint).where(Complaint.id == UUID(complaint_id))
+            except ValueError:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid UUID format.")
         else:
             query = select(Complaint).where(Complaint.acknowledgement_no == complaint_id)
 

@@ -5,6 +5,7 @@ from app.models.complaint import Complaint
 from app.models.transaction import Transaction
 from app.models.alert import Alert
 from app.models.audit_log import AuditLog
+from app.models.officer import Officer
 
 __all__ = [
     "Base",
@@ -13,5 +14,6 @@ __all__ = [
     "Complaint",
     "Transaction",
     "Alert",
-    "AuditLog"
+    "AuditLog",
+    "Officer"
 ]

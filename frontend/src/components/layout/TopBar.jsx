@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, ShieldAlert, Cpu, RefreshCw, Radio, Terminal } from 'lucide-react';
+import { Shield, ShieldAlert, Cpu, RefreshCw, Radio, Terminal, LogOut, Wifi, WifiOff } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
-import { DEFAULT_OFFICER_BADGE } from '../../utils/constants';
+import { getStoredOfficer, logoutOfficer } from '../../utils/api';
 
 export const TopBar = () => {
-  const { isScoring, runScoring, refreshData, isLoading, stats } = useAlertContext();
+  const { isScoring, runScoring, refreshData, isLoading, stats, wsConnected, wsNotification } = useAlertContext();
   const location = useLocation();
+  const officer = getStoredOfficer();
 
   return (
     <header className="h-16 border-b border-white/10 bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-50">
@@ -53,15 +54,33 @@ export const TopBar = () => {
         </nav>
       </div>
 
+      {/* WebSocket Notification Toast */}
+      {wsNotification && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-4 py-2 rounded-lg bg-blue-950/90 border border-blue-700/50 text-blue-200 text-xs font-mono shadow-lg animate-in slide-in-from-top duration-300 z-50 max-w-md text-center backdrop-blur-sm">
+          <span className="text-blue-400 font-bold mr-1">📡 LIVE:</span>
+          {wsNotification.message}
+        </div>
+      )}
+
       {/* Live System Status & Controls */}
       <div className="flex items-center gap-4">
-        {/* Connection Pulse */}
-        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/40 border border-emerald-800/40 text-emerald-400 text-xs font-mono">
+        {/* WebSocket Connection Status */}
+        <div className={`hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono ${
+          wsConnected 
+            ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400' 
+            : 'bg-amber-950/40 border-amber-800/40 text-amber-400'
+        }`}>
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            {wsConnected && (
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            )}
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${wsConnected ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
           </span>
-          <span>SYSTEM ONLINE // 3 DUAL-DB ENGINES</span>
+          {wsConnected ? (
+            <span className="flex items-center gap-1"><Wifi className="w-3 h-3" /> LIVE FEED</span>
+          ) : (
+            <span className="flex items-center gap-1"><WifiOff className="w-3 h-3" /> RECONNECTING</span>
+          )}
         </div>
 
         {/* AI Scoring Pipeline Trigger */}
@@ -85,15 +104,26 @@ export const TopBar = () => {
           <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
         </button>
 
-        {/* Officer Credential Badge */}
+        {/* Officer Credential Badge with Logout */}
         <div className="flex items-center gap-2 pl-3 border-l border-white/10">
           <div className="w-7 h-7 rounded-full bg-slate-800 border border-white/15 flex items-center justify-center text-blue-400">
             <Shield className="w-3.5 h-3.5" />
           </div>
           <div className="text-right hidden sm:block">
-            <p className="text-[11px] font-mono text-slate-300 font-semibold">{DEFAULT_OFFICER_BADGE}</p>
-            <p className="text-[10px] text-emerald-400 font-mono">AUTHORIZED OFFICER</p>
+            <p className="text-[11px] font-mono text-slate-300 font-semibold">
+              {officer?.badge_id || 'UNAUTHENTICATED'}
+            </p>
+            <p className="text-[10px] text-emerald-400 font-mono">
+              {officer?.name || 'Login Required'}
+            </p>
           </div>
+          <button
+            onClick={logoutOfficer}
+            className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/30 transition-colors"
+            title="Logout"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </header>

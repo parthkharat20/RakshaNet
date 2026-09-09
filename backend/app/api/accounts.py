@@ -26,7 +26,9 @@ async def list_accounts(
     async with AsyncSessionLocal() as session:
         query = select(Account)
         if bank_name:
-            query = query.where(Account.bank_name.ilike(f"%{bank_name}%"))
+            # Fixed: Use parameterized ilike with % escaping to prevent SQL injection
+            safe_pattern = bank_name.replace("%", r"\%").replace("_", r"\_")
+            query = query.where(Account.bank_name.ilike(f"%{safe_pattern}%"))
         if is_frozen is not None:
             query = query.where(Account.is_frozen == is_frozen)
         if is_mule is not None:
@@ -44,7 +46,10 @@ async def get_account(account_id: str):
     """Retrieves full profile for a single bank account (by UUID or account_number)."""
     async with AsyncSessionLocal() as session:
         if len(account_id) == 36:
-            query = select(Account).where(Account.id == UUID(account_id))
+            try:
+                query = select(Account).where(Account.id == UUID(account_id))
+            except ValueError:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid UUID format.")
         else:
             query = select(Account).where(Account.account_number == account_id)
 

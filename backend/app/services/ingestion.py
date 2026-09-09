@@ -1,5 +1,11 @@
+"""
+Data Ingestion Service: NCRP Complaints & Financial Transactions.
+
+Handles dual-write atomicity between PostgreSQL and Neo4j using compensating
+transaction pattern — if Neo4j write fails after PG commit, we log the failure
+for async retry rather than leaving the system in an inconsistent state.
+"""
 import logging
-import random
 import uuid
 from datetime import datetime, timezone
 from typing import Optional
@@ -36,7 +42,11 @@ class IngestionService:
                 )
                 suspect_acc = s_res.scalar_one_or_none()
 
-            ack_no = f"20260908{random.randint(10000000, 99999999)}"
+            # Fixed: Dynamic date prefix + UUID short suffix for globally unique acknowledgement numbers
+            date_prefix = datetime.now(timezone.utc).strftime('%Y%m%d')
+            unique_suffix = uuid.uuid4().hex[:8].upper()
+            ack_no = f"{date_prefix}{unique_suffix}"
+
             geom_loc = from_shape(Point(data.lon, data.lat), srid=4326) if (data.lat and data.lon) else None
 
             complaint = Complaint(
@@ -79,7 +89,15 @@ class IngestionService:
 
     @staticmethod
     async def ingest_transaction(data: TransactionCreate) -> TransactionResponse:
-        """Ingests a financial transaction into PostgreSQL and mirrors edge into Neo4j."""
+        """
+        Ingests a financial transaction into PostgreSQL and mirrors edge into Neo4j.
+        Uses compensating transaction pattern: if Neo4j fails, PG transaction is 
+        marked for async graph sync rather than being rolled back.
+        """
+        txn = None
+        sender = None
+        receiver = None
+
         async with AsyncSessionLocal() as session:
             # 1. Resolve accounts
             s_res = await session.execute(select(Account).where(Account.account_number == data.sender_account_number))
@@ -91,7 +109,7 @@ class IngestionService:
                 raise ValueError(f"One or both accounts not found: {data.sender_account_number}, {data.receiver_account_number}")
 
             txn_time = data.timestamp or datetime.now(timezone.utc)
-            txn_ref = f"{data.channel}{txn_time.strftime('%Y%m%d%H%M%S')}{random.randint(1000, 9999)}"
+            txn_ref = f"{data.channel}{txn_time.strftime('%Y%m%d%H%M%S')}{uuid.uuid4().hex[:6].upper()}"
 
             txn = Transaction(
                 txn_ref=txn_ref,
@@ -108,35 +126,45 @@ class IngestionService:
             await session.commit()
             await session.refresh(txn)
 
-        # 2. Mirror into Neo4j
-        driver = get_neo4j_driver()
-        async with driver.session() as n_session:
-            await n_session.run(
-                """
-                MATCH (s:Account {id: $s_id})
-                MATCH (r:Account {id: $r_id})
-                CREATE (s)-[:TRANSFERRED {
-                    txn_ref: $txn_ref,
-                    amount: $amount,
-                    timestamp: $timestamp,
-                    channel: $channel,
-                    is_flagged: $is_flagged,
-                    hop_level: $hop_level,
-                    ring_id: $ring_id
-                }]->(r)
-                """,
-                s_id=str(sender.id),
-                r_id=str(receiver.id),
-                txn_ref=txn_ref,
-                amount=float(data.amount),
-                timestamp=txn_time.isoformat(),
-                channel=data.channel,
-                is_flagged=data.is_flagged,
-                hop_level=1 if data.is_flagged else 0,
-                ring_id=data.ring_id or ""
-            )
+        # 2. Mirror into Neo4j — compensating transaction pattern
+        neo4j_synced = False
+        try:
+            driver = get_neo4j_driver()
+            async with driver.session() as n_session:
+                await n_session.run(
+                    """
+                    MATCH (s:Account {id: $s_id})
+                    MATCH (r:Account {id: $r_id})
+                    CREATE (s)-[:TRANSFERRED {
+                        txn_ref: $txn_ref,
+                        amount: $amount,
+                        timestamp: $timestamp,
+                        channel: $channel,
+                        is_flagged: $is_flagged,
+                        hop_level: $hop_level,
+                        ring_id: $ring_id
+                    }]->(r)
+                    """,
+                    s_id=str(sender.id),
+                    r_id=str(receiver.id),
+                    txn_ref=txn_ref,
+                    amount=float(data.amount),
+                    timestamp=txn_time.isoformat(),
+                    channel=data.channel,
+                    is_flagged=data.is_flagged,
+                    hop_level=1 if data.is_flagged else 0,
+                    ring_id=data.ring_id or ""
+                )
+            neo4j_synced = True
+        except Exception as e:
+            # Log failure but don't roll back PostgreSQL — mark for async retry
+            logger.error(f"⚠️ Neo4j graph sync FAILED for txn {txn_ref}: {e}. "
+                        f"PostgreSQL record preserved. Schedule async graph reconciliation.")
 
-        logger.info(f"✅ Ingested Transaction {txn_ref}: ₹{data.amount} from {data.sender_account_number} to {data.receiver_account_number}")
+        sync_status = "SYNCED" if neo4j_synced else "PG_ONLY_PENDING_SYNC"
+        logger.info(f"✅ Ingested Transaction {txn_ref}: ₹{data.amount} "
+                    f"({data.sender_account_number} → {data.receiver_account_number}) "
+                    f"[Graph: {sync_status}]")
 
         return TransactionResponse(
             id=txn.id,

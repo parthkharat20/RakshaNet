@@ -1,3 +1,4 @@
+import warnings
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -35,6 +36,17 @@ class Settings(BaseSettings):
     @property
     def cors_origin_list(self) -> List[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Warn if using the default JWT secret in production
+        if self.ENVIRONMENT == "production" and self.JWT_SECRET == "rakshanet_super_secure_jwt_secret_key_2026":
+            warnings.warn(
+                "⚠️ SECURITY WARNING: Using default JWT_SECRET in production! "
+                "Set the JWT_SECRET environment variable to a cryptographically random value.",
+                RuntimeWarning,
+                stacklevel=2
+            )
 
 
 settings = Settings()
