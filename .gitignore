@@ -62,6 +62,8 @@ redis_data/
 # Local College Submissions & Docs
 docs/
 !docs/SIH_PITCH_AND_DEMO_GUIDE.md
+!docs/RAKSHANET_MASTER_TECHNICAL_DOSSIER.pdf
+!docs/RAKSHANET_MASTER_TECHNICAL_DOSSIER.html
 generate_synopsis_docs.py
 
 
