@@ -12,11 +12,13 @@ import {
   WifiOff,
   Zap,
   Volume2,
-  VolumeX
+  VolumeX,
+  HeartHandshake
 } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { getStoredOfficer, logoutOfficer } from '../../utils/api';
 import { ScenarioModal } from '../demo/ScenarioModal';
+import { VictimTrackModal } from '../restitution/VictimTrackModal';
 
 export const TopBar = () => {
   const {
@@ -31,6 +33,7 @@ export const TopBar = () => {
     toggleMuteAudio
   } = useAlertContext();
   const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false);
+  const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
   const location = useLocation();
   const officer = getStoredOfficer();
 
@@ -132,6 +135,16 @@ export const TopBar = () => {
             <span>Simulate Live Attack</span>
           </button>
 
+          {/* 🤝 Citizen Restitution & Complaint Recovery Tracker */}
+          <button
+            onClick={() => setIsTrackModalOpen(true)}
+            className="flex items-center gap-1.5 text-xs font-bold py-1.5 px-3 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 shadow-sm transition-all"
+            title="Track Citizen NCRP Cybercrime Complaint & Section 457 Restitution Status"
+          >
+            <HeartHandshake className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden sm:inline">Citizen Recovery Portal</span>
+          </button>
+
           {/* AI Scoring Pipeline Trigger */}
           <button
             onClick={runScoring}
@@ -181,6 +194,12 @@ export const TopBar = () => {
       <ScenarioModal
         isOpen={isScenarioModalOpen}
         onClose={() => setIsScenarioModalOpen(false)}
+      />
+
+      {/* Public Citizen Recovery & Section 457 Tracking Modal */}
+      <VictimTrackModal
+        isOpen={isTrackModalOpen}
+        onClose={() => setIsTrackModalOpen(false)}
       />
     </>
   );

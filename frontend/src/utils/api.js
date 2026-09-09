@@ -170,6 +170,27 @@ export const fetchSyndicates = async () => {
   return res.data;
 };
 
+// --- Citizen Restitution Engine (Section 457 Cr.P.C. / BNSS 503) ---
+export const fetchRestitutionsApi = async () => {
+  const res = await api.get('/restitution');
+  return res.data;
+};
+
+export const draftRestitutionApi = async (payload = {}) => {
+  const res = await api.post('/restitution/draft', payload);
+  return res.data;
+};
+
+export const executeRestitutionApi = async (restitutionId, payload) => {
+  const res = await api.post(`/restitution/${restitutionId}/execute`, payload);
+  return res.data;
+};
+
+export const trackVictimComplaintApi = async (ackNo) => {
+  const res = await api.get(`/restitution/track/${encodeURIComponent(ackNo)}`);
+  return res.data;
+};
+
 export default api;
 
 

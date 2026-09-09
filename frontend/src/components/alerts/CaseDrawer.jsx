@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2, Radio, Scale, FileText } from 'lucide-react';
+import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2, Radio, Scale, FileText, Coins } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { ExplainPanel } from '../explain/ExplainPanel';
 import { FreezeButton } from '../actions/FreezeButton';
 import { PatrolDispatchModal } from '../patrols/PatrolDispatchModal';
 import { LegalDossierModal } from '../dossier/LegalDossierModal';
+import { RestitutionModal } from '../restitution/RestitutionModal';
 import { maskAccountNumber, formatDateTime, formatINR } from '../../utils/constants';
 
 export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
   const { selectedAlert } = useAlertContext();
   const [patrolModalOpen, setPatrolModalOpen] = useState(false);
   const [dossierModalOpen, setDossierModalOpen] = useState(false);
+  const [restitutionModalOpen, setRestitutionModalOpen] = useState(false);
 
 
 
@@ -122,6 +124,15 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
             </button>
 
             <button
+              onClick={() => setRestitutionModalOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold font-mono flex items-center gap-1.5 transition-colors"
+              title="Draft and execute Section 457 Cr.P.C. / BNSS 503 Magisterial Restitution Order"
+            >
+              <Coins className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Sec 457 Restitution</span>
+            </button>
+
+            <button
               onClick={() => setPatrolModalOpen(true)}
               className="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-bold font-mono flex items-center gap-1.5 transition-colors"
               title="Dispatch nearest police PCR van or Beat Marshal to predicted ATM cashout point"
@@ -176,6 +187,13 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
       <LegalDossierModal
         isOpen={dossierModalOpen}
         onClose={() => setDossierModalOpen(false)}
+        alertId={selectedAlert.id}
+      />
+
+      {/* Section 457 Cr.P.C. / BNSS 503 Victim Restitution Modal */}
+      <RestitutionModal
+        isOpen={restitutionModalOpen}
+        onClose={() => setRestitutionModalOpen(false)}
         alertId={selectedAlert.id}
       />
     </div>

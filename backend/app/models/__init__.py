@@ -7,6 +7,7 @@ from app.models.alert import Alert
 from app.models.audit_log import AuditLog
 from app.models.officer import Officer
 from app.models.patrol_unit import PatrolUnit
+from app.models.restitution import RestitutionOrder
 
 __all__ = [
     "Base",
@@ -17,6 +18,8 @@ __all__ = [
     "Alert",
     "AuditLog",
     "Officer",
-    "PatrolUnit"
+    "PatrolUnit",
+    "RestitutionOrder"
 ]
+
 
