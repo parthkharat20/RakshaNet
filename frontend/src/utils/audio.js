@@ -112,6 +112,45 @@ class TacticalAudioEngine {
       console.debug('Audio playback suppressed:', e);
     }
   }
+
+  /**
+   * Play tactical dual-burst police radio dispatch squelch tone.
+   */
+  playPatrolDispatchSound() {
+    if (this.muted) return;
+    try {
+      const ctx = this.getAudioContext();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+
+      // Two-tone dispatch cue (Motorola radio MDC-style cue: 950Hz then 1450Hz)
+      const tones = [
+        { freq: 950, start: 0.0, dur: 0.08 },
+        { freq: 1450, start: 0.09, dur: 0.10 },
+        { freq: 1900, start: 0.20, dur: 0.12 }
+      ];
+
+      tones.forEach(({ freq, start, dur }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + start);
+
+        gain.gain.setValueAtTime(0.08, now + start);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + start + dur);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + start);
+        osc.stop(now + start + dur);
+      });
+    } catch (e) {
+      console.debug('Audio playback suppressed:', e);
+    }
+  }
 }
 
 export const tacticalAudio = new TacticalAudioEngine();
+

@@ -5,12 +5,14 @@ import {
   freezeAccount,
   triggerAIRun,
   fetchDemoScenarios,
-  simulateAttackApi
+  simulateAttackApi,
+  dispatchPatrolApi
 } from '../utils/api';
 import { useSocket } from '../hooks/useSocket';
 import { tacticalAudio } from '../utils/audio';
 
 const AlertContext = createContext(null);
+
 
 export const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
@@ -22,6 +24,7 @@ export const AlertProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState(null);
   const [freezeReceipt, setFreezeReceipt] = useState(null);
+  const [patrolReceipt, setPatrolReceipt] = useState(null);
   const [wsNotification, setWsNotification] = useState(null);
   const [demoScenarios, setDemoScenarios] = useState([]);
   const [isAudioMuted, setIsAudioMuted] = useState(tacticalAudio.isMuted());
@@ -119,6 +122,17 @@ export const AlertProvider = ({ children }) => {
         });
         break;
 
+      case 'PATROL_DISPATCHED':
+        console.log('[WS] Received PATROL_DISPATCHED:', payload);
+        tacticalAudio.playPatrolDispatchSound();
+        setWsNotification({
+          type: 'PATROL_DISPATCHED',
+          message: `🚨 LEA Beat Dispatch: ${payload.callsign} (${payload.officer_in_charge}) -> ${payload.target_hotspot} (ETA ${payload.eta_minutes}m) [Ref: ${payload.dispatch_order_id}]`,
+          timestamp
+        });
+        break;
+
+
       case 'COMPLAINT_INGESTED':
         console.log('[WS] Received COMPLAINT_INGESTED:', payload);
         setWsNotification({
@@ -212,6 +226,16 @@ export const AlertProvider = ({ children }) => {
     }
   };
 
+  const dispatchPatrol = async (unitId, payload) => {
+    try {
+      const receipt = await dispatchPatrolApi(unitId, payload);
+      setPatrolReceipt(receipt);
+      return receipt;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   const simulateAttack = async (scenarioId) => {
     try {
       const result = await simulateAttackApi(scenarioId);
@@ -254,18 +278,22 @@ export const AlertProvider = ({ children }) => {
     error,
     freezeReceipt,
     setFreezeReceipt,
+    patrolReceipt,
+    setPatrolReceipt,
     wsConnected,
     wsNotification,
     setWsNotification,
     refreshData: loadData,
     runScoring,
     dispatchFreeze,
+    dispatchPatrol,
     demoScenarios,
     fetchScenarios: loadScenarios,
     simulateAttack,
     isAudioMuted,
     toggleMuteAudio
   };
+
 
 
   return (

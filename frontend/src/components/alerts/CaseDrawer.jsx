@@ -1,12 +1,15 @@
-import React from 'react';
-import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2, Radio } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { ExplainPanel } from '../explain/ExplainPanel';
 import { FreezeButton } from '../actions/FreezeButton';
+import { PatrolDispatchModal } from '../patrols/PatrolDispatchModal';
 import { maskAccountNumber, formatDateTime, formatINR } from '../../utils/constants';
 
 export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
   const { selectedAlert } = useAlertContext();
+  const [patrolModalOpen, setPatrolModalOpen] = useState(false);
+
 
   if (!selectedAlert) return null;
 
@@ -91,7 +94,7 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
         </div>
 
         {/* Action Bar */}
-        <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-white/10">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 p-3 rounded-xl bg-slate-900/60 border border-white/10">
           <div className="flex items-center gap-2">
             <span className="text-slate-400 text-[11px]">Interdiction Status:</span>
             {isFrozen ? (
@@ -105,11 +108,22 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
             )}
           </div>
 
-          <FreezeButton
-            accountId={selectedAlert.target_account_id}
-            accountHolder={selectedAlert.target_holder_name}
-            isFrozen={isFrozen}
-          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPatrolModalOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-bold font-mono flex items-center gap-1.5 transition-colors"
+              title="Dispatch nearest police PCR van or Beat Marshal to predicted ATM cashout point"
+            >
+              <Radio className="w-3.5 h-3.5 text-red-400 animate-pulse" />
+              <span>Dispatch Patrol</span>
+            </button>
+
+            <FreezeButton
+              accountId={selectedAlert.target_account_id}
+              accountHolder={selectedAlert.target_holder_name}
+              isFrozen={isFrozen}
+            />
+          </div>
         </div>
 
 
@@ -132,6 +146,20 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
           geoScore={selectedAlert.geo_score}
         />
       </div>
+
+      {/* Patrol Dispatch Modal */}
+      <PatrolDispatchModal
+        isOpen={patrolModalOpen}
+        onClose={() => setPatrolModalOpen(false)}
+        targetHotspot={{
+          alert_id: selectedAlert.id,
+          terminal_id: selectedAlert.target_terminal_id || 'ATM_MUM_001',
+          name: selectedAlert.target_atm_name || 'State Bank of India - Matunga East ATM',
+          lat: selectedAlert.target_lat || (selectedAlert.city === 'Delhi' ? 28.6290 : selectedAlert.city === 'Bengaluru' ? 12.9352 : 19.0270),
+          lon: selectedAlert.target_lon || (selectedAlert.city === 'Delhi' ? 77.2260 : selectedAlert.city === 'Bengaluru' ? 77.6245 : 72.8550)
+        }}
+      />
     </div>
   );
 };
+

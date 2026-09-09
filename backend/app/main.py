@@ -36,12 +36,19 @@ async def lifespan(app: FastAPI):
     )
     logger.info(f"Starting {settings.PROJECT_NAME} Backend ({settings.ENVIRONMENT})...")
 
-    # Initialize officers table on startup
+    # Initialize officers and patrol units on startup
     try:
         from app.db.init_officers import seed_demo_officers
         await seed_demo_officers()
     except Exception as e:
         logger.warning(f"Officer seeding skipped: {e}")
+
+    try:
+        from app.db.init_patrols import seed_demo_patrols
+        await seed_demo_patrols()
+    except Exception as e:
+        logger.warning(f"Patrol unit seeding skipped: {e}")
+
 
     yield
 

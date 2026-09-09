@@ -117,3 +117,28 @@ async def dispatch_attack_simulated_event(scenario_name: str, victim_city: str, 
     })
     logger.info(f"📡 Dispatched ATTACK_SIMULATED event: {scenario_name}")
 
+
+async def dispatch_patrol_event(
+    callsign: str,
+    officer_in_charge: str,
+    target_hotspot: str,
+    dispatch_order_id: str,
+    distance_km: float,
+    eta_minutes: float,
+    officer_badge_id: str
+):
+    """Broadcast when a police patrol unit is dispatched to an ATM hotspot."""
+    from app.realtime.socket_server import ws_manager
+
+    await ws_manager.broadcast_event("PATROL_DISPATCHED", {
+        "callsign": callsign,
+        "officer_in_charge": officer_in_charge,
+        "target_hotspot": target_hotspot,
+        "dispatch_order_id": dispatch_order_id,
+        "distance_km": distance_km,
+        "eta_minutes": eta_minutes,
+        "officer_badge_id": officer_badge_id
+    })
+    logger.info(f"📡 Dispatched PATROL_DISPATCHED event: {callsign} -> {target_hotspot}")
+
+

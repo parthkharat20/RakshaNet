@@ -138,5 +138,27 @@ export const simulateAttackApi = async (scenarioId) => {
   return res.data;
 };
 
+// --- Mobile Patrol Interdiction & Beat Dispatch ---
+export const fetchPatrols = async (city = null, status = null) => {
+  const params = {};
+  if (city) params.city = city;
+  if (status) params.status = status;
+  const res = await api.get('/patrols', { params });
+  return res.data;
+};
+
+export const fetchNearbyPatrols = async (lat, lon, radiusKm = 15) => {
+  const res = await api.get('/patrols/nearby', {
+    params: { lat, lon, radius_km: radiusKm }
+  });
+  return res.data;
+};
+
+export const dispatchPatrolApi = async (unitId, payload) => {
+  const res = await api.post(`/patrols/${unitId}/dispatch`, payload);
+  return res.data;
+};
+
 export default api;
+
 
