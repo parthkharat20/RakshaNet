@@ -23,14 +23,9 @@ python-socketio>=5.11.1
 scikit-learn>=1.4.1
 xgboost>=2.0.3
 hdbscan>=0.8.33
-prophet>=1.1.5
-shap>=0.45.0
-geopandas>=0.14.3
 shapely>=2.0.3
 
-# Graph Neural Networks & Graph Theory
-torch>=2.2.0
-torch_geometric>=2.5.0
+# Graph Theory & Network Analysis
 networkx>=3.2.1
 
 # Utilities, Security & Synthetic Generation
