@@ -50,6 +50,46 @@ services:
       timeout: 3s
       retries: 5
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rakshanet-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: raksha
+      POSTGRES_PASSWORD: rakshanet_secret
+      POSTGRES_DB: rakshanet
+      DATABASE_URL: postgresql+asyncpg://raksha:rakshanet_secret@postgres:5432/rakshanet
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: rakshanet_secret
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: rakshanet_super_secure_jwt_secret_key_2026
+      CORS_ORIGINS: "http://localhost,http://localhost:5173,http://localhost:80,http://127.0.0.1:5173,http://127.0.0.1:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rakshanet-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
 volumes:
   pgdata:
   neo4j_data:
