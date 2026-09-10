@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Network,
-  ShieldCheck,
-  AlertTriangle,
-  Flame,
-  CheckCircle2,
-  TrendingUp,
-  MapPin,
-  RefreshCw,
-  Users,
-  Building,
-  Radio
-} from 'lucide-react';
+import { Network, RefreshCw } from 'lucide-react';
 import { fetchSyndicates } from '../../utils/api';
 import { formatINR } from '../../utils/constants';
 
@@ -39,95 +27,79 @@ export const SyndicateHub = () => {
     loadSyndicates();
   }, []);
 
-  const totalDetected = syndicates.reduce((acc, s) => acc + (s.total_detected_loss || 0), 0);
   const totalIntercepted = syndicates.reduce((acc, s) => acc + (s.funds_intercepted || 0), 0);
-  const totalMules = syndicates.reduce((acc, s) => acc + (s.active_mules_identified || 0), 0);
-  const overallDisruption = totalDetected > 0 ? ((totalIntercepted / totalDetected) * 100).toFixed(1) : 0;
 
   return (
-    <div className="command-panel p-4 flex flex-col space-y-4 border-[#1E293B]">
-      {/* Top Banner & Disruption KPI */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#1E293B] pb-3">
+    <div className="p-4 flex flex-col space-y-3 font-mono text-xs select-none">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400">
-            <Network className="w-4 h-4" />
+          <div className="w-6 h-6 rounded bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+            <Network className="w-3.5 h-3.5" />
           </div>
-          <div>
-            <h3 className="font-display font-bold text-white text-sm flex items-center gap-2">
-              Organized Cybercrime Syndicate Intelligence
-              <span className="px-2 py-0.2 rounded text-[10px] font-mono bg-red-500/20 text-red-400 border border-red-500/30 font-bold">
-                {syndicates.length} ACTIVE RINGS
-              </span>
-            </h3>
-            <p className="text-[11px] font-mono text-slate-400">
-              Cross-Jurisdictional Topological Clustering & Interdiction Tracking
-            </p>
-          </div>
+          <span className="font-semibold text-zinc-200 text-xs tracking-wide uppercase">
+            Mule Syndicates ({syndicates.length})
+          </span>
         </div>
 
-        {/* Global Stats */}
-        <div className="flex items-center gap-4 text-xs font-mono">
+        <div className="flex items-center gap-3">
           <div className="text-right">
-            <div className="text-[10px] text-slate-400 uppercase font-bold">Disrupted Volume</div>
-            <div className="font-bold text-emerald-400">{formatINR(totalIntercepted)}</div>
-          </div>
-          <div className="text-right">
-            <div className="text-[10px] text-slate-400 uppercase font-bold">Suppression Rate</div>
-            <div className="font-bold text-cyan-300">{overallDisruption}%</div>
+            <span className="text-[10px] text-zinc-500 uppercase mr-1.5">Intercepted:</span>
+            <span className="font-bold text-emerald-400">{formatINR(totalIntercepted)}</span>
           </div>
           <button
             onClick={loadSyndicates}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors"
-            title="Refresh Syndicate Intelligence"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40 border border-white/[0.06] transition-colors cursor-pointer"
+            title="Refresh Syndicates"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Grid of Syndicate Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 font-mono text-xs">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
         {syndicates.map((syn) => {
           const isSelected = selectedSyndicate?.id === syn.id;
           return (
             <div
               key={syn.id}
               onClick={() => setSelectedSyndicate(syn)}
-              className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 ${
+              className={`p-3 rounded-lg border cursor-pointer transition-all flex flex-col justify-between space-y-2.5 ${
                 isSelected
-                  ? 'bg-red-950/20 border-red-500/60 shadow-lg shadow-red-950/40'
-                  : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                  ? 'bg-zinc-800/90 border-indigo-500/50 shadow-sm'
+                  : 'bg-zinc-900/40 border-white/[0.04] hover:border-white/[0.1] hover:bg-zinc-800/30'
               }`}
             >
               <div>
-                <div className="flex items-center justify-between text-[10px] text-slate-400 pb-1">
+                <div className="flex items-center justify-between text-[10px] text-zinc-500 mb-1">
                   <span>{syn.id}</span>
-                  <span className="px-1.5 py-0.2 rounded font-bold bg-amber-950/60 text-amber-300 border border-amber-700/50">
+                  <span className="px-1.5 py-0.5 rounded font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
                     {syn.status.replace(/_/g, ' ')}
                   </span>
                 </div>
-                <h4 className="font-bold text-white text-xs mt-1 leading-snug">
+                <h4 className="font-semibold text-zinc-100 text-xs truncate">
                   {syn.name}
                 </h4>
-                <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">
+                <p className="text-[10px] text-zinc-500 mt-0.5 line-clamp-1">
                   {syn.modus_operandi}
                 </p>
               </div>
 
               {/* Progress Bar & Interception Stats */}
-              <div className="space-y-1.5 pt-2 border-t border-white/5">
+              <div className="space-y-1.5 pt-2 border-t border-white/[0.04]">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="text-slate-400">Interdiction Efficacy:</span>
-                  <span className="font-bold text-emerald-400">{syn.disruption_rate_pct}%</span>
+                  <span className="text-zinc-500">Disruption:</span>
+                  <span className="font-semibold text-emerald-400">{syn.disruption_rate_pct}%</span>
                 </div>
-                <div className="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden">
+                <div className="w-full bg-zinc-950 rounded-full h-1 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500"
+                    className="bg-emerald-500 h-full rounded-full transition-all"
                     style={{ width: `${Math.min(syn.disruption_rate_pct, 100)}%` }}
                   />
                 </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
-                  <span>Mules: <strong className="text-white">{syn.active_mules_identified}</strong></span>
+                <div className="flex items-center justify-between text-[10px] text-zinc-400 pt-0.5">
+                  <span>Mules: <strong className="text-zinc-200">{syn.active_mules_identified}</strong></span>
                   <span>Intercepted: <strong className="text-emerald-400">{formatINR(syn.funds_intercepted)}</strong></span>
                 </div>
               </div>
@@ -138,3 +110,4 @@ export const SyndicateHub = () => {
     </div>
   );
 };
+

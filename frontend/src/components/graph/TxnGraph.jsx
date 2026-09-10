@@ -278,17 +278,17 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
   return (
     <div className="flex flex-col h-full overflow-hidden relative select-none bg-[#090D16]">
       {/* Header & Controls Bar */}
-      <div className="px-3.5 py-2.5 border-b border-white/10 flex items-center justify-between z-10 bg-[#0B101D]">
+      <div className="px-3.5 py-2.5 border-b border-white/[0.06] flex items-center justify-between z-10 bg-zinc-900/80 backdrop-blur-md">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
-            <Network className="w-3.5 h-3.5" />
+          <div className="w-5 h-5 rounded bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <Network className="w-3 h-3" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono font-bold text-white text-xs">
-                Multi-Hop Transaction Topology
+              <span className="font-mono font-semibold text-zinc-200 text-xs tracking-wide uppercase">
+                Graph Topology
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-slate-400 border border-white/10">
+              <span className="text-[10px] font-mono text-zinc-500">
                 {graphData.nodes.length} Nodes • {graphData.links.length} Transfers
               </span>
             </div>
@@ -297,13 +297,13 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
 
         {/* Hop Depth & Zoom Controls */}
         <div className="flex items-center gap-1.5 font-mono text-xs">
-          <div className="flex items-center bg-[#070A12] rounded border border-white/10 p-0.5 mr-1">
+          <div className="flex items-center bg-zinc-950/60 rounded-md border border-white/[0.06] p-0.5 mr-1">
             {[1, 2, 3].map(h => (
               <button
                 key={h}
                 onClick={() => setMaxHops(h)}
-                className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors cursor-pointer ${
-                  maxHops === h ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
+                className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors cursor-pointer ${
+                  maxHops === h ? 'bg-zinc-800 text-white shadow-xs border border-white/10' : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 {h} {h === 1 ? 'Hop' : 'Hops'}
@@ -313,28 +313,28 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
 
           <button
             onClick={() => fgRef.current?.zoom(fgRef.current.zoom() * 1.3, 200)}
-            className="p-1 rounded bg-[#0E1526] hover:bg-white/10 text-slate-300 border border-white/10 cursor-pointer"
+            className="p-1 rounded-md bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/[0.06] cursor-pointer"
             title="Zoom In"
           >
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => fgRef.current?.zoom(fgRef.current.zoom() / 1.3, 200)}
-            className="p-1 rounded bg-[#0E1526] hover:bg-white/10 text-slate-300 border border-white/10 cursor-pointer"
+            className="p-1 rounded-md bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/[0.06] cursor-pointer"
             title="Zoom Out"
           >
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => handleCenterAndFit()}
-            className="p-1 rounded bg-[#0E1526] hover:bg-white/10 text-slate-300 border border-white/10 cursor-pointer"
+            className="p-1 rounded-md bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/[0.06] cursor-pointer"
             title="Recenter & Fit"
           >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={loadGraph}
-            className="p-1 rounded bg-[#0E1526] hover:bg-white/10 text-slate-300 border border-white/10 cursor-pointer"
+            className="p-1 rounded-md bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/[0.06] cursor-pointer"
             title="Refresh Network"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -343,11 +343,11 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
       </div>
 
       {/* Graph Canvas Container */}
-      <div ref={containerRef} className="flex-1 relative w-full h-full min-h-[360px] bg-[#070A12] overflow-hidden">
+      <div ref={containerRef} className="flex-1 relative w-full h-full min-h-[360px] bg-[#09090b] overflow-hidden">
         {isLoading && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#070A12]/80 backdrop-blur-xs text-slate-400">
-            <RefreshCw className="w-5 h-5 animate-spin text-blue-400 mb-2" />
-            <p className="text-xs font-mono">Traversing Neo4j Multi-Hop Graph...</p>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-950/80 backdrop-blur-xs text-zinc-400">
+            <RefreshCw className="w-5 h-5 animate-spin text-indigo-400 mb-2" />
+            <p className="text-xs font-mono">Traversing Graph...</p>
           </div>
         )}
 
@@ -365,12 +365,12 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
             ctx.arc(node.x, node.y, 9, 0, 2 * Math.PI, false);
             ctx.fill();
           }}
-          linkColor={link => link.isFlagged ? '#EF4444' : 'rgba(147, 197, 253, 0.35)'}
-          linkWidth={link => link.isFlagged ? 2 : 1.2}
+          linkColor={link => link.isFlagged ? '#f43f5e' : 'rgba(129, 140, 248, 0.35)'}
+          linkWidth={link => link.isFlagged ? 1.8 : 1}
           linkDirectionalParticles={2}
           linkDirectionalParticleWidth={2}
           linkDirectionalParticleSpeed={0.006}
-          linkDirectionalParticleColor={link => link.isFlagged ? '#EF4444' : '#60A5FA'}
+          linkDirectionalParticleColor={link => link.isFlagged ? '#f43f5e' : '#818cf8'}
           onNodeClick={(node) => {
             if (onNodeClick) onNodeClick(node);
           }}
@@ -383,25 +383,24 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
 
         {/* Hover Tooltip Overlay */}
         {hoverNode && (
-          <div className="absolute bottom-3 left-3 z-20 p-2.5 rounded-lg bg-[#0E1526]/95 border border-white/15 text-xs font-mono pointer-events-none shadow-xl">
-            <div className="font-bold text-white text-sm">{hoverNode.name}</div>
-            <div className="text-slate-400">Acc: {hoverNode.accountNumber} ({hoverNode.bank})</div>
+          <div className="absolute bottom-3 left-3 z-20 p-2.5 rounded-lg bg-zinc-950/95 border border-white/[0.08] text-xs font-mono pointer-events-none shadow-xl">
+            <div className="font-semibold text-white text-xs">{hoverNode.name}</div>
+            <div className="text-zinc-400 text-[11px]">{hoverNode.accountNumber} • {hoverNode.bank}</div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-slate-300">Role:</span>
-              <span style={{ color: ROLE_COLORS[hoverNode.role] || '#EF4444' }}>{hoverNode.role}</span>
-              <span className="text-slate-500">•</span>
-              <span className="text-slate-300">Risk:</span>
-              <span className="font-bold text-red-400">{(hoverNode.risk * 100).toFixed(1)}%</span>
+              <span className="text-zinc-500">Role:</span>
+              <span style={{ color: ROLE_COLORS[hoverNode.role] || '#f43f5e' }}>{hoverNode.role}</span>
+              <span className="text-zinc-600">•</span>
+              <span className="text-zinc-500">Risk:</span>
+              <span className="font-bold text-rose-400">{(hoverNode.risk * 100).toFixed(0)}%</span>
             </div>
           </div>
         )}
 
         {/* Floating Topology Legend */}
-        <div className="absolute bottom-3 right-3 z-10 p-2.5 rounded-lg bg-[#0B101D]/90 border border-white/10 text-[10px] font-mono space-y-1 shadow-md">
-          <div className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-1">Topology Legend</div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500" /> Victim Account</div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500" /> Mule Hub (Collector)</div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-orange-500" /> Layering Intermediary</div>
+        <div className="absolute bottom-3 right-3 z-10 p-2 rounded-lg bg-zinc-950/85 border border-white/[0.08] text-[10px] font-mono space-y-1">
+          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-blue-500" /> Victim</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-rose-500" /> Mule Hub</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-amber-500" /> Intermediary</div>
           <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500" /> ATM Terminal</div>
         </div>
       </div>

@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  ShieldAlert,
   Cpu,
   RefreshCw,
   Terminal,
   LogOut,
-  Wifi,
-  WifiOff,
   Zap,
   Volume2,
   VolumeX,
   HeartHandshake,
   Clock,
-  Shield,
-  Activity
+  User
 } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { getStoredOfficer, logoutOfficer } from '../../utils/api';
+import { BrandLogo } from '../common/BrandLogo';
 import { ScenarioModal } from '../demo/ScenarioModal';
 import { VictimTrackModal } from '../restitution/VictimTrackModal';
 
@@ -38,34 +35,26 @@ export const TopBar = () => {
   const location = useLocation();
   const officer = getStoredOfficer() || {
     badge_id: 'LE-CYBER-MUM-4029',
-    name: 'Inspector Parth Kharat',
+    name: 'Insp. Parth Kharat',
     rank: 'Cyber Crime Inspector',
-    department: 'Maharashtra Cyber Cell, I4C Division'
+    department: 'Maharashtra Cyber Cell'
   };
 
-  // Live Indian Standard Time (IST) Atomic Clock
+  // Live IST Clock
   const [istTime, setIstTime] = useState('');
-  const [istDate, setIstDate] = useState('');
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-IN', {
-        timeZone: 'Asia/Kolkata',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      const dateStr = now.toLocaleDateString('en-IN', {
-        timeZone: 'Asia/Kolkata',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      }).toUpperCase();
-
-      setIstTime(timeStr);
-      setIstDate(dateStr);
+      setIstTime(
+        now.toLocaleTimeString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })
+      );
     };
 
     updateTime();
@@ -75,177 +64,125 @@ export const TopBar = () => {
 
   return (
     <>
-      {/* 3-Color Sovereign Tiranga Ribbon */}
       <div className="tiranga-strip" />
 
-      <header className="border-b border-white/10 bg-[#0A0E1A] sticky top-0 z-50 select-none">
-        {/* Top Sovereign Telemetry & Legal Clearance Strip */}
-        <div className="h-7 px-6 bg-[#070A12] border-b border-white/5 flex items-center justify-between text-[11px] font-mono text-slate-400">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-slate-200 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>गृह मंत्रालय, भारत सरकार | Ministry of Home Affairs</span>
-            </span>
-            <span className="text-slate-700">•</span>
-            <span className="text-slate-400">भारतीय साइबर अपराध समन्वय केंद्र (I4C)</span>
-            <span className="text-slate-700">•</span>
-            <span className="text-slate-500 hidden xl:inline">Sec 91 CrPC • Sec 69B IT Act • Sec 457 CrPC</span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Live IST Atomic Clock */}
-            <div className="flex items-center gap-1.5 text-slate-300">
-              <Clock className="w-3 h-3 text-emerald-400" />
-              <span>{istDate}</span>
-              <span className="font-bold text-white font-mono">{istTime} IST</span>
-              <span className="px-1 py-0.2 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 text-[9px] font-semibold">
-                NPL SYNC
-              </span>
-            </div>
-
-            <span className="text-slate-700">•</span>
-
-            {/* Real-time CFCFRMS Gateway Status */}
-            <div className="flex items-center gap-1.5 text-[10px]">
-              <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-              <span className={wsConnected ? 'text-emerald-400 font-semibold' : 'text-amber-400'}>
-                {wsConnected ? 'CFCFRMS LIVE' : 'RECONNECTING'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Operational Command Bar */}
-        <div className="h-16 px-6 flex items-center justify-between gap-4">
-          {/* Brand Mark & Agency Scope */}
-          <div className="flex items-center gap-5">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-lg bg-[#0F172A] border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-sm group-hover:border-blue-400 transition-colors">
-                <ShieldAlert className="w-5 h-5 text-blue-400" />
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-display font-black text-lg tracking-wider text-white">
-                    RAKSHA<span className="text-blue-500">NET</span>
-                  </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/40 font-semibold tracking-wider uppercase">
-                    CYBER COMMAND
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-400 font-mono -mt-0.5">
-                  National Cyber Financial Fraud Interdiction Grid
-                </p>
-              </div>
+      <header className="border-b border-white/[0.08] bg-[#09090b]/95 backdrop-blur-md sticky top-0 z-50 select-none">
+        <div className="h-14 px-5 flex items-center justify-between gap-4">
+          {/* Brand & Nav */}
+          <div className="flex items-center gap-6">
+            <Link to="/" className="flex items-center group">
+              <BrandLogo size="default" />
             </Link>
 
-            {/* Primary Navigation Tabs */}
-            <nav className="hidden lg:flex items-center gap-1 ml-4 p-1 rounded-lg bg-[#070A12] border border-white/5">
+            {/* Navigation Tabs */}
+            <nav className="flex items-center gap-1 p-0.5 rounded-lg bg-zinc-900/80 border border-white/[0.06]">
               <Link
                 to="/"
-                className={`px-3.5 py-1.5 rounded-md text-xs font-mono font-medium transition-colors ${
+                className={`px-3 py-1 rounded-md text-xs font-mono font-medium transition-all ${
                   location.pathname === '/'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-zinc-800 text-white shadow-sm border border-white/10'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                Overview & Telemetry
+                Overview
               </Link>
               <Link
                 to="/command"
-                className={`px-3.5 py-1.5 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-colors ${
+                className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all ${
                   location.pathname === '/command'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-zinc-800 text-white shadow-sm border border-white/10'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <Terminal className="w-3.5 h-3.5" />
+                <Terminal className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Command Theater</span>
               </Link>
             </nav>
+
+            {/* Live Gateway & Clock Pill */}
+            <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900/60 border border-white/[0.05] text-[11px] font-mono text-zinc-400">
+              <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+              <span className={wsConnected ? 'text-zinc-300 font-medium' : 'text-amber-400'}>
+                {wsConnected ? 'LIVE' : 'RECONNECTING'}
+              </span>
+              <span className="text-zinc-600">|</span>
+              <Clock className="w-3 h-3 text-zinc-500" />
+              <span className="text-zinc-300">{istTime} IST</span>
+            </div>
           </div>
 
-          {/* Operational Tools & Authorized Officer Profile */}
+          {/* Action Toolbar */}
           <div className="flex items-center gap-2">
-            {/* Audio Alerts Toggle */}
+            {/* Audio Toggle */}
             <button
               onClick={toggleMuteAudio}
-              className={`p-2 rounded-lg border text-xs transition-colors cursor-pointer ${
+              className={`p-1.5 rounded-md border text-xs transition-colors cursor-pointer ${
                 isAudioMuted
-                  ? 'text-slate-500 border-white/5 hover:text-slate-300 hover:bg-white/5'
-                  : 'text-blue-400 border-blue-500/30 bg-blue-950/30 hover:bg-blue-950/50'
+                  ? 'text-zinc-500 border-white/[0.06] hover:text-zinc-300 hover:bg-zinc-800/50'
+                  : 'text-indigo-300 border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20'
               }`}
-              title={isAudioMuted ? 'Unmute Audio Chimes' : 'Mute Audio Chimes'}
+              title={isAudioMuted ? 'Unmute Audio' : 'Mute Audio'}
             >
-              {isAudioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              {isAudioMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
             </button>
 
-            {/* Sync Telemetry Button */}
+            {/* Refresh */}
             <button
               onClick={refreshData}
               disabled={isLoading}
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 transition-colors cursor-pointer"
+              className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60 border border-white/[0.06] transition-colors cursor-pointer"
               title="Refresh Telemetry"
             >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
 
-            {/* Operational Tool Suite */}
-            <div className="flex items-center gap-1.5">
-              {/* ⚡ Simulate Attack Modal Trigger */}
+            {/* Primary Action Suite */}
+            <div className="flex items-center gap-1.5 ml-1">
               <button
                 onClick={() => setIsScenarioModalOpen(true)}
-                className="btn-command-secondary cursor-pointer"
-                title="Inject live cyber syndicate scenario for demonstration"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/25 transition-all cursor-pointer"
+                title="Inject attack simulation"
               >
                 <Zap className="w-3.5 h-3.5 text-amber-400" />
                 <span>Simulate Attack</span>
               </button>
 
-              {/* 🤝 Citizen Recovery Portal Trigger */}
               <button
                 onClick={() => setIsTrackModalOpen(true)}
-                className="btn-command-secondary cursor-pointer"
-                title="Track Citizen NCRP Cybercrime Complaint Status"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 transition-all cursor-pointer"
+                title="Citizen restitution status"
               >
                 <HeartHandshake className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Citizen Portal</span>
               </button>
 
-              {/* 🤖 Dual-Branch AI Scoring Trigger */}
               <button
                 onClick={runScoring}
                 disabled={isScoring}
-                className={`btn-command-secondary cursor-pointer ${isScoring ? 'opacity-60 cursor-not-allowed' : ''}`}
-                title="Execute Dual-Branch AI: Graph Link Prediction & Spatial Hotspots"
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-indigo-200 bg-indigo-600 hover:bg-indigo-500 border border-indigo-400/30 shadow-sm transition-all cursor-pointer ${
+                  isScoring ? 'opacity-60 cursor-not-allowed' : ''
+                }`}
+                title="Run Dual-AI Scoring"
               >
-                <Cpu className={`w-3.5 h-3.5 text-blue-400 ${isScoring ? 'animate-spin' : ''}`} />
-                <span>{isScoring ? 'AI Scoring...' : 'Run Dual AI'}</span>
+                <Cpu className={`w-3.5 h-3.5 ${isScoring ? 'animate-spin' : ''}`} />
+                <span>{isScoring ? 'Scoring...' : 'Run Dual AI'}</span>
               </button>
             </div>
 
-            {/* Authorized Law Enforcement Officer Profile */}
-            <div className="flex items-center gap-2 pl-3 ml-2 border-l border-white/10">
-              <div className="w-8 h-8 rounded-lg bg-[#0F172A] border border-white/10 flex items-center justify-center text-slate-300">
-                <Shield className="w-4 h-4 text-blue-400" />
+            {/* Officer Clearance */}
+            <div className="flex items-center gap-2.5 pl-3 ml-2 border-l border-white/[0.08]">
+              <div className="w-7 h-7 rounded-md bg-zinc-900 border border-white/[0.08] flex items-center justify-center text-zinc-400">
+                <User className="w-3.5 h-3.5 text-zinc-300" />
               </div>
-              <div className="text-right hidden xl:block leading-tight font-mono">
-                <div className="flex items-center justify-end gap-1.5">
-                  <span className="text-xs font-bold text-white tracking-tight">{officer.name}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" title="Level-4 Active Clearance" />
-                </div>
-                <div className="text-[10px] text-slate-400">
-                  <span className="text-blue-400 font-semibold">{officer.badge_id}</span>
-                  <span className="mx-1">•</span>
-                  <span>Level-4 LEA</span>
-                </div>
+              <div className="text-right hidden sm:block leading-tight font-mono">
+                <div className="text-xs font-medium text-zinc-200">{officer.name}</div>
+                <div className="text-[10px] text-zinc-500">{officer.badge_id}</div>
               </div>
 
-              {/* Logout Button */}
               <button
                 onClick={logoutOfficer}
-                className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/30 transition-colors cursor-pointer"
-                title="Officer Logout"
+                className="p-1.5 rounded-md text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                title="Sign Out"
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
@@ -253,23 +190,19 @@ export const TopBar = () => {
           </div>
         </div>
 
-        {/* Real-time WebSocket Alert Banner */}
+        {/* WebSocket Alert Banner */}
         {wsNotification && (
-          <div className="bg-blue-950/80 border-t border-blue-600/30 px-6 py-1.5 text-xs font-mono text-blue-200 flex items-center justify-between">
+          <div className="bg-indigo-950/40 border-t border-indigo-500/20 px-5 py-1 text-xs font-mono text-indigo-300 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="px-1.5 py-0.2 rounded bg-blue-600 text-white font-bold text-[9px] uppercase">
-                INTER-BANK LIEN FLASH
-              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping" />
+              <span className="font-semibold text-white">INTERDICTION FLASH:</span>
               <span>{wsNotification.message}</span>
             </div>
-            <span className="text-[10px] text-blue-400">
-              {new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })} IST
-            </span>
+            <span className="text-[10px] text-zinc-400">{istTime} IST</span>
           </div>
         )}
       </header>
 
-      {/* Demonstration Modals */}
       <ScenarioModal
         isOpen={isScenarioModalOpen}
         onClose={() => setIsScenarioModalOpen(false)}
@@ -282,3 +215,4 @@ export const TopBar = () => {
     </>
   );
 };
+

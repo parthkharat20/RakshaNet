@@ -8,34 +8,34 @@
    ========================================================================== */
 
 :root {
-  /* Surface Tokens */
-  --surface-ground: #070a12;
-  --surface-header: #0b101d;
-  --surface-card: #0e1526;
-  --surface-elevated: #151f38;
-  --surface-hover: #1c294a;
+  /* Surface Tokens - Deep Zinc & Obsidian */
+  --surface-ground: #09090b;
+  --surface-header: #0e0e11;
+  --surface-card: #121216;
+  --surface-elevated: #18181d;
+  --surface-hover: #1e1e24;
 
-  /* Border Tokens */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.16);
+  /* Border Tokens - Precise Hairlines */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.12);
   --border-focus: #3b82f6;
-  --border-critical: rgba(239, 68, 68, 0.6);
+  --border-critical: rgba(239, 68, 68, 0.4);
 
   /* Typography Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
 
   /* Semantic Palettes */
-  --accent-blue: #2563eb;
-  --accent-red: #dc2626;
-  --accent-amber: #d97706;
-  --accent-emerald: #059669;
+  --accent-blue: #3b82f6;
+  --accent-red: #ef4444;
+  --accent-amber: #f59e0b;
+  --accent-emerald: #10b981;
 
   /* Fonts */
   --font-sans: 'Inter', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --font-display: 'Outfit', 'Inter', sans-serif;
+  --font-display: 'Inter', sans-serif;
 }
 
 * {
@@ -65,30 +65,29 @@ body {
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface-ground);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.22);
 }
 
-/* Command Center Panel Architecture */
+/* Clean Minimal Panel Architecture */
 .command-panel {
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
 }
 
 .command-panel:hover {
@@ -101,32 +100,32 @@ body {
 }
 
 .surface-card {
-  background: #0D121F;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 8px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
 }
 
 .surface-card-interactive {
-  background: #0D121F;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 8px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
   transition: all 0.15s ease;
 }
 
 .surface-card-interactive:hover {
-  background: #121A2C;
-  border-color: rgba(255, 255, 255, 0.14);
+  background: var(--surface-hover);
+  border-color: var(--border-medium);
 }
 
 .alert-card-selected {
-  background: #131D33 !important;
-  border-color: #3B82F6 !important;
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5), 0 4px 16px -2px rgba(0, 0, 0, 0.6) !important;
+  background: #181820 !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 1px #3b82f6 !important;
 }
 
-/* Refined Sovereign Tiranga Ribbon */
+/* Slim Micro Accent Ribbon */
 .tiranga-strip {
-  height: 3px;
+  height: 2px;
   width: 100%;
   background: linear-gradient(
     90deg,
@@ -139,6 +138,7 @@ body {
   );
   position: relative;
   z-index: 50;
+  opacity: 0.85;
 }
 
 /* Mission-Critical Button Architecture */

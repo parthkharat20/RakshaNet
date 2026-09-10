@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, ShieldCheck, RefreshCw, ShieldAlert, Filter } from 'lucide-react';
+import { Search, ShieldCheck, RefreshCw, AlertCircle } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { AlertCard } from './AlertCard';
 
@@ -32,10 +32,10 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
   const frozCount = uniqueAlerts.filter(a => a.status === 'FREEZE_DISPATCHED' || a.status === 'FREEZE_CONFIRMED').length;
 
   const filterTabs = [
-    { id: 'ALL', label: 'All Targets', count: allCount },
-    { id: 'CRITICAL', label: 'Critical (>85%)', count: critCount },
+    { id: 'ALL', label: 'All', count: allCount },
+    { id: 'CRITICAL', label: 'Critical', count: critCount },
     { id: 'ELEVATED', label: 'Elevated', count: elevCount },
-    { id: 'FROZEN', label: 'Interdicted', count: frozCount }
+    { id: 'FROZEN', label: 'Frozen', count: frozCount }
   ];
 
   // Apply active filter
@@ -61,47 +61,47 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
   }, [uniqueAlerts, filter, searchQuery]);
 
   return (
-    <div className="command-panel flex flex-col h-full overflow-hidden select-none">
+    <div className="flex flex-col h-full rounded-xl bg-zinc-900/60 border border-white/[0.06] overflow-hidden select-none">
       {/* Feed Header */}
-      <div className="p-4 border-b border-white/10 space-y-3 bg-[#0B101D]">
+      <div className="p-3.5 border-b border-white/[0.06] space-y-2.5 bg-zinc-900/80">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-red-400" />
-            <h3 className="font-sans font-bold text-white text-sm tracking-wide">
-              Threat Intelligence Incident Queue
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            <h3 className="font-mono font-semibold text-zinc-200 text-xs tracking-wide uppercase">
+              Incident Queue
             </h3>
           </div>
-          <span className="text-[10px] font-mono text-slate-400">
-            {displayedAlerts.length} Queued
+          <span className="text-[11px] font-mono text-zinc-500">
+            {displayedAlerts.length} Active
           </span>
         </div>
 
         {/* Search Input */}
         <div className="relative">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2 text-zinc-500" />
           <input
             type="text"
-            placeholder="Filter suspect name, account, or bank..."
+            placeholder="Search suspects, accounts, banks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-md bg-[#070A12] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors font-mono"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-mono"
           />
         </div>
 
         {/* Filter Segment Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
+        <div className="flex items-center gap-1">
           {filterTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setFilter(tab.id)}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+              className={`flex-1 py-1 rounded-md text-[11px] font-mono font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                 filter === tab.id
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-zinc-800 text-white shadow-sm border border-white/[0.08]'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
               }`}
             >
               <span>{tab.label}</span>
-              <span className="px-1 py-0.2 rounded bg-black/40 text-[9px] text-slate-300">
+              <span className="text-[10px] text-zinc-500">
                 {tab.count}
               </span>
             </button>
@@ -110,18 +110,18 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
       </div>
 
       {/* Feed Card Stream */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2.5 min-h-[300px]">
+      <div className="flex-1 overflow-y-auto p-2.5 space-y-2 min-h-[300px]">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-48 text-slate-400 gap-2">
-            <RefreshCw className="w-5 h-5 animate-spin text-blue-400" />
-            <p className="text-xs font-mono">Loading threat intelligence stream...</p>
+          <div className="flex flex-col items-center justify-center h-48 text-zinc-500 gap-2">
+            <RefreshCw className="w-4 h-4 animate-spin text-indigo-400" />
+            <p className="text-xs font-mono">Syncing incidents...</p>
           </div>
         ) : displayedAlerts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-slate-400 text-center p-6">
-            <ShieldCheck className="w-8 h-8 text-emerald-400 mb-2 opacity-80" />
-            <p className="text-xs font-semibold text-slate-300">No Threat Alerts In This Filter</p>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-mono">
-              All monitored accounts meet standard behavioral thresholds.
+          <div className="flex flex-col items-center justify-center h-48 text-zinc-500 text-center p-6">
+            <ShieldCheck className="w-7 h-7 text-emerald-400/80 mb-2" />
+            <p className="text-xs font-medium text-zinc-300">No Incidents in Queue</p>
+            <p className="text-[11px] text-zinc-500 mt-0.5 font-mono">
+              Filtered criteria returned zero active alerts.
             </p>
           </div>
         ) : (
@@ -140,3 +140,4 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
     </div>
   );
 };
+

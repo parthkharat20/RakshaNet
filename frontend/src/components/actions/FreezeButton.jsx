@@ -66,9 +66,9 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
 
   if (isFrozen) {
     return (
-      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-mono text-xs font-semibold">
+      <div className="w-full py-2 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-mono text-xs font-medium flex items-center justify-center gap-1.5 select-none">
         <CheckCircle2 className="w-3.5 h-3.5" />
-        <span>FROZEN (SEC 91)</span>
+        <span>FROZEN (SEC 91 ACTIVE)</span>
       </div>
     );
   }
@@ -77,7 +77,7 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
     <>
       <button
         onClick={handleOpen}
-        className="btn-command-danger text-xs py-1.5 px-3 cursor-pointer"
+        className="w-full py-2 px-4 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono font-medium text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
         title="Execute emergency Section 91 CrPC Bank Lien Freeze"
       >
         <Lock className="w-3.5 h-3.5" />
@@ -86,10 +86,10 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
 
       {/* Confirmation & Evidence Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg rounded-2xl bg-slate-900 border border-white/15 p-6 shadow-2xl space-y-4 font-mono text-xs relative"
+            className="w-full max-w-lg rounded-xl bg-zinc-900 border border-white/10 p-5 shadow-2xl space-y-4 font-mono text-xs relative"
           >
             {/* Header */}
             <div className="flex items-start justify-between border-b border-white/10 pb-3">
