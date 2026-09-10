@@ -56,11 +56,11 @@ export const DashboardPage = () => {
                 onClick={() => setActiveCanvas('GRAPH')}
                 className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeCanvas === 'GRAPH'
-                    ? 'bg-zinc-800 text-white border border-white/10 shadow-xs'
+                    ? 'bg-sky-950/60 text-sky-200 border border-sky-500/30 shadow-xs'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <Network className="w-3.5 h-3.5 text-zinc-400" />
+                <Network className={`w-3.5 h-3.5 ${activeCanvas === 'GRAPH' ? 'text-sky-400' : 'text-zinc-400'}`} />
                 <span>Topology Graph</span>
               </button>
 
@@ -68,11 +68,11 @@ export const DashboardPage = () => {
                 onClick={() => setActiveCanvas('MAP')}
                 className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeCanvas === 'MAP'
-                    ? 'bg-zinc-800 text-white border border-white/10 shadow-xs'
+                    ? 'bg-rose-950/60 text-rose-200 border border-rose-500/30 shadow-xs'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <MapPin className="w-3.5 h-3.5 text-zinc-400" />
+                <MapPin className={`w-3.5 h-3.5 ${activeCanvas === 'MAP' ? 'text-rose-400' : 'text-zinc-400'}`} />
                 <span>ATM Map</span>
               </button>
 
@@ -80,11 +80,11 @@ export const DashboardPage = () => {
                 onClick={() => setActiveCanvas('SYNDICATES')}
                 className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeCanvas === 'SYNDICATES'
-                    ? 'bg-zinc-800 text-white border border-white/10 shadow-xs'
+                    ? 'bg-amber-950/60 text-amber-200 border border-amber-500/30 shadow-xs'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <Flame className="w-3.5 h-3.5 text-zinc-400" />
+                <Flame className={`w-3.5 h-3.5 ${activeCanvas === 'SYNDICATES' ? 'text-amber-400' : 'text-zinc-400'}`} />
                 <span>Syndicates</span>
               </button>
             </div>
@@ -92,11 +92,11 @@ export const DashboardPage = () => {
             {/* Jump to Command Theater */}
             <button
               onClick={handleOpenCommand}
-              className="px-2 py-1 text-xs font-mono text-zinc-400 hover:text-zinc-200 flex items-center gap-1 transition-colors cursor-pointer"
+              className="px-2.5 py-1 text-xs font-mono text-zinc-400 hover:text-sky-300 hover:bg-sky-950/30 rounded-md border border-transparent hover:border-sky-500/20 flex items-center gap-1.5 transition-all cursor-pointer"
               title="Open full tactical command theater"
             >
               <span className="hidden xl:inline">Command Theater</span>
-              <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />
+              <ChevronRight className="w-3.5 h-3.5 text-sky-400/80" />
             </button>
           </div>
 

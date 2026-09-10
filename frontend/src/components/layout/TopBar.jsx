@@ -94,15 +94,15 @@ export const TopBar = () => {
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <Terminal className="w-3.5 h-3.5 text-zinc-400" />
+                <Terminal className="w-3.5 h-3.5 text-blue-400" />
                 <span>Command Theater</span>
               </Link>
             </nav>
 
             {/* Live Gateway & Clock Pill */}
             <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900/60 border border-white/[0.05] text-[11px] text-zinc-400">
-              <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-zinc-200 animate-pulse' : 'bg-zinc-500'}`} />
-              <span className="text-[10px] font-mono font-medium text-zinc-300">
+              <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+              <span className={`text-[10px] font-mono font-bold ${wsConnected ? 'text-emerald-400' : 'text-amber-400'}`}>
                 {wsConnected ? 'LIVE' : 'RECONNECTING'}
               </span>
               <span className="text-zinc-700">|</span>
@@ -119,7 +119,7 @@ export const TopBar = () => {
               className={`p-1.5 rounded-md border text-xs transition-colors cursor-pointer ${
                 isAudioMuted
                   ? 'text-zinc-500 border-white/[0.06] hover:text-zinc-300 hover:bg-zinc-800/50'
-                  : 'text-zinc-200 border-white/[0.1] bg-zinc-800/80 hover:bg-zinc-700/80'
+                  : 'text-blue-400 border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20'
               }`}
               title={isAudioMuted ? 'Unmute Audio' : 'Mute Audio'}
             >
@@ -136,35 +136,35 @@ export const TopBar = () => {
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
 
-            {/* Primary Action Suite - Clean Monochrome Hierarchy */}
+            {/* Semantic Action Suite: Amber (Simulate), Emerald (Citizen), Cobalt (AI) */}
             <div className="flex items-center gap-1.5 ml-1">
               <button
                 onClick={() => setIsScenarioModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 hover:text-white border border-white/[0.08] transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all cursor-pointer"
                 title="Inject attack simulation"
               >
-                <Zap className="w-3.5 h-3.5 text-zinc-400" />
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
                 <span>Simulate Attack</span>
               </button>
 
               <button
                 onClick={() => setIsTrackModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 hover:text-white border border-white/[0.08] transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all cursor-pointer"
                 title="Citizen restitution status"
               >
-                <HeartHandshake className="w-3.5 h-3.5 text-zinc-400" />
+                <HeartHandshake className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Citizen Portal</span>
               </button>
 
               <button
                 onClick={runScoring}
                 disabled={isScoring}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold text-zinc-950 bg-zinc-100 hover:bg-white border border-white/20 shadow-xs transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 border border-blue-400/40 shadow-sm transition-all cursor-pointer ${
                   isScoring ? 'opacity-60 cursor-not-allowed' : ''
                 }`}
                 title="Run Dual-AI Scoring"
               >
-                <Cpu className={`w-3.5 h-3.5 text-zinc-900 ${isScoring ? 'animate-spin' : ''}`} />
+                <Cpu className={`w-3.5 h-3.5 text-white ${isScoring ? 'animate-spin' : ''}`} />
                 <span>{isScoring ? 'Scoring...' : 'Run Dual AI'}</span>
               </button>
             </div>

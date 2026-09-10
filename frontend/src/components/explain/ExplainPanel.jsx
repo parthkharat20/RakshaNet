@@ -42,30 +42,30 @@ Cryptographically prepared for Section 65B evidence submission.`;
       <div className="p-3 rounded-xl bg-zinc-900/90 border border-white/[0.06] space-y-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <Cpu className="w-3.5 h-3.5 text-zinc-400" />
+            <Cpu className="w-3.5 h-3.5 text-blue-400" />
             <span className="text-xs font-semibold text-zinc-200">Dual-Branch AI Fusion</span>
           </div>
           <span
             className={`px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider ${
               isCritical
-                ? 'bg-rose-950/60 text-rose-300 border border-rose-800/40'
-                : 'bg-zinc-800 text-zinc-300 border border-zinc-700/50'
+                ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+                : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
             }`}
           >
             {verdict}
           </span>
         </div>
 
-        {/* Fusion Meters */}
+        {/* Fusion Meters - Contrasting Blue (Graph) vs Rose (Geo) */}
         <div className="space-y-1.5">
           <div>
             <div className="flex justify-between text-[11px] text-zinc-400 mb-0.5">
-              <span>Graph Link Prediction (60%)</span>
-              <span className="text-zinc-200 font-mono font-medium">{(graphScore || 0).toFixed(3)} ({graphPercent}%)</span>
+              <span className="text-zinc-300">Graph Link Prediction (60%)</span>
+              <span className="text-blue-400 font-mono font-semibold">{(graphScore || 0).toFixed(3)} ({graphPercent}%)</span>
             </div>
             <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
               <div
-                className="h-full bg-zinc-200 rounded-full transition-all duration-300"
+                className="h-full bg-blue-500 rounded-full transition-all duration-300"
                 style={{ width: `${Math.min(graphPercent, 100)}%` }}
               />
             </div>
@@ -73,12 +73,12 @@ Cryptographically prepared for Section 65B evidence submission.`;
 
           <div>
             <div className="flex justify-between text-[11px] text-zinc-400 mb-0.5">
-              <span>Geospatial Cordon Proximity (40%)</span>
-              <span className="text-rose-400 font-mono font-medium">{(geoScore || 0).toFixed(3)} ({geoPercent}%)</span>
+              <span className="text-zinc-300">Geospatial Cordon Proximity (40%)</span>
+              <span className="text-rose-400 font-mono font-semibold">{(geoScore || 0).toFixed(3)} ({geoPercent}%)</span>
             </div>
             <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
               <div
-                className="h-full bg-rose-500/80 rounded-full transition-all duration-300"
+                className="h-full bg-rose-500 rounded-full transition-all duration-300"
                 style={{ width: `${Math.min(geoPercent, 100)}%` }}
               />
             </div>
@@ -87,7 +87,7 @@ Cryptographically prepared for Section 65B evidence submission.`;
 
         {/* Total Fused Score */}
         <div className="flex items-center justify-between pt-2 border-t border-white/[0.04]">
-          <span className="text-zinc-500 text-[11px]">Fused Probability:</span>
+          <span className="text-zinc-400 text-[11px]">Fused Probability:</span>
           <span className="text-base font-bold font-mono text-white">
             {(fusedScore * 100).toFixed(1)}%
           </span>
@@ -98,7 +98,7 @@ Cryptographically prepared for Section 65B evidence submission.`;
       <div className="p-3.5 rounded-xl bg-zinc-900/90 border border-white/[0.06] space-y-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <Scale className="w-3.5 h-3.5 text-zinc-400" />
+            <Scale className="w-3.5 h-3.5 text-amber-400" />
             <h4 className="font-semibold text-zinc-200 text-xs">
               SHAP Attribution Factors
             </h4>
@@ -109,7 +109,7 @@ Cryptographically prepared for Section 65B evidence submission.`;
             className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] border border-white/[0.06] transition-colors cursor-pointer"
             title="Copy court-admissible forensic text"
           >
-            {copied ? <Check className="w-3 h-3 text-zinc-200" /> : <Copy className="w-3 h-3" />}
+            {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-zinc-400" />}
             <span>{copied ? 'Copied' : 'Copy Dossier'}</span>
           </button>
         </div>

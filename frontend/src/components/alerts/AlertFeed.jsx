@@ -84,28 +84,50 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
             placeholder="Search suspects, accounts, banks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-white/20 transition-colors"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-sky-500/40 focus:ring-1 focus:ring-sky-500/20 transition-all"
           />
         </div>
 
         {/* Filter Segment Tabs */}
         <div className="flex items-center gap-1">
-          {filterTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setFilter(tab.id)}
-              className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-                filter === tab.id
-                  ? 'bg-zinc-800 text-white shadow-xs border border-white/[0.08]'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
-              }`}
-            >
-              <span>{tab.label}</span>
-              <span className="text-[10px] font-mono text-zinc-500">
-                {tab.count}
-              </span>
-            </button>
-          ))}
+          {filterTabs.map((tab) => {
+            const isActive = filter === tab.id;
+            let activeClass = 'bg-zinc-800 text-white shadow-xs border border-white/[0.08]';
+            let countClass = 'text-zinc-500';
+
+            if (isActive) {
+              if (tab.id === 'CRITICAL') {
+                activeClass = 'bg-rose-950/60 text-rose-200 border border-rose-500/30 shadow-xs';
+                countClass = 'text-rose-400 font-bold';
+              } else if (tab.id === 'ELEVATED') {
+                activeClass = 'bg-amber-950/60 text-amber-200 border border-amber-500/30 shadow-xs';
+                countClass = 'text-amber-400 font-bold';
+              } else if (tab.id === 'FROZEN') {
+                activeClass = 'bg-emerald-950/60 text-emerald-200 border border-emerald-500/30 shadow-xs';
+                countClass = 'text-emerald-400 font-bold';
+              } else {
+                activeClass = 'bg-sky-950/50 text-sky-200 border border-sky-500/30 shadow-xs';
+                countClass = 'text-sky-400 font-bold';
+              }
+            }
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setFilter(tab.id)}
+                className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  isActive
+                    ? activeClass
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`text-[10px] font-mono ${countClass}`}>
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

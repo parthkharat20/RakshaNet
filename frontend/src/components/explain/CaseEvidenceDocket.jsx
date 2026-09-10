@@ -60,19 +60,19 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
       {/* Docket Header */}
       <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between bg-zinc-900/80">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-zinc-400" />
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           <h3 className="font-mono font-semibold text-zinc-200 text-xs tracking-wide uppercase">
             Suspect Intelligence
           </h3>
         </div>
 
         <span
-          className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium ${
+          className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
             isFrozen
-              ? 'bg-zinc-800 text-zinc-300 border border-zinc-700/60'
+              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
               : isCritical
-              ? 'bg-rose-950/60 text-rose-300 border border-rose-800/40'
-              : 'bg-zinc-800 text-zinc-400 border border-zinc-700/50'
+              ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+              : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
           }`}
         >
           {isFrozen ? 'FROZEN' : isCritical ? 'CRITICAL' : 'ELEVATED'}
@@ -100,7 +100,7 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
               <span className="text-[10px] text-zinc-500 uppercase tracking-wider block">
                 Risk Score
               </span>
-              <span className={`text-xl font-bold font-mono ${isCritical ? 'text-rose-400' : 'text-zinc-200'}`}>
+              <span className={`text-xl font-bold font-mono ${isCritical ? 'text-rose-400' : 'text-amber-400'}`}>
                 {(alert.risk_score * 100).toFixed(0)}%
               </span>
             </div>
@@ -118,9 +118,9 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
           </div>
 
           {alert.bank_lien_reference && (
-            <div className="p-2 rounded bg-zinc-900 border border-zinc-700/60 text-zinc-200 flex items-center justify-between text-[10px]">
+            <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex items-center justify-between text-[10px]">
               <span className="flex items-center gap-1.5 font-medium">
-                <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                 Lien Reference:
               </span>
               <span className="font-bold text-white font-mono">{alert.bank_lien_reference}</span>
@@ -128,10 +128,10 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
           )}
         </div>
 
-        {/* Dual-AI Split Gauge - Minimal Telemetry */}
+        {/* Dual-AI Split Gauge */}
         <div className="p-3 rounded-lg bg-zinc-950/60 border border-white/[0.06] space-y-2">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="text-zinc-400 font-medium">Dual-AI Model</span>
+            <span className="text-zinc-300 font-medium">Dual-AI Model</span>
             <span className="text-zinc-500 text-[10px]">0.60·Graph + 0.40·Geo</span>
           </div>
 
@@ -139,11 +139,11 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
             <div>
               <div className="flex justify-between text-[10px] text-zinc-400 mb-0.5">
                 <span>Graph Link Prediction</span>
-                <span className="text-zinc-200 font-mono font-medium">{graphPct}%</span>
+                <span className="text-blue-400 font-mono font-semibold">{graphPct}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
                 <div
-                  className="h-full bg-zinc-200 rounded-full transition-all"
+                  className="h-full bg-blue-500 rounded-full transition-all"
                   style={{ width: `${Math.min(graphPct, 100)}%` }}
                 />
               </div>
@@ -152,11 +152,11 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
             <div>
               <div className="flex justify-between text-[10px] text-zinc-400 mb-0.5">
                 <span>Geospatial Proximity</span>
-                <span className="text-rose-400 font-mono font-medium">{geoPct}%</span>
+                <span className="text-rose-400 font-mono font-semibold">{geoPct}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-zinc-800 overflow-hidden">
                 <div
-                  className="h-full bg-rose-500/80 rounded-full transition-all"
+                  className="h-full bg-rose-500 rounded-full transition-all"
                   style={{ width: `${Math.min(geoPct, 100)}%` }}
                 />
               </div>
@@ -173,7 +173,7 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
               className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] border border-white/[0.06] transition-colors cursor-pointer"
               title="Copy forensic summary"
             >
-              {copied ? <Check className="w-3 h-3 text-zinc-200" /> : <Copy className="w-3 h-3" />}
+              {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-zinc-400" />}
               <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
           </div>
@@ -191,7 +191,7 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
                     <p className="font-medium text-zinc-200 text-[11px] truncate">{f.factor}</p>
                     <p className="text-zinc-500 text-[10px] mt-0.5 leading-snug truncate">{f.detail}</p>
                   </div>
-                  <span className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-mono text-[9px] font-medium shrink-0 border border-zinc-700/50">
+                  <span className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono text-[9px] font-semibold shrink-0 border border-amber-500/20">
                     {f.impact}
                   </span>
                 </div>
@@ -209,14 +209,14 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
             isFrozen={isFrozen}
           />
 
-          {/* Secondary Actions - Unified Neutral Monochrome */}
+          {/* Secondary Actions - Semantic Purposeful Accents */}
           <div className="grid grid-cols-3 gap-1.5">
             <button
               onClick={onOpenDossier}
               className="py-1.5 px-2 rounded-lg bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] text-zinc-300 text-[11px] font-mono flex items-center justify-center gap-1.5 transition-all cursor-pointer truncate"
               title="Section 65B Electronic Evidence Brief"
             >
-              <FileText className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <FileText className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span className="truncate">Sec 65B</span>
             </button>
 
@@ -225,7 +225,7 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
               className="py-1.5 px-2 rounded-lg bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] text-zinc-300 text-[11px] font-mono flex items-center justify-center gap-1.5 transition-all cursor-pointer truncate"
               title="Section 457 Restitution Order"
             >
-              <Coins className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <Coins className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span className="truncate">Sec 457</span>
             </button>
 
@@ -234,7 +234,7 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
               className="py-1.5 px-2 rounded-lg bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] text-zinc-300 text-[11px] font-mono flex items-center justify-center gap-1.5 transition-all cursor-pointer truncate"
               title="Dispatch Patrol"
             >
-              <Radio className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <Radio className="w-3.5 h-3.5 text-blue-400 shrink-0" />
               <span className="truncate">Patrol</span>
             </button>
           </div>

@@ -12,48 +12,54 @@ export const StatsBar = () => {
       value: stats?.total_complaints || 31,
       sub: `Loss ${formatINR(stats?.total_loss_reported || stats?.total_loss_reported_inr || 3472242)}`,
       icon: ShieldAlert,
+      iconColor: 'text-rose-400',
       badge: 'NCRP',
-      badgeColor: 'text-zinc-300 bg-zinc-800/90 border border-zinc-700/50'
+      badgeColor: 'text-rose-400 bg-rose-500/10 border border-rose-500/20'
     },
     {
       label: 'Accounts Monitored',
       value: (stats?.total_accounts_monitored || 500).toLocaleString('en-IN'),
       sub: `${(stats?.total_transactions || 2526).toLocaleString('en-IN')} Txns`,
       icon: Users,
+      iconColor: 'text-blue-400',
       badge: 'Live',
-      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
+      badgeColor: 'text-blue-400 bg-blue-500/10 border border-blue-500/20'
     },
     {
       label: 'Mule Syndicates',
       value: stats?.active_mule_rings || stats?.active_mule_rings_count || 3,
       sub: 'Graph Detected',
       icon: Network,
+      iconColor: 'text-amber-400',
       badge: 'Rings',
-      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
+      badgeColor: 'text-amber-400 bg-amber-500/10 border border-amber-500/20'
     },
     {
       label: 'ATM Hotspots',
       value: stats?.high_risk_atms_count || 6,
       sub: 'Geofenced High Risk',
       icon: MapPin,
+      iconColor: 'text-indigo-400',
       badge: 'Cordon',
-      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
+      badgeColor: 'text-indigo-400 bg-indigo-500/10 border border-indigo-500/20'
     },
     {
       label: 'Accounts Frozen',
       value: stats?.frozen_accounts_count || 6,
       sub: 'Sec 91 Liens',
       icon: Lock,
+      iconColor: 'text-cyan-400',
       badge: 'Sec 91',
-      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
+      badgeColor: 'text-cyan-400 bg-cyan-500/10 border border-cyan-500/20'
     },
     {
       label: 'Funds Intercepted',
       value: formatINR(stats?.total_funds_intercepted || stats?.total_funds_intercepted_inr || 83060),
       sub: 'Held for Restitution',
       icon: IndianRupee,
+      iconColor: 'text-emerald-400',
       badge: 'Sec 457',
-      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
+      badgeColor: 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
     }
   ];
 
@@ -64,13 +70,16 @@ export const StatsBar = () => {
         return (
           <div
             key={idx}
-            className="p-3 rounded-lg bg-zinc-900/60 border border-white/[0.06] hover:border-white/[0.12] transition-all flex flex-col justify-between"
+            className="p-3 rounded-lg bg-zinc-900/60 border border-white/[0.06] hover:border-white/[0.15] transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between gap-1 mb-1.5">
-              <span className="text-[11px] font-medium text-zinc-400 truncate">
-                {card.label}
-              </span>
-              <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold ${card.badgeColor}`}>
+              <div className="flex items-center gap-1.5 truncate">
+                <Icon className={`w-3.5 h-3.5 shrink-0 ${card.iconColor}`} />
+                <span className="text-[11px] font-medium text-zinc-300 truncate">
+                  {card.label}
+                </span>
+              </div>
+              <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold shrink-0 ${card.badgeColor}`}>
                 {card.badge}
               </span>
             </div>
@@ -85,7 +94,7 @@ export const StatsBar = () => {
               </div>
             </div>
 
-            <div className="text-[11px] text-zinc-500 truncate pt-1.5 border-t border-white/[0.04]">
+            <div className="text-[11px] text-zinc-400 truncate pt-1.5 border-t border-white/[0.04]">
               {card.sub}
             </div>
           </div>

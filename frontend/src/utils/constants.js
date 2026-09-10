@@ -3,11 +3,11 @@
  */
 
 export const ROLE_COLORS = {
-  VICTIM: '#94a3b8',      // Slate 400: Defrauded citizen node
-  MULE_HUB: '#e11d48',    // Crimson: Interdicted mule aggregator (Primary Threat Accent)
-  MULE_NODE: '#d4d4d8',   // Zinc 300: Layering intermediary mule
-  CLEAN: '#52525b',       // Zinc 600: Legitimate background account
-  ATM: '#71717a'          // Zinc 500: Physical cash-out terminal
+  VICTIM: '#38bdf8',      // Cyan-Blue: Defrauded citizen node
+  MULE_HUB: '#f43f5e',    // Crimson: Interdicted mule aggregator (Primary Threat Accent)
+  MULE_NODE: '#fbbf24',   // Amber: Layering intermediary mule
+  CLEAN: '#64748b',       // Slate: Legitimate background account
+  ATM: '#10b981'          // Emerald: Physical cash-out terminal
 };
 
 export const ROLE_LABELS = {

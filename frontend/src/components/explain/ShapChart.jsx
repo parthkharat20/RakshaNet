@@ -48,26 +48,32 @@ export const ShapChart = ({ factors = [] }) => {
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
                   {item.isPositive ? (
-                    <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                   ) : (
-                    <ArrowDownRight className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                    <ArrowDownRight className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   )}
                   <span className="text-xs font-medium text-zinc-200 truncate">
                     {item.factor}
                   </span>
                 </div>
 
-                <span className="font-mono font-medium text-xs px-1.5 py-0.5 rounded shrink-0 bg-zinc-800 text-zinc-300 border border-zinc-700/60">
+                <span
+                  className={`font-mono font-bold text-xs px-1.5 py-0.5 rounded shrink-0 ${
+                    item.isPositive
+                      ? 'text-rose-400 bg-rose-500/10 border border-rose-500/20'
+                      : 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
+                  }`}
+                >
                   {formattedImpact}
                 </span>
               </div>
 
-              {/* Visual Deviation Bar - High Precision Minimal Meter */}
+              {/* Visual Deviation Bar - High Precision Dynamic Meter */}
               <div className="space-y-1">
                 <div className="w-full h-1.5 rounded-full bg-zinc-800/80 overflow-hidden relative">
                   <div
                     className={`h-full rounded-full transition-all duration-300 ${
-                      item.isPositive ? 'bg-rose-500/80' : 'bg-zinc-500'
+                      item.isPositive ? 'bg-gradient-to-r from-amber-500 to-rose-500' : 'bg-emerald-500'
                     }`}
                     style={{ width: `${impactPercent}%` }}
                   />

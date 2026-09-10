@@ -91,7 +91,7 @@ export const HeatmapView = () => {
       {/* Header & Controls */}
       <div className="p-3 border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-2 z-10 bg-zinc-900/80 backdrop-blur-md">
         <div className="flex items-center gap-2">
-          <MapPin className="w-3.5 h-3.5 text-zinc-400" />
+          <MapPin className="w-3.5 h-3.5 text-blue-400" />
           <h3 className="font-mono font-semibold text-zinc-200 text-xs tracking-wide uppercase">
             Geospatial Grid
           </h3>
@@ -102,26 +102,26 @@ export const HeatmapView = () => {
 
         {/* Controls */}
         <div className="flex items-center gap-2">
-          {/* Layer toggles - Clean Monochrome Switches */}
+          {/* Layer toggles - Distinct Tactical Switches */}
           <div className="flex items-center gap-1 bg-zinc-950/60 p-0.5 rounded-lg border border-white/[0.06] text-xs font-mono">
             <button
               onClick={() => setShowPatrols(!showPatrols)}
               className={`px-2.5 py-0.5 rounded text-[11px] transition-colors flex items-center gap-1.5 cursor-pointer ${
-                showPatrols ? 'bg-zinc-700 text-white font-medium shadow-xs' : 'text-zinc-400 hover:text-zinc-200'
+                showPatrols ? 'bg-blue-600 text-white font-medium shadow-xs' : 'text-zinc-400 hover:text-zinc-200'
               }`}
               title="Toggle Patrols"
             >
-              <Shield className="w-3 h-3 text-zinc-300" />
+              <Shield className="w-3 h-3" />
               <span>Patrols</span>
             </button>
             <button
               onClick={() => setShowGeofences(!showGeofences)}
               className={`px-2.5 py-0.5 rounded text-[11px] transition-colors flex items-center gap-1.5 cursor-pointer ${
-                showGeofences ? 'bg-zinc-700 text-white font-medium shadow-xs' : 'text-zinc-400 hover:text-zinc-200'
+                showGeofences ? 'bg-rose-600 text-white font-medium shadow-xs' : 'text-zinc-400 hover:text-zinc-200'
               }`}
               title="Toggle Cordon"
             >
-              <Radio className="w-3 h-3 text-zinc-300" />
+              <Radio className="w-3 h-3" />
               <span>Cordon</span>
             </button>
           </div>
@@ -282,7 +282,7 @@ export const HeatmapView = () => {
         {/* Tactical Map Legend */}
         <div className="absolute bottom-3 right-3 z-[400] p-2 rounded-lg bg-zinc-950/85 backdrop-blur-md border border-white/[0.08] text-[10px] font-mono space-y-1 pointer-events-none text-zinc-400">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-zinc-300" />
+            <span className="w-2 h-2 rounded-full bg-blue-500" />
             <span>Patrol Units ({patrols.length})</span>
           </div>
           <div className="flex items-center gap-2">
@@ -290,11 +290,11 @@ export const HeatmapView = () => {
             <span>ATM Cashout Hotspot</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-zinc-600" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span>Monitored ATM</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-zinc-400" />
+            <span className="w-2 h-2 rounded-full bg-amber-500" />
             <span>Citizen Complaint</span>
           </div>
         </div>

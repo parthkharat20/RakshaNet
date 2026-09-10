@@ -9,19 +9,19 @@ import { Shield, Radio, Navigation, Clock, UserCheck, AlertOctagon } from 'lucid
 const createPatrolIcon = (unit) => {
   const isDispatched = unit.status === 'DISPATCHED_INTERDICTION';
 
-  const badgeBorder = isDispatched ? '#e11d48' : 'rgba(255, 255, 255, 0.3)';
-  const badgeBg = isDispatched ? '#18181b' : '#18181b';
+  const badgeBorder = isDispatched ? '#ef4444' : '#3b82f6';
+  const badgeBg = '#0f172a';
 
   const svgIcon = `
     <div class="relative flex items-center justify-center cursor-pointer group">
       ${isDispatched ? '<div class="absolute -inset-1.5 rounded-full bg-rose-500/25 animate-ping"></div>' : ''}
       <div class="relative flex items-center justify-center w-7 h-7 rounded-full border shadow-sm"
            style="background: ${badgeBg}; border-color: ${badgeBorder};">
-        <svg class="w-3.5 h-3.5 ${isDispatched ? 'text-rose-400 animate-spin' : 'text-zinc-300'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="w-3.5 h-3.5 ${isDispatched ? 'text-rose-400 animate-spin' : 'text-blue-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
         </svg>
       </div>
-      <div class="absolute -bottom-4 px-1.5 py-0.2 rounded bg-zinc-950/95 border border-white/10 text-[9px] font-mono text-zinc-300 font-medium whitespace-nowrap shadow-xs">
+      <div class="absolute -bottom-4 px-1.5 py-0.2 rounded bg-zinc-950/95 border border-blue-500/25 text-[9px] font-mono text-blue-200 font-medium whitespace-nowrap shadow-xs">
         ${unit.callsign.split('-').slice(-2).join('-')}
       </div>
     </div>

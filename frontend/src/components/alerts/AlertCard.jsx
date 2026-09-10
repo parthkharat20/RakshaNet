@@ -14,7 +14,9 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
       onClick={onSelect}
       className={`p-3 rounded-lg cursor-pointer transition-all border text-xs relative select-none ${
         isSelected
-          ? 'bg-zinc-800/90 border-zinc-500 shadow-xs'
+          ? 'bg-blue-950/25 border-blue-500/60 shadow-sm'
+          : isFrozen
+          ? 'bg-zinc-900/40 border-emerald-500/20 hover:border-emerald-500/40 hover:bg-zinc-800/40'
           : isCritical
           ? 'bg-zinc-900/40 border-rose-500/20 hover:border-rose-500/40 hover:bg-zinc-800/40'
           : 'bg-zinc-900/40 border-white/[0.04] hover:border-white/[0.1] hover:bg-zinc-800/30'
@@ -26,10 +28,10 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
           <span
             className={`px-1.5 py-0.5 rounded text-[9px] font-semibold tracking-wider shrink-0 ${
               isFrozen
-                ? 'bg-zinc-800 text-zinc-300 border border-zinc-700/60'
+                ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
                 : isCritical
-                ? 'bg-rose-950/60 text-rose-300 border border-rose-800/40'
-                : 'bg-zinc-800 text-zinc-400 border border-zinc-700/50'
+                ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+                : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
             }`}
           >
             {isFrozen ? 'FROZEN' : isCritical ? 'CRITICAL' : 'ELEVATED'}
@@ -42,8 +44,10 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
         <span
           className={`font-mono font-bold text-xs px-1.5 py-0.5 rounded shrink-0 ${
             isCritical
-              ? 'text-rose-400 bg-rose-500/10'
-              : 'text-zinc-300 bg-zinc-800'
+              ? 'text-rose-400 bg-rose-500/10 border border-rose-500/20'
+              : isElevated
+              ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20'
+              : 'text-zinc-300 bg-zinc-800 border border-zinc-700/40'
           }`}
         >
           {(alert.risk_score * 100).toFixed(0)}%
@@ -70,7 +74,7 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
           <span className="truncate text-zinc-300">
             {topFactor.factor}: <span className="text-zinc-500">{topFactor.detail}</span>
           </span>
-          <span className="text-zinc-300 font-mono font-medium shrink-0 text-[10px]">
+          <span className="text-amber-400 font-mono font-semibold shrink-0 text-[10px]">
             {topFactor.impact}
           </span>
         </div>

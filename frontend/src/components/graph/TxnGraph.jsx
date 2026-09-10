@@ -280,7 +280,7 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
       {/* Header & Controls Bar */}
       <div className="px-3.5 py-2.5 border-b border-white/[0.06] flex items-center justify-between z-10 bg-zinc-900/80 backdrop-blur-md">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-zinc-800 border border-white/[0.08] flex items-center justify-center text-zinc-400">
+          <div className="w-5 h-5 rounded bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
             <Network className="w-3 h-3" />
           </div>
           <div>
@@ -346,7 +346,7 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
       <div ref={containerRef} className="flex-1 relative w-full h-full min-h-[360px] bg-[#09090b] overflow-hidden">
         {isLoading && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-950/80 backdrop-blur-xs text-zinc-400">
-            <RefreshCw className="w-5 h-5 animate-spin text-zinc-400 mb-2" />
+            <RefreshCw className="w-5 h-5 animate-spin text-blue-400 mb-2" />
             <p className="text-xs font-mono">Traversing Graph...</p>
           </div>
         )}
@@ -365,12 +365,12 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
             ctx.arc(node.x, node.y, 9, 0, 2 * Math.PI, false);
             ctx.fill();
           }}
-          linkColor={link => link.isFlagged ? '#e11d48' : 'rgba(255, 255, 255, 0.18)'}
-          linkWidth={link => link.isFlagged ? 1.6 : 1}
+          linkColor={link => link.isFlagged ? '#ef4444' : 'rgba(56, 189, 248, 0.35)'}
+          linkWidth={link => link.isFlagged ? 1.8 : 1}
           linkDirectionalParticles={2}
-          linkDirectionalParticleWidth={1.8}
+          linkDirectionalParticleWidth={2}
           linkDirectionalParticleSpeed={0.006}
-          linkDirectionalParticleColor={link => link.isFlagged ? '#e11d48' : 'rgba(255, 255, 255, 0.4)'}
+          linkDirectionalParticleColor={link => link.isFlagged ? '#ef4444' : '#38bdf8'}
           onNodeClick={(node) => {
             if (onNodeClick) onNodeClick(node);
           }}
@@ -388,7 +388,7 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
             <div className="text-zinc-400 text-[11px]">{hoverNode.accountNumber} • {hoverNode.bank}</div>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-zinc-500">Role:</span>
-              <span style={{ color: ROLE_COLORS[hoverNode.role] || '#e11d48' }}>{hoverNode.role}</span>
+              <span style={{ color: ROLE_COLORS[hoverNode.role] || '#ef4444' }}>{hoverNode.role}</span>
               <span className="text-zinc-600">•</span>
               <span className="text-zinc-500">Risk:</span>
               <span className="font-bold text-rose-400 font-mono">{(hoverNode.risk * 100).toFixed(0)}%</span>
@@ -398,10 +398,10 @@ export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
 
         {/* Floating Topology Legend */}
         <div className="absolute bottom-3 right-3 z-10 p-2 rounded-lg bg-zinc-950/85 border border-white/[0.08] text-[10px] font-mono space-y-1">
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-slate-400" /> Victim</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-sky-400" /> Victim</div>
           <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-rose-500" /> Mule Hub</div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-zinc-300" /> Intermediary</div>
-          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-zinc-500" /> ATM Terminal</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-amber-400" /> Intermediary</div>
+          <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-emerald-500" /> ATM Terminal</div>
         </div>
       </div>
     </div>
