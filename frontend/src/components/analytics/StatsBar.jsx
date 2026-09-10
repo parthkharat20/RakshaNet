@@ -67,10 +67,10 @@ export const StatsBar = () => {
             className="p-3 rounded-lg bg-zinc-900/60 border border-white/[0.06] hover:border-white/[0.12] transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between gap-1 mb-1.5">
-              <span className="text-[11px] font-mono font-medium text-zinc-400 truncate">
+              <span className="text-[11px] font-medium text-zinc-400 truncate">
                 {card.label}
               </span>
-              <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-medium ${card.badgeColor}`}>
+              <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-semibold ${card.badgeColor}`}>
                 {card.badge}
               </span>
             </div>
@@ -85,7 +85,7 @@ export const StatsBar = () => {
               </div>
             </div>
 
-            <div className="text-[10px] font-mono text-zinc-500 truncate pt-1.5 border-t border-white/[0.04]">
+            <div className="text-[11px] text-zinc-500 truncate pt-1.5 border-t border-white/[0.04]">
               {card.sub}
             </div>
           </div>

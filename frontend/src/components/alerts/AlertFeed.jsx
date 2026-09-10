@@ -67,7 +67,7 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <h3 className="font-mono font-semibold text-zinc-200 text-xs tracking-wide uppercase">
+            <h3 className="font-semibold text-zinc-200 text-xs tracking-wide uppercase">
               Incident Queue
             </h3>
           </div>
@@ -78,13 +78,13 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
 
         {/* Search Input */}
         <div className="relative">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-2 text-zinc-500" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-zinc-500" />
           <input
             type="text"
             placeholder="Search suspects, accounts, banks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-indigo-500/50 transition-colors font-mono"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-indigo-500/50 transition-colors"
           />
         </div>
 
@@ -94,14 +94,14 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
             <button
               key={tab.id}
               onClick={() => setFilter(tab.id)}
-              className={`flex-1 py-1 rounded-md text-[11px] font-mono font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+              className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                 filter === tab.id
                   ? 'bg-zinc-800 text-white shadow-sm border border-white/[0.08]'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
               }`}
             >
               <span>{tab.label}</span>
-              <span className="text-[10px] text-zinc-500">
+              <span className="text-[10px] font-mono text-zinc-500">
                 {tab.count}
               </span>
             </button>

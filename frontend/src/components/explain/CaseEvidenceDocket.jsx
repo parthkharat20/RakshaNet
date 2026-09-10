@@ -80,7 +80,7 @@ ${factors.map((f, i) => `${i + 1}. [${f.impact}] ${f.factor}: ${f.detail}`).join
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto p-3.5 space-y-3 font-mono text-xs">
+      <div className="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs">
         {/* Suspect Identity */}
         <div className="p-3 rounded-lg bg-zinc-950/60 border border-white/[0.06] space-y-2">
           <div className="flex items-start justify-between">

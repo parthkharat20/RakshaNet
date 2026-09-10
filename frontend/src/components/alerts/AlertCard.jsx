@@ -12,7 +12,7 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
   return (
     <div
       onClick={onSelect}
-      className={`p-3 rounded-lg cursor-pointer transition-all border font-mono text-xs relative select-none ${
+      className={`p-3 rounded-lg cursor-pointer transition-all border text-xs relative select-none ${
         isSelected
           ? 'bg-zinc-800/90 border-indigo-500/60 shadow-sm'
           : isFrozen

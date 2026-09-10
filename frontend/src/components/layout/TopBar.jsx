@@ -78,7 +78,7 @@ export const TopBar = () => {
             <nav className="flex items-center gap-1 p-0.5 rounded-lg bg-zinc-900/80 border border-white/[0.06]">
               <Link
                 to="/"
-                className={`px-3 py-1 rounded-md text-xs font-mono font-medium transition-all ${
+                className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
                   location.pathname === '/'
                     ? 'bg-zinc-800 text-white shadow-sm border border-white/10'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
@@ -88,7 +88,7 @@ export const TopBar = () => {
               </Link>
               <Link
                 to="/command"
-                className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${
                   location.pathname === '/command'
                     ? 'bg-zinc-800 text-white shadow-sm border border-white/10'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
@@ -100,14 +100,14 @@ export const TopBar = () => {
             </nav>
 
             {/* Live Gateway & Clock Pill */}
-            <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900/60 border border-white/[0.05] text-[11px] font-mono text-zinc-400">
+            <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-900/60 border border-white/[0.05] text-[11px] text-zinc-400">
               <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-              <span className={wsConnected ? 'text-zinc-300 font-medium' : 'text-amber-400'}>
+              <span className={`text-[10px] font-mono font-semibold ${wsConnected ? 'text-emerald-400' : 'text-amber-400'}`}>
                 {wsConnected ? 'LIVE' : 'RECONNECTING'}
               </span>
               <span className="text-zinc-600">|</span>
               <Clock className="w-3 h-3 text-zinc-500" />
-              <span className="text-zinc-300">{istTime} IST</span>
+              <span className="text-zinc-200 font-mono text-[11px]">{istTime} IST</span>
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export const TopBar = () => {
             <div className="flex items-center gap-1.5 ml-1">
               <button
                 onClick={() => setIsScenarioModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/25 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/25 transition-all cursor-pointer"
                 title="Inject attack simulation"
               >
                 <Zap className="w-3.5 h-3.5 text-amber-400" />
@@ -149,7 +149,7 @@ export const TopBar = () => {
 
               <button
                 onClick={() => setIsTrackModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 transition-all cursor-pointer"
                 title="Citizen restitution status"
               >
                 <HeartHandshake className="w-3.5 h-3.5 text-emerald-400" />
@@ -159,7 +159,7 @@ export const TopBar = () => {
               <button
                 onClick={runScoring}
                 disabled={isScoring}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-medium text-indigo-200 bg-indigo-600 hover:bg-indigo-500 border border-indigo-400/30 shadow-sm transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-indigo-200 bg-indigo-600 hover:bg-indigo-500 border border-indigo-400/30 shadow-sm transition-all cursor-pointer ${
                   isScoring ? 'opacity-60 cursor-not-allowed' : ''
                 }`}
                 title="Run Dual-AI Scoring"
@@ -174,9 +174,9 @@ export const TopBar = () => {
               <div className="w-7 h-7 rounded-md bg-zinc-900 border border-white/[0.08] flex items-center justify-center text-zinc-400">
                 <User className="w-3.5 h-3.5 text-zinc-300" />
               </div>
-              <div className="text-right hidden sm:block leading-tight font-mono">
+              <div className="text-right hidden sm:block leading-tight">
                 <div className="text-xs font-medium text-zinc-200">{officer.name}</div>
-                <div className="text-[10px] text-zinc-500">{officer.badge_id}</div>
+                <div className="text-[10px] text-zinc-500 font-mono">{officer.badge_id}</div>
               </div>
 
               <button

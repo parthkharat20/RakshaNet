@@ -12,17 +12,20 @@ import {
   Terminal,
   ArrowLeft,
   FileText,
-  ChevronDown,
-  ChevronUp,
   Radio,
-  Coins
+  Coins,
+  LayoutGrid,
+  Columns,
+  Scale
 } from 'lucide-react';
 import { maskAccountNumber } from '../utils/constants';
 
 export const CommandPage = () => {
   const location = useLocation();
   const { alerts, selectedAlert, setSelectedAlert } = useAlertContext();
-  const [drawerExpanded, setDrawerExpanded] = useState(true);
+  
+  // Layout mode: 'TRI' (Graph + Map + SHAP), 'DUAL' (Graph + Map), 'FORENSIC' (Graph + SHAP)
+  const [layoutMode, setLayoutMode] = useState('TRI');
 
   // Tactical Action Modal States
   const [patrolModalOpen, setPatrolModalOpen] = useState(false);
@@ -44,9 +47,9 @@ export const CommandPage = () => {
   const isFrozen = currentTarget?.status === 'FREEZE_DISPATCHED' || currentTarget?.status === 'FREEZE_CONFIRMED';
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-[#09090b] font-mono select-none">
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-[#09090b] select-none">
       {/* Tactical Subheader / Context Bar */}
-      <div className="h-12 border-b border-white/[0.08] bg-zinc-900/80 px-5 flex items-center justify-between shrink-0">
+      <div className="h-12 border-b border-white/[0.08] bg-zinc-900/80 px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <Link
             to="/"
@@ -61,6 +64,48 @@ export const CommandPage = () => {
               Command Theater
             </span>
           </div>
+
+          {/* View Mode Switcher Pills */}
+          <div className="hidden md:flex items-center gap-1 ml-3 p-0.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs">
+            <button
+              onClick={() => setLayoutMode('TRI')}
+              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                layoutMode === 'TRI'
+                  ? 'bg-zinc-800 text-white shadow-xs border border-white/10'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              }`}
+              title="Full Tri-Command Grid (Graph + Map + SHAP)"
+            >
+              <LayoutGrid className="w-3 h-3 text-indigo-400" />
+              <span>Tri-Grid (All)</span>
+            </button>
+
+            <button
+              onClick={() => setLayoutMode('DUAL')}
+              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                layoutMode === 'DUAL'
+                  ? 'bg-zinc-800 text-white shadow-xs border border-white/10'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              }`}
+              title="Graph & Map Surveillance"
+            >
+              <Columns className="w-3 h-3 text-rose-400" />
+              <span>Surveillance (2)</span>
+            </button>
+
+            <button
+              onClick={() => setLayoutMode('FORENSIC')}
+              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                layoutMode === 'FORENSIC'
+                  ? 'bg-zinc-800 text-white shadow-xs border border-white/10'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              }`}
+              title="Graph & SHAP Attribution Deep-Dive"
+            >
+              <Scale className="w-3 h-3 text-amber-400" />
+              <span>Forensic XAI (2)</span>
+            </button>
+          </div>
         </div>
 
         {/* Selected Suspect Info Ticker & Full Action Suite */}
@@ -68,9 +113,9 @@ export const CommandPage = () => {
           <div className="flex items-center gap-2 text-xs">
             <div className="hidden lg:flex items-center gap-2 bg-zinc-950/80 px-2.5 py-1 rounded-md border border-white/[0.06]">
               <span className="text-zinc-500 text-[10px]">TARGET:</span>
-              <span className="font-medium text-white">{currentTarget.target_holder_name}</span>
-              <span className="text-zinc-500">({maskAccountNumber(currentTarget.target_account_number)})</span>
-              <span className={`px-1.5 py-0.2 rounded font-medium text-[10px] ${
+              <span className="font-semibold text-white">{currentTarget.target_holder_name}</span>
+              <span className="text-zinc-400 font-mono text-[11px]">({maskAccountNumber(currentTarget.target_account_number)})</span>
+              <span className={`px-1.5 py-0.2 rounded font-bold font-mono text-[10px] ${
                 isCritical ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
               }`}>
                 {(currentTarget.risk_score * 100).toFixed(0)}% RISK
@@ -80,7 +125,7 @@ export const CommandPage = () => {
             {/* Quick Tactical Action Buttons */}
             <button
               onClick={() => setDossierModalOpen(true)}
-              className="px-2.5 py-1 rounded-md text-xs font-mono text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] transition-colors cursor-pointer flex items-center gap-1"
+              className="px-2.5 py-1 rounded-md text-xs font-medium text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] transition-colors cursor-pointer flex items-center gap-1"
               title="Export Section 65B Evidence Dossier"
             >
               <FileText className="w-3 h-3 text-emerald-400" />
@@ -89,7 +134,7 @@ export const CommandPage = () => {
 
             <button
               onClick={() => setRestitutionModalOpen(true)}
-              className="px-2.5 py-1 rounded-md text-xs font-mono text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] transition-colors cursor-pointer flex items-center gap-1"
+              className="px-2.5 py-1 rounded-md text-xs font-medium text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] transition-colors cursor-pointer flex items-center gap-1"
               title="Execute Section 457 Restitution"
             >
               <Coins className="w-3 h-3 text-cyan-400" />
@@ -98,7 +143,7 @@ export const CommandPage = () => {
 
             <button
               onClick={() => setPatrolModalOpen(true)}
-              className="px-2.5 py-1 rounded-md text-xs font-mono text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] transition-colors cursor-pointer flex items-center gap-1"
+              className="px-2.5 py-1 rounded-md text-xs font-medium text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/[0.06] transition-colors cursor-pointer flex items-center gap-1"
               title="Dispatch Mobile Beat Patrol to ATM"
             >
               <Radio className="w-3 h-3 text-rose-400" />
@@ -120,56 +165,107 @@ export const CommandPage = () => {
         )}
       </div>
 
-      {/* Dual Split Screen: Graph (Left) & Geo Hotspots (Right) */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-2.5 p-2.5 overflow-hidden">
-        {/* Left Screen: Neo4j Multi-Hop Graph */}
-        <div className="h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
-          <TxnGraph
-            accountId={targetAccId}
-            accountNumber={currentTarget?.target_account_number}
-            onNodeClick={(node) => {
-              const matched = alerts.find(a => a.target_account_id === node.id || a.target_account_number === node.accountNumber);
-              if (matched) setSelectedAlert(matched);
-            }}
-          />
-        </div>
+      {/* Main Tactical Viewport: Adaptive Grid based on layoutMode */}
+      <div className="flex-1 p-2.5 overflow-hidden">
+        {layoutMode === 'TRI' && (
+          <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-2.5 overflow-hidden">
+            {/* Screen 1: Neo4j Multi-Hop Graph (4 Cols / ~33%) */}
+            <div className="lg:col-span-4 h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
+              <TxnGraph
+                accountId={targetAccId}
+                accountNumber={currentTarget?.target_account_number}
+                onNodeClick={(node) => {
+                  const matched = alerts.find(a => a.target_account_id === node.id || a.target_account_number === node.accountNumber);
+                  if (matched) setSelectedAlert(matched);
+                }}
+              />
+            </div>
 
-        {/* Right Screen: PostGIS ATM Cash-Out Hotspot Map */}
-        <div className="h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
-          <HeatmapView />
-        </div>
-      </div>
+            {/* Screen 2: PostGIS ATM Cash-Out Hotspot Map (4 Cols / ~33%) */}
+            <div className="lg:col-span-4 h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
+              <HeatmapView />
+            </div>
 
-      {/* Bottom Collapsible Intelligence Tray */}
-      <div className={`border-t border-white/[0.08] bg-zinc-950/95 transition-all duration-200 shrink-0 ${
-        drawerExpanded ? 'h-64' : 'h-8'
-      }`}>
-        <div
-          onClick={() => setDrawerExpanded(!drawerExpanded)}
-          className="h-8 px-5 flex items-center justify-between cursor-pointer hover:bg-zinc-900/50 border-b border-white/[0.04] select-none text-xs"
-        >
-          <div className="flex items-center gap-2">
-            <FileText className="w-3 h-3 text-indigo-400" />
-            <span className="font-semibold text-zinc-200">Intelligence Dossier & Explainability</span>
-            <span className="text-[11px] text-zinc-500">
-              ({currentTarget ? `${currentTarget.target_holder_name} • ${maskAccountNumber(currentTarget.target_account_number)}` : 'No Target Selected'})
-            </span>
+            {/* Screen 3: Dedicated Full-Height AI Forensic & SHAP Attribution Suite (4 Cols / ~34%) */}
+            <div className="lg:col-span-4 h-full rounded-xl overflow-y-auto border border-white/[0.06] bg-zinc-900/60 p-3 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="font-semibold text-zinc-200 text-xs tracking-wide uppercase">
+                    Forensic XAI Intelligence
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-zinc-500">
+                  Target: {currentTarget ? maskAccountNumber(currentTarget.target_account_number) : 'N/A'}
+                </span>
+              </div>
+
+              <ExplainPanel
+                explanation={currentTarget?.explanation}
+                fusedScore={currentTarget?.risk_score || 0}
+                graphScore={currentTarget?.graph_score || 0}
+                geoScore={currentTarget?.geo_score || 0}
+              />
+            </div>
           </div>
+        )}
 
-          <div className="flex items-center gap-1 text-zinc-400 text-xs">
-            <span>{drawerExpanded ? 'Collapse' : 'Expand'}</span>
-            {drawerExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+        {layoutMode === 'DUAL' && (
+          <div className="h-full grid grid-cols-1 lg:grid-cols-2 gap-2.5 overflow-hidden">
+            {/* 50% Graph */}
+            <div className="h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
+              <TxnGraph
+                accountId={targetAccId}
+                accountNumber={currentTarget?.target_account_number}
+                onNodeClick={(node) => {
+                  const matched = alerts.find(a => a.target_account_id === node.id || a.target_account_number === node.accountNumber);
+                  if (matched) setSelectedAlert(matched);
+                }}
+              />
+            </div>
+
+            {/* 50% Map */}
+            <div className="h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
+              <HeatmapView />
+            </div>
           </div>
-        </div>
+        )}
 
-        {drawerExpanded && (
-          <div className="h-[calc(16rem-2rem)] overflow-y-auto p-3.5">
-            <ExplainPanel
-              explanation={currentTarget?.explanation}
-              fusedScore={currentTarget?.risk_score || 0}
-              graphScore={currentTarget?.graph_score || 0}
-              geoScore={currentTarget?.geo_score || 0}
-            />
+        {layoutMode === 'FORENSIC' && (
+          <div className="h-full grid grid-cols-1 lg:grid-cols-12 gap-2.5 overflow-hidden">
+            {/* 60% Graph */}
+            <div className="lg:col-span-7 h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
+              <TxnGraph
+                accountId={targetAccId}
+                accountNumber={currentTarget?.target_account_number}
+                onNodeClick={(node) => {
+                  const matched = alerts.find(a => a.target_account_id === node.id || a.target_account_number === node.accountNumber);
+                  if (matched) setSelectedAlert(matched);
+                }}
+              />
+            </div>
+
+            {/* 40% Forensic SHAP */}
+            <div className="lg:col-span-5 h-full rounded-xl overflow-y-auto border border-white/[0.06] bg-zinc-900/60 p-4 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="font-semibold text-zinc-200 text-xs tracking-wide uppercase">
+                    Forensic XAI & SHAP Attribution
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono text-zinc-500">
+                  Target: {currentTarget ? maskAccountNumber(currentTarget.target_account_number) : 'N/A'}
+                </span>
+              </div>
+
+              <ExplainPanel
+                explanation={currentTarget?.explanation}
+                fusedScore={currentTarget?.risk_score || 0}
+                graphScore={currentTarget?.graph_score || 0}
+                geoScore={currentTarget?.geo_score || 0}
+              />
+            </div>
           </div>
         )}
       </div>
@@ -205,3 +301,4 @@ export const CommandPage = () => {
     </div>
   );
 };
+
