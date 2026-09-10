@@ -19,8 +19,10 @@ For accounts, geo risk is computed based on:
 """
 
 import asyncio
+import json
 import logging
 import os
+import uuid
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
 
@@ -58,41 +60,67 @@ async def load_spatial_data() -> Tuple[List[Dict], List[Dict]]:
     atms = []
     complaints = []
 
-    async with AsyncSessionLocal() as session:
-        atm_rows = (await session.execute(text("""
-            SELECT id, terminal_id, city, state,
-                   ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lon,
-                   cash_out_frequency, risk_score, is_hotspot
-            FROM atm_locations;
-        """))).fetchall()
+    try:
+        async with AsyncSessionLocal() as session:
+            atm_rows = (await session.execute(text("""
+                SELECT id, terminal_id, city, state,
+                       ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lon,
+                       cash_out_frequency, risk_score, is_hotspot
+                FROM atm_locations;
+            """))).fetchall()
 
-        for r in atm_rows:
-            atms.append({
-                "id": str(r[0]),
-                "terminal_id": r[1],
-                "city": r[2],
-                "state": r[3],
-                "lat": float(r[4]),
-                "lon": float(r[5]),
-                "cash_out_frequency": int(r[6]),
-                "risk_score": float(r[7]),
-                "is_hotspot": bool(r[8])
-            })
+            for r in atm_rows:
+                atms.append({
+                    "id": str(r[0]),
+                    "terminal_id": r[1],
+                    "city": r[2],
+                    "state": r[3],
+                    "lat": float(r[4]),
+                    "lon": float(r[5]),
+                    "cash_out_frequency": int(r[6]),
+                    "risk_score": float(r[7]),
+                    "is_hotspot": bool(r[8])
+                })
 
-        comp_rows = (await session.execute(text("""
-            SELECT id, loss_amount, city,
-                   ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lon
-            FROM complaints WHERE location IS NOT NULL;
-        """))).fetchall()
+            comp_rows = (await session.execute(text("""
+                SELECT id, loss_amount, city,
+                       ST_Y(location::geometry) AS lat, ST_X(location::geometry) AS lon
+                FROM complaints WHERE location IS NOT NULL;
+            """))).fetchall()
 
-        for r in comp_rows:
-            complaints.append({
-                "id": str(r[0]),
-                "loss_amount": float(r[1]),
-                "city": r[2],
-                "lat": float(r[3]),
-                "lon": float(r[4])
-            })
+            for r in comp_rows:
+                complaints.append({
+                    "id": str(r[0]),
+                    "loss_amount": float(r[1]),
+                    "city": r[2],
+                    "lat": float(r[3]),
+                    "lon": float(r[4])
+                })
+    except Exception as e:
+        logger.warning(f"Failed loading spatial data from DB: {e}")
+
+    # Fallback to synthetic atms.json if DB has no ATMs yet
+    if not atms:
+        logger.warning("No ATMs found in database; loading from synthetic atms.json snapshot...")
+        json_path = Path(__file__).resolve().parent.parent / "data" / "synthetic" / "atms.json"
+        if json_path.exists():
+            try:
+                with open(json_path, "r") as f:
+                    atms_json = json.load(f)
+                    for a in atms_json:
+                        atms.append({
+                            "id": str(a.get("id", uuid.uuid4())),
+                            "terminal_id": a["terminal_id"],
+                            "city": a["city"],
+                            "state": a.get("state", "Maharashtra"),
+                            "lat": float(a["lat"]),
+                            "lon": float(a["lon"]),
+                            "cash_out_frequency": int(a.get("cash_out_frequency", 10)),
+                            "risk_score": float(a.get("risk_score", 0.5)),
+                            "is_hotspot": bool(a.get("is_hotspot", False))
+                        })
+            except Exception as e:
+                logger.error(f"Failed reading atms.json fallback: {e}")
 
     logger.info(f"Loaded {len(atms)} ATMs and {len(complaints)} complaints for spatial analysis")
     return atms, complaints
@@ -198,29 +226,34 @@ def extract_atm_features(atms: List[Dict], complaints: List[Dict], clusters: Dic
     return np.array(X_rows), np.array(y_labels), atm_ids
 
 
-def train_xgboost_atm_classifier(X: np.ndarray, y: np.ndarray) -> xgb.XGBClassifier:
+def train_xgboost_atm_classifier(X: np.ndarray, y: np.ndarray) -> Any:
     """Trains an XGBoost binary classifier on ATM geo-spatial features with class-imbalance weighting."""
-    pos_weight = float((len(y) - sum(y)) / max(sum(y), 1.0))
+    if len(X) == 0 or len(y) == 0 or X.ndim != 2 or X.shape[0] < 2:
+        logger.warning("Insufficient samples or invalid dimensions for XGBoost training.")
+        return None
 
-    model = xgb.XGBClassifier(
-        n_estimators=100,
-        max_depth=3,
-        learning_rate=0.1,
-        scale_pos_weight=pos_weight,
-        objective="binary:logistic",
-        eval_metric="logloss",
-        random_state=42
-    )
+    try:
+        pos_weight = float((len(y) - sum(y)) / max(sum(y), 1.0))
+        model = xgb.XGBClassifier(
+            n_estimators=100,
+            max_depth=3,
+            learning_rate=0.1,
+            scale_pos_weight=pos_weight,
+            objective="binary:logistic",
+            eval_metric="logloss",
+            random_state=42
+        )
+        model.fit(X, y)
+        probs = model.predict_proba(X)[:, 1]
+        high_risk_count = sum(probs > 0.5)
+        logger.info(f"✅ XGBoost ATM classifier trained. Predicted {high_risk_count} high-risk cashout terminals.")
 
-    model.fit(X, y)
-    probs = model.predict_proba(X)[:, 1]
-    high_risk_count = sum(probs > 0.5)
-    logger.info(f"✅ XGBoost ATM classifier trained. Predicted {high_risk_count} high-risk cashout terminals.")
-
-    # Save model
-    model.save_model(str(XGB_MODEL_PATH))
-    logger.info(f"✅ XGBoost model saved to {XGB_MODEL_PATH}")
-    return model
+        # Save model
+        model.save_model(str(XGB_MODEL_PATH))
+        return model
+    except Exception as e:
+        logger.warning(f"XGBoost training exception: {e}")
+        return None
 
 
 async def compute_account_geo_scores(atms: List[Dict], complaints: List[Dict]) -> Dict[str, float]:
@@ -233,44 +266,47 @@ async def compute_account_geo_scores(atms: List[Dict], complaints: List[Dict]) -
     """
     scores: Dict[str, float] = {}
 
-    async with AsyncSessionLocal() as session:
-        # 1. ATM Cash-Out Withdrawals
-        atm_rows = (await session.execute(text("""
-            SELECT DISTINCT t.sender_account_id::text, COUNT(*) as cnt
-            FROM transactions t
-            WHERE t.channel = 'ATM_WITHDRAWAL'
-            GROUP BY t.sender_account_id;
-        """))).fetchall()
+    try:
+        async with AsyncSessionLocal() as session:
+            # 1. ATM Cash-Out Withdrawals
+            atm_rows = (await session.execute(text("""
+                SELECT DISTINCT t.sender_account_id::text, COUNT(*) as cnt
+                FROM transactions t
+                WHERE t.channel = 'ATM_WITHDRAWAL'
+                GROUP BY t.sender_account_id;
+            """))).fetchall()
 
-        for r in atm_rows:
-            acc_id = r[0]
-            scores[acc_id] = 0.92  # High cashout terminal activity
+            for r in atm_rows:
+                acc_id = r[0]
+                scores[acc_id] = 0.92  # High cashout terminal activity
 
-        # 2. NCRP Complaint Suspects
-        suspect_rows = (await session.execute(text("""
-            SELECT DISTINCT suspect_account_id::text
-            FROM complaints
-            WHERE suspect_account_id IS NOT NULL;
-        """))).fetchall()
+            # 2. NCRP Complaint Suspects
+            suspect_rows = (await session.execute(text("""
+                SELECT DISTINCT suspect_account_id::text
+                FROM complaints
+                WHERE suspect_account_id IS NOT NULL;
+            """))).fetchall()
 
-        for r in suspect_rows:
-            acc_id = r[0]
-            scores[acc_id] = max(scores.get(acc_id, 0.0), 0.82)
+            for r in suspect_rows:
+                acc_id = r[0]
+                scores[acc_id] = max(scores.get(acc_id, 0.0), 0.82)
 
-        # 3. Hero Fraud Ring Participants (syndicate corridor presence)
-        ring_rows = (await session.execute(text("""
-            SELECT DISTINCT sender_account_id::text
-            FROM transactions
-            WHERE ring_id IS NOT NULL AND ring_id <> ''
-            UNION
-            SELECT DISTINCT receiver_account_id::text
-            FROM transactions
-            WHERE ring_id IS NOT NULL AND ring_id <> '';
-        """))).fetchall()
+            # 3. Hero Fraud Ring Participants (syndicate corridor presence)
+            ring_rows = (await session.execute(text("""
+                SELECT DISTINCT sender_account_id::text
+                FROM transactions
+                WHERE ring_id IS NOT NULL AND ring_id <> ''
+                UNION
+                SELECT DISTINCT receiver_account_id::text
+                FROM transactions
+                WHERE ring_id IS NOT NULL AND ring_id <> '';
+            """))).fetchall()
 
-        for r in ring_rows:
-            acc_id = r[0]
-            scores[acc_id] = max(scores.get(acc_id, 0.0), 0.72)
+            for r in ring_rows:
+                acc_id = r[0]
+                scores[acc_id] = max(scores.get(acc_id, 0.0), 0.72)
+    except Exception as e:
+        logger.warning(f"Failed computing account geo scores from DB: {e}")
 
     logger.info(f"Computed geo scores for {len(scores)} spatially linked accounts")
     return scores
@@ -288,16 +324,23 @@ async def run_geo_scoring() -> Dict[str, Any]:
     model = train_xgboost_atm_classifier(X, y)
 
     # Predict risk probabilities for all ATMs
-    probs = model.predict_proba(X)[:, 1]
+    if model is not None and len(X) > 0 and X.ndim == 2:
+        try:
+            probs = model.predict_proba(X)[:, 1]
+        except Exception as e:
+            logger.warning(f"Predict proba failed: {e}")
+            probs = np.array([atm.get("risk_score", 0.45) for atm in atms], dtype=np.float32)
+    else:
+        probs = np.array([atm.get("risk_score", 0.45) for atm in atms], dtype=np.float32)
 
     atm_results = {}
     for i, aid in enumerate(atm_ids):
         atm_results[aid] = {
-            "geo_risk_score": float(probs[i]),
+            "geo_risk_score": float(probs[i]) if i < len(probs) else 0.5,
             "cluster_label": clusters.get(aid, -1),
-            "features": {name: float(X[i, j]) for j, name in enumerate(GEO_FEATURE_NAMES)},
-            "terminal_id": atms[i]["terminal_id"],
-            "city": atms[i]["city"]
+            "features": {name: float(X[i, j]) for j, name in enumerate(GEO_FEATURE_NAMES)} if (len(X) > i and X.ndim == 2) else {},
+            "terminal_id": atms[i]["terminal_id"] if i < len(atms) else f"ATM_{aid[:6]}",
+            "city": atms[i]["city"] if i < len(atms) else "Mumbai"
         }
 
     # Also compute per-account geo scores
