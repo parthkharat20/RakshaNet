@@ -136,8 +136,9 @@ export const CommandPage = () => {
         <div className="h-full rounded-lg overflow-hidden border border-white/10 bg-[#0B101D] relative command-panel">
           <TxnGraph
             accountId={targetAccId}
+            accountNumber={currentTarget?.target_account_number}
             onNodeClick={(node) => {
-              const matched = alerts.find(a => a.target_account_id === node.id);
+              const matched = alerts.find(a => a.target_account_id === node.id || a.target_account_number === node.accountNumber);
               if (matched) setSelectedAlert(matched);
             }}
           />

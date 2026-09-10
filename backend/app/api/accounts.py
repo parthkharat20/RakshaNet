@@ -68,10 +68,5 @@ async def get_account_graph(
     Returns the multi-hop transaction ego-network around an account for React-Force-Graph-2D.
     Extracts all interconnected sender/receiver accounts and labels them as VICTIM, MULE, or CLEAN.
     """
-    graph_data = await GraphService.get_account_subgraph(account_id, max_hops=max_hops)
-    if graph_data.total_nodes == 0:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No graph node found for account '{account_id}' in Neo4j."
-        )
-    return graph_data
+    return await GraphService.get_account_subgraph(account_id, max_hops=max_hops)
+

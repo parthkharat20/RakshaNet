@@ -105,8 +105,9 @@ export const DashboardPage = () => {
             {activeCanvas === 'GRAPH' && (
               <TxnGraph
                 accountId={currentTarget?.target_account_id}
+                accountNumber={currentTarget?.target_account_number}
                 onNodeClick={(node) => {
-                  const matched = alerts.find(a => a.target_account_id === node.id);
+                  const matched = alerts.find(a => a.target_account_id === node.id || a.target_account_number === node.accountNumber);
                   if (matched) setSelectedAlert(matched);
                 }}
               />

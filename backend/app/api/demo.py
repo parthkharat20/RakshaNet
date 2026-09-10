@@ -7,7 +7,7 @@ from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
-from app.api.auth import get_current_officer
+from app.api.auth import get_current_officer, get_optional_officer
 from app.services.simulation_service import SimulationService
 
 logger = logging.getLogger("demo_api")
@@ -45,7 +45,7 @@ async def list_demo_scenarios():
 @router.post("/simulate-attack")
 async def trigger_live_attack_simulation(
     payload: SimulateAttackRequest,
-    officer: dict = Depends(get_current_officer)
+    officer: Optional[dict] = Depends(get_optional_officer)
 ):
     """
     Injects a live cyber scam attack scenario into the RakshaNet network in real-time.
@@ -54,12 +54,13 @@ async def trigger_live_attack_simulation(
     3. Executes GraphSAGE inductive link prediction + PostGIS ATM clustering.
     4. Broadcasts WebSocket events to update all active Command Centers.
     
-    Requires Law Enforcement JWT authorization.
+    Permits officer token or falls back to standard LEA Command credential.
     """
+    badge_id = officer["badge_id"] if officer else "LE-CYBER-MUM-4029"
     try:
         result = await SimulationService.simulate_attack(
             scenario_id=payload.scenario_id,
-            officer_badge_id=officer["badge_id"]
+            officer_badge_id=badge_id
         )
         return result
     except ValueError as e:

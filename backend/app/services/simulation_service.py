@@ -172,6 +172,56 @@ class SimulationService:
         start_time = datetime.now(timezone.utc)
         logger.info(f"⚡ SIMULATION START: {scenario['title']} triggered by {officer_badge_id}")
 
+        # Ensure Suspect and Victim Accounts exist in PostgreSQL
+        suspect_account_id: uuid.UUID = uuid.uuid4()
+        victim_account_id: Optional[uuid.UUID] = None
+
+        try:
+            async with AsyncSessionLocal() as session:
+                # 1. Suspect Account
+                s_res = await session.execute(
+                    select(Account).where(Account.account_number == scenario["suspect_account"])
+                )
+                suspect_acc = s_res.scalar_one_or_none()
+                if not suspect_acc:
+                    suspect_acc = Account(
+                        id=uuid.uuid4(),
+                        account_number=scenario["suspect_account"],
+                        holder_name=scenario["suspect_holder"],
+                        bank_name=scenario["suspect_bank"],
+                        ifsc_code=f"{scenario['suspect_bank'][:4].upper()}0001029",
+                        is_mule_label=True,
+                        risk_score=0.94,
+                        account_age_days=18
+                    )
+                    session.add(suspect_acc)
+                    await session.commit()
+                    await session.refresh(suspect_acc)
+                suspect_account_id = suspect_acc.id
+
+                # 2. Victim Account
+                v_res = await session.execute(
+                    select(Account).where(Account.account_number == scenario["victim_account"])
+                )
+                victim_acc = v_res.scalar_one_or_none()
+                if not victim_acc:
+                    victim_acc = Account(
+                        id=uuid.uuid4(),
+                        account_number=scenario["victim_account"],
+                        holder_name=scenario["victim_name"],
+                        bank_name="State Bank of India",
+                        ifsc_code="SBIN0000001",
+                        is_mule_label=False,
+                        risk_score=0.05,
+                        account_age_days=1450
+                    )
+                    session.add(victim_acc)
+                    await session.commit()
+                    await session.refresh(victim_acc)
+                victim_account_id = victim_acc.id
+        except Exception as e:
+            logger.warning(f"PostgreSQL account preparation non-fatal note: {e}")
+
         # Step 1: Ingest Complaint via NCRP Service
         await dispatch_pipeline_progress("NCRP_INGESTION", 20, f"Ingesting citizen complaint for {scenario['city']}...")
 
@@ -208,10 +258,15 @@ class SimulationService:
                 await n_session.run(
                     """
                     MERGE (v:Account {account_number: $acc})
-                    ON CREATE SET v.id = $id, v.holder_name = $holder, v.is_mule_label = false, v.is_frozen = false
+                    SET v.id = coalesce(v.id, $id),
+                        v.holder_name = $holder,
+                        v.bank_name = 'State Bank of India',
+                        v.is_mule = false,
+                        v.is_mule_label = false,
+                        v.risk_score = 0.05
                     """,
                     acc=scenario["victim_account"],
-                    id=str(uuid.uuid4()),
+                    id=str(victim_account_id or uuid.uuid4()),
                     holder=scenario["victim_name"]
                 )
 
@@ -219,30 +274,51 @@ class SimulationService:
                 await n_session.run(
                     """
                     MERGE (s:Account {account_number: $acc})
-                    ON CREATE SET s.id = $id, s.holder_name = $holder, s.is_mule_label = true, s.is_frozen = false
+                    SET s.id = coalesce(s.id, $id),
+                        s.holder_name = $holder,
+                        s.bank_name = $bank,
+                        s.is_mule = true,
+                        s.is_mule_label = true,
+                        s.risk_score = 0.94
                     """,
                     acc=scenario["suspect_account"],
-                    id=str(complaint_res.suspect_account_id or uuid.uuid4()),
-                    holder=scenario["suspect_holder"]
+                    id=str(suspect_account_id),
+                    holder=scenario["suspect_holder"],
+                    bank=scenario["suspect_bank"]
                 )
-
 
                 # Inject transfer hops
                 for hop in scenario.get("hops", []):
                     await n_session.run(
                         """
                         MERGE (src:Account {account_number: $src_acc})
+                        SET src.id = coalesce(src.id, $src_id),
+                            src.holder_name = coalesce(src.holder_name, 'Intermediary Mule ' + right($src_acc, 4)),
+                            src.bank_name = coalesce(src.bank_name, 'HDFC Bank'),
+                            src.is_mule = true,
+                            src.risk_score = coalesce(src.risk_score, 0.82)
                         MERGE (dst:Account {account_number: $dst_acc})
+                        SET dst.id = coalesce(dst.id, $dst_id),
+                            dst.holder_name = coalesce(dst.holder_name, 'Layer Mule ' + right($dst_acc, 4)),
+                            dst.bank_name = coalesce(dst.bank_name, 'ICICI Bank'),
+                            dst.is_mule = true,
+                            dst.risk_score = coalesce(dst.risk_score, 0.88)
                         CREATE (src)-[:TRANSFERRED {
+                            txn_ref: $txn_id,
                             txn_id: $txn_id,
                             amount: $amount,
                             timestamp: $ts,
+                            channel: 'IMPS',
+                            is_flagged: true,
                             is_suspicious: true,
-                            layer: $layer
+                            layer: $layer,
+                            hop_level: $layer
                         }]->(dst)
                         """,
                         src_acc=hop["from"],
                         dst_acc=hop["to"],
+                        src_id=str(uuid.uuid4()),
+                        dst_id=str(uuid.uuid4()),
                         txn_id=f"TXN_{uuid.uuid4().hex[:10].upper()}",
                         amount=float(hop["amount"]),
                         ts=datetime.now(timezone.utc).isoformat(),
@@ -271,7 +347,7 @@ class SimulationService:
         suspect_alert = {
             "id": alert_id_str,
             "alert_id": alert_id_str,
-            "target_account_id": str(complaint_res.suspect_account_id or uuid.uuid4()),
+            "target_account_id": str(suspect_account_id),
             "target_account_number": scenario["suspect_account"],
             "target_holder_name": scenario["suspect_holder"],
             "bank_name": scenario["suspect_bank"],
@@ -302,11 +378,7 @@ class SimulationService:
                 new_alert = Alert(
                     id=alert_uuid,
                     alert_type="MULE_RING",
-                    target_account_id=complaint_res.suspect_account_id,
-                    target_account_number=scenario["suspect_account"],
-                    target_holder_name=scenario["suspect_holder"],
-                    bank_name=scenario["suspect_bank"],
-                    city=scenario.get("city", "Mumbai"),
+                    target_account_id=suspect_account_id,
                     risk_score=0.94,
                     graph_score=0.96,
                     geo_score=0.91,
@@ -315,14 +387,15 @@ class SimulationService:
                 )
                 session.add(new_alert)
                 await session.commit()
+                logger.info(f"✅ Persisted simulated Alert {alert_id_str} into PostgreSQL")
         except Exception as e:
             logger.warning(f"Could not persist alert to DB: {e}")
-
 
         # Step 5: Broadcast Real-Time Events
         await dispatch_pipeline_progress("READY", 100, "Attack simulation live in Command Center!")
         await dispatch_attack_simulated_event(
             scenario_name=scenario["title"],
+
             victim_city=scenario["city"],
             loss_amount=scenario["loss_amount"]
         )

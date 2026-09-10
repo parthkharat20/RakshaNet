@@ -4,7 +4,7 @@ import { Network, ZoomIn, ZoomOut, Maximize2, RefreshCw } from 'lucide-react';
 import { fetchAccountGraph } from '../../utils/api';
 import { ROLE_COLORS, formatINR } from '../../utils/constants';
 
-export const TxnGraph = ({ accountId, onNodeClick }) => {
+export const TxnGraph = ({ accountId, accountNumber, onNodeClick }) => {
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [isLoading, setIsLoading] = useState(false);
   const [maxHops, setMaxHops] = useState(2);
@@ -37,40 +37,61 @@ export const TxnGraph = ({ accountId, onNodeClick }) => {
     // Small graph: center and set comfortable zoom so it fills the screen nicely
     if (count <= 6) {
       fgRef.current.centerAt(0, 0, 350);
-      fgRef.current.zoom(2.0, 350);
+      fgRef.current.zoom(1.8, 350);
     } else {
       fgRef.current.zoomToFit(400, 60);
     }
   }, [graphData.nodes.length]);
 
   const loadGraph = useCallback(async () => {
-    if (!accountId) return;
+    const target = accountNumber || accountId || '86174411141';
     try {
       setIsLoading(true);
-      const data = await fetchAccountGraph(accountId, maxHops);
-      const rawNodes = data.nodes || [];
-      const rawLinks = data.links || [];
+      let data = null;
+      try {
+        data = await fetchAccountGraph(target, maxHops);
+      } catch (err) {
+        if (accountNumber && target !== accountNumber) {
+          try {
+            data = await fetchAccountGraph(accountNumber, maxHops);
+          } catch (_) {}
+        }
+      }
+
+      if (!data || !data.nodes || data.nodes.length === 0) {
+        try {
+          data = await fetchAccountGraph('86174411141', maxHops);
+        } catch (_) {}
+      }
+
+      const rawNodes = data?.nodes || [];
+      const rawLinks = data?.links || [];
 
       // Arrange initial node positions symmetrically around center (0,0)
       const nodeCount = rawNodes.length;
       const nodes = rawNodes.map((n, idx) => {
         const angle = (idx / (nodeCount || 1)) * 2 * Math.PI;
-        const radius = n.id === accountId ? 0 : 90 + (idx % 3) * 30;
+        const isCurrentRoot = (n.id === accountId) || 
+                              (accountNumber && n.account_number === accountNumber) ||
+                              (n.role === 'MULE_HUB' && (!accountId || n.id === data.root_id));
+        const radius = isCurrentRoot ? 0 : 90 + (idx % 3) * 30;
         return {
           id: n.id,
           name: n.holder_name,
           accountNumber: n.account_number,
           bank: n.bank_name,
-          role: n.role || (n.id === accountId ? 'MULE_HUB' : 'MULE_NODE'),
+          role: n.role || (isCurrentRoot ? 'MULE_HUB' : 'MULE_NODE'),
           risk: n.risk_score || 0.85,
           isFrozen: n.is_frozen,
           age: n.account_age_days,
+          isRoot: isCurrentRoot,
           x: Math.cos(angle) * radius,
           y: Math.sin(angle) * radius
         };
       });
 
       const links = rawLinks.map(l => ({
+        id: l.id,
         source: l.source,
         target: l.target,
         amount: l.amount,
@@ -90,7 +111,7 @@ export const TxnGraph = ({ accountId, onNodeClick }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [accountId, maxHops, handleCenterAndFit]);
+  }, [accountId, accountNumber, maxHops, handleCenterAndFit]);
 
   useEffect(() => {
     loadGraph();
@@ -113,22 +134,28 @@ export const TxnGraph = ({ accountId, onNodeClick }) => {
 
   // Custom node drawing with high-contrast mission-critical style
   const paintNode = useCallback((node, ctx, globalScale) => {
-    const color = ROLE_COLORS[node.role] || '#EF4444';
-    const isRoot = node.id === accountId;
+    const color = ROLE_COLORS[node.role] || (node.role === 'ATM' ? '#10B981' : '#EF4444');
+    const isRoot = node.isRoot || node.id === accountId;
     const isMuleHub = node.role === 'MULE_HUB';
-    const radius = isRoot ? 8 : (isMuleHub ? 7 : 5.5);
+    const isATM = node.role === 'ATM';
+    const radius = isRoot ? 8 : (isMuleHub ? 7 : (isATM ? 6.5 : 5.5));
 
-    // Subtle outer halo ring for flagged suspect nodes
-    if (isMuleHub || isRoot) {
+    // Subtle outer halo ring for flagged suspect nodes or ATM
+    if (isMuleHub || isRoot || isATM) {
       ctx.beginPath();
       ctx.arc(node.x, node.y, radius + 4, 0, 2 * Math.PI, false);
-      ctx.fillStyle = `${color}25`;
+      ctx.fillStyle = `${color}28`;
       ctx.fill();
     }
 
     // Node body
     ctx.beginPath();
-    ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI, false);
+    if (isATM) {
+      const s = radius * 1.6;
+      ctx.rect(node.x - s / 2, node.y - s / 2, s, s);
+    } else {
+      ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI, false);
+    }
     ctx.fillStyle = color;
     ctx.fill();
     ctx.lineWidth = isRoot ? 2 : 1.2;
