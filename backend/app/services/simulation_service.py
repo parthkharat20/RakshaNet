@@ -277,34 +277,48 @@ class SimulationService:
                 row = (await session.execute(query)).first()
                 if row:
                     alert_obj, acc_obj = row
+                    alert_id_str = str(alert_obj.id)
                     suspect_alert = {
-                        "alert_id": str(alert_obj.id),
+                        "id": alert_id_str,
+                        "alert_id": alert_id_str,
                         "target_account_id": str(alert_obj.target_account_id),
                         "target_account_number": acc_obj.account_number if acc_obj else scenario["suspect_account"],
                         "target_holder_name": acc_obj.holder_name if acc_obj else scenario["suspect_holder"],
                         "bank_name": acc_obj.bank_name if acc_obj else scenario["suspect_bank"],
+                        "city": acc_obj.city if acc_obj else scenario.get("city", "Mumbai"),
                         "risk_score": float(alert_obj.risk_score or 0.0),
                         "graph_score": float(alert_obj.graph_score or 0.0),
                         "geo_score": float(alert_obj.geo_score or 0.0),
                         "alert_type": alert_obj.alert_type,
                         "status": alert_obj.status,
+                        "created_at": alert_obj.created_at.isoformat() if alert_obj.created_at else datetime.now(timezone.utc).isoformat(),
+                        "target_atm_name": f"{scenario.get('target_atm_cluster', 'Dadar West')} ATM Hub",
+                        "target_lat": 19.0270 if scenario.get("city") != "Delhi" else 28.6290,
+                        "target_lon": 72.8550 if scenario.get("city") != "Delhi" else 77.2260,
                         "explanation": alert_obj.explanation
                     }
         except Exception as e:
             logger.warning(f"Failed to query suspect alert: {e}")
 
         if not suspect_alert:
+            alert_id_str = str(uuid.uuid4())
             suspect_alert = {
-                "alert_id": str(uuid.uuid4()),
+                "id": alert_id_str,
+                "alert_id": alert_id_str,
                 "target_account_id": str(complaint_res.suspect_account_id or uuid.uuid4()),
                 "target_account_number": scenario["suspect_account"],
                 "target_holder_name": scenario["suspect_holder"],
                 "bank_name": scenario["suspect_bank"],
+                "city": scenario.get("city", "Mumbai"),
                 "risk_score": 0.94,
                 "graph_score": 0.96,
                 "geo_score": 0.91,
                 "alert_type": "MULE_RING",
                 "status": "NEW",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "target_atm_name": f"{scenario.get('target_atm_cluster', 'Dadar West')} ATM Hub",
+                "target_lat": 19.0270 if scenario.get("city") != "Delhi" else 28.6290,
+                "target_lon": 72.8550 if scenario.get("city") != "Delhi" else 77.2260,
                 "explanation": {
                     "verdict": "CRITICAL",
                     "fused_risk_score": 0.94,

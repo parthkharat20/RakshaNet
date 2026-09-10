@@ -80,7 +80,7 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
             <span>{alert.city || 'Mumbai Sector'}</span>
             <span className="text-slate-600">•</span>
             <span className="text-slate-500 text-[9px]">
-              REF: {alert.id.slice(0, 8)}
+              REF: {(alert.id || alert.alert_id || 'ALERT').slice(0, 8)}
             </span>
           </div>
         </div>

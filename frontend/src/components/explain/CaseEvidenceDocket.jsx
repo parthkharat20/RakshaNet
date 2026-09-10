@@ -72,7 +72,7 @@ Cryptographically Prepared for Evidence Submission under Section 65B Indian Evid
               Target Suspect Dossier & Evidence
             </h3>
             <p className="text-[10px] font-mono text-slate-400">
-              ALERT ID: {alert.id.slice(0, 13)}...
+              ALERT ID: {(alert.id || alert.alert_id || 'INCIDENT').slice(0, 13)}...
             </p>
           </div>
         </div>

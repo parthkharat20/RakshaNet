@@ -35,7 +35,7 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
               Intelligence Case Dossier
             </h3>
             <p className="text-[10px] font-mono text-slate-400">
-              ALERT REF: {selectedAlert.id}
+              ALERT REF: {selectedAlert.id || selectedAlert.alert_id || 'N/A'}
             </p>
           </div>
         </div>
@@ -174,7 +174,7 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
         isOpen={patrolModalOpen}
         onClose={() => setPatrolModalOpen(false)}
         targetHotspot={{
-          alert_id: selectedAlert.id,
+          alert_id: selectedAlert.id || selectedAlert.alert_id,
           terminal_id: selectedAlert.target_terminal_id || 'ATM_MUM_001',
           name: selectedAlert.target_atm_name || 'State Bank of India - Matunga East ATM',
           lat: selectedAlert.target_lat || (selectedAlert.city === 'Delhi' ? 28.6290 : selectedAlert.city === 'Bengaluru' ? 12.9352 : 19.0270),
@@ -186,14 +186,14 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
       <LegalDossierModal
         isOpen={dossierModalOpen}
         onClose={() => setDossierModalOpen(false)}
-        alertId={selectedAlert.id}
+        alertId={selectedAlert.id || selectedAlert.alert_id}
       />
 
       {/* Section 457 Cr.P.C. / BNSS 503 Victim Restitution Modal */}
       <RestitutionModal
         isOpen={restitutionModalOpen}
         onClose={() => setRestitutionModalOpen(false)}
-        alertId={selectedAlert.id}
+        alertId={selectedAlert.id || selectedAlert.alert_id}
       />
     </div>
   );

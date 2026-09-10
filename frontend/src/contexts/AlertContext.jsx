@@ -53,10 +53,15 @@ export const AlertProvider = ({ children }) => {
         fetchAlerts(100).catch(() => [])
       ]);
       if (statsData) setStats(statsData);
-      setAlerts(alertsData || []);
+      const normalizedAlerts = (alertsData || []).map(a => ({
+        ...a,
+        id: a.id || a.alert_id || `ALERT-${Math.random().toString(36).slice(2, 9)}`,
+        alert_id: a.alert_id || a.id
+      }));
+      setAlerts(normalizedAlerts);
       // Default select the highest risk alert if none selected
-      if (!selectedAlert && alertsData && alertsData.length > 0) {
-        setSelectedAlert(alertsData[0]);
+      if (!selectedAlert && normalizedAlerts.length > 0) {
+        setSelectedAlert(normalizedAlerts[0]);
       }
     } catch (err) {
       console.error('Failed to load telemetry:', err);
@@ -135,9 +140,10 @@ export const AlertProvider = ({ children }) => {
 
       case 'COMPLAINT_INGESTED':
         console.log('[WS] Received COMPLAINT_INGESTED:', payload);
+        const loss = Number(payload.loss_amount || 0);
         setWsNotification({
           type: 'COMPLAINT_INGESTED',
-          message: `New NCRP Complaint ${payload.acknowledgement_no}: ₹${payload.loss_amount.toLocaleString('en-IN')} (${payload.city})`,
+          message: `New NCRP Complaint ${payload.acknowledgement_no || 'N/A'}: ₹${loss.toLocaleString('en-IN')} (${payload.city || 'Sector'})`,
           timestamp
         });
         fetchDashboardStats().then(s => s && setStats(s)).catch(() => {});

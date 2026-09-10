@@ -71,6 +71,7 @@ async def trigger_live_attack_simulation(
         from datetime import datetime, timezone
         from app.services.simulation_service import DEMO_SCENARIOS
         scenario = SimulationService.get_scenario_by_id(payload.scenario_id) or DEMO_SCENARIOS[0]
+        alert_id_val = str(uuid.uuid4())
         return {
             "success": True,
             "scenario": scenario,
@@ -83,16 +84,22 @@ async def trigger_live_attack_simulation(
                 "reported_time": datetime.now(timezone.utc).isoformat()
             },
             "suspect_alert": {
-                "alert_id": str(uuid.uuid4()),
+                "id": alert_id_val,
+                "alert_id": alert_id_val,
                 "target_account_id": str(uuid.uuid4()),
                 "target_account_number": scenario["suspect_account"],
                 "target_holder_name": scenario["suspect_holder"],
                 "bank_name": scenario["suspect_bank"],
+                "city": scenario.get("city", "Mumbai"),
                 "risk_score": 0.94,
                 "graph_score": 0.96,
                 "geo_score": 0.91,
                 "alert_type": "MULE_RING",
                 "status": "NEW",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "target_atm_name": f"{scenario.get('target_atm_cluster', 'Dadar West')} ATM Hub",
+                "target_lat": 19.0270 if scenario.get("city") != "Delhi" else 28.6290,
+                "target_lon": 72.8550 if scenario.get("city") != "Delhi" else 77.2260,
                 "explanation": {
                     "verdict": "CRITICAL",
                     "fused_risk_score": 0.94,
@@ -118,6 +125,7 @@ async def trigger_live_attack_simulation(
         from datetime import datetime, timezone
         from app.services.simulation_service import DEMO_SCENARIOS
         scenario = SimulationService.get_scenario_by_id(payload.scenario_id) or DEMO_SCENARIOS[0]
+        alert_id_val = str(uuid.uuid4())
         return {
             "success": True,
             "scenario": scenario,
@@ -130,16 +138,22 @@ async def trigger_live_attack_simulation(
                 "reported_time": datetime.now(timezone.utc).isoformat()
             },
             "suspect_alert": {
-                "alert_id": str(uuid.uuid4()),
+                "id": alert_id_val,
+                "alert_id": alert_id_val,
                 "target_account_id": str(uuid.uuid4()),
                 "target_account_number": scenario["suspect_account"],
                 "target_holder_name": scenario["suspect_holder"],
                 "bank_name": scenario["suspect_bank"],
+                "city": scenario.get("city", "Mumbai"),
                 "risk_score": 0.94,
                 "graph_score": 0.96,
                 "geo_score": 0.91,
                 "alert_type": "MULE_RING",
                 "status": "NEW",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "target_atm_name": f"{scenario.get('target_atm_cluster', 'Dadar West')} ATM Hub",
+                "target_lat": 19.0270 if scenario.get("city") != "Delhi" else 28.6290,
+                "target_lon": 72.8550 if scenario.get("city") != "Delhi" else 77.2260,
                 "explanation": {
                     "verdict": "CRITICAL",
                     "fused_risk_score": 0.94,

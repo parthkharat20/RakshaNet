@@ -41,7 +41,7 @@ export const ShapChart = ({ factors = [] }) => {
             width={160}
             stroke="#94a3b8"
             fontSize={10}
-            tickFormatter={(v) => v.length > 22 ? v.slice(0, 22) + '...' : v}
+            tickFormatter={(v) => (v && typeof v === 'string' && v.length > 22) ? v.slice(0, 22) + '...' : (v || '')}
           />
           <Tooltip
             content={({ active, payload }) => {

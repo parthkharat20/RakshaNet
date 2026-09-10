@@ -62,9 +62,21 @@ export const ScenarioModal = ({ isOpen, onClose }) => {
       // Refresh data
       await refreshData();
 
-      // Auto-focus if alert returned
-      if (result.suspect_alert?.alert_id) {
-        setSelectedAlert(result.suspect_alert);
+      // Auto-focus if alert returned and normalize ID
+      if (result.suspect_alert) {
+        const rawAlert = result.suspect_alert;
+        const alertId = rawAlert.id || rawAlert.alert_id || `ALERT-${Date.now()}`;
+        const normalizedAlert = {
+          ...rawAlert,
+          id: alertId,
+          alert_id: alertId,
+          created_at: rawAlert.created_at || new Date().toISOString(),
+          city: rawAlert.city || activeScenario?.city || 'Mumbai Sector',
+          target_atm_name: rawAlert.target_atm_name || `${activeScenario?.target_atm_cluster || 'Dadar West'} ATM Hub`,
+          target_lat: rawAlert.target_lat || (activeScenario?.city === 'Delhi' ? 28.6290 : activeScenario?.city === 'Bengaluru' ? 12.9352 : 19.0270),
+          target_lon: rawAlert.target_lon || (activeScenario?.city === 'Delhi' ? 77.2260 : activeScenario?.city === 'Bengaluru' ? 77.6245 : 72.8550)
+        };
+        setSelectedAlert(normalizedAlert);
       }
     } catch (err) {
       clearInterval(stepInterval);
@@ -141,7 +153,7 @@ export const ScenarioModal = ({ isOpen, onClose }) => {
                           {scen.city}
                         </span>
                         <span className="text-xs font-bold text-amber-400 font-mono">
-                          ₹{scen.loss_amount?.toLocaleString('en-IN')}
+                          ₹{Number(scen.loss_amount || 0).toLocaleString('en-IN')}
                         </span>
                       </div>
                       <p className="text-xs font-bold line-clamp-1 text-slate-200">{scen.title}</p>
@@ -167,7 +179,7 @@ export const ScenarioModal = ({ isOpen, onClose }) => {
                 <div className="text-right">
                   <span className="text-[11px] font-mono text-slate-400 block">Reported Loss</span>
                   <span className="text-base font-extrabold text-amber-400 font-mono">
-                    ₹{activeScenario.loss_amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    ₹{Number(activeScenario.loss_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>

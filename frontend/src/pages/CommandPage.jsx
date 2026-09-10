@@ -190,7 +190,7 @@ export const CommandPage = () => {
             isOpen={patrolModalOpen}
             onClose={() => setPatrolModalOpen(false)}
             targetHotspot={{
-              alert_id: currentTarget.id,
+              alert_id: currentTarget.id || currentTarget.alert_id,
               terminal_id: currentTarget.target_terminal_id || 'ATM_MUM_001',
               name: currentTarget.target_atm_name || 'State Bank of India - Matunga East ATM',
               lat: currentTarget.target_lat || 19.0270,
@@ -201,13 +201,13 @@ export const CommandPage = () => {
           <LegalDossierModal
             isOpen={dossierModalOpen}
             onClose={() => setDossierModalOpen(false)}
-            alertId={currentTarget.id}
+            alertId={currentTarget.id || currentTarget.alert_id}
           />
 
           <RestitutionModal
             isOpen={restitutionModalOpen}
             onClose={() => setRestitutionModalOpen(false)}
-            alertId={currentTarget.id}
+            alertId={currentTarget.id || currentTarget.alert_id}
           />
         </>
       )}
