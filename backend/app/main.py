@@ -36,6 +36,32 @@ async def lifespan(app: FastAPI):
     )
     logger.info(f"Starting {settings.PROJECT_NAME} Backend ({settings.ENVIRONMENT})...")
 
+    # Ensure database schemas & PostGIS are initialized
+    try:
+        from app.db.init_db import init_all_databases
+        await init_all_databases()
+    except Exception as e:
+        logger.warning(f"Database schema initialization skipped/warned: {e}")
+
+    # Check and seed initial synthetic data if database is brand new
+    try:
+        from app.db.postgres import AsyncSessionLocal
+        from sqlalchemy import text
+        async with AsyncSessionLocal() as session:
+            count = await session.execute(text("SELECT count(*) FROM accounts;"))
+            if count.scalar() == 0:
+                logger.info("⚡ Brand new database detected! Seeding synthetic fraud graph and accounts...")
+                from app.generators.synthetic_seeder import SyntheticDataGenerator
+                gen = SyntheticDataGenerator()
+                gen.generate_accounts_and_atms()
+                gen.generate_hero_fraud_rings()
+                gen.generate_normal_transactions()
+                await gen.seed_postgres()
+                await gen.seed_neo4j()
+                logger.info("✅ Database seeded with initial accounts, ATMs, and fraud rings!")
+    except Exception as e:
+        logger.warning(f"Initial synthetic seeding skipped: {e}")
+
     # Initialize officers and patrol units on startup
     try:
         from app.db.init_officers import seed_demo_officers
