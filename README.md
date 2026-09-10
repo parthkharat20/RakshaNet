@@ -1,437 +1,268 @@
 # RakshaNet 🛡️
-### Predictive Cash-Out Hotspot Intelligence & Multi-Hop Mule Interdiction Platform
+### Autonomous Cyber-Financial Fraud Interdiction & Predictive Cash-Out Intelligence Grid
+*Designed for Law Enforcement Agencies (LEAs), the Indian Cyber Crime Coordination Centre (I4C), and Banking Partner Networks.*
 
-RakshaNet is an enterprise-grade cyber-financial fraud interdiction platform designed to halt fund dissipation during the critical **"Golden Window"** (the first 180–240 minutes following an attack). By unifying spatial-temporal clustering with inductive graph neural networks (GNNs), RakshaNet shifts fraud response from reactive forensic accounting to proactive topological interdiction.
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
+[![React 18](https://img.shields.io/badge/React-18.2.0-61DAFB.svg?style=flat&logo=react)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.4.0-646CFF.svg?style=flat&logo=vite)](https://vitejs.dev/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16-PostGIS_3.4-336791.svg?style=flat&logo=postgresql)](https://www.postgresql.org/)
+[![Neo4j](https://img.shields.io/badge/Neo4j-5.18_Aura-45818e.svg?style=flat&logo=neo4j)](https://neo4j.com/)
+[![Redis](https://img.shields.io/badge/Redis-7.0_PubSub-DC382D.svg?style=flat&logo=redis)](https://redis.io/)
+[![PyTorch](https://img.shields.io/badge/PyTorch_Geometric-2.5.0-EE4C2C.svg?style=flat&logo=pytorch)](https://pyg.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-2.0.3-EB8E3B.svg?style=flat&logo=xgboost)](https://xgboost.readthedocs.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?style=flat&logo=docker)](https://www.docker.com/)
 
 ---
 
 ## 1. Executive Summary & Problem Context
 
-In modern cyber-financial fraud, stolen capital does not stay in a single victim-facing account. Instead, criminal syndicates execute a high-speed, layered evasion strategy:
-1. **Layer 0 (Victim Debit):** Unauthorized withdrawal or social engineering transfer occurs.
-2. **Layers 1–4 (Rapid Mule Layering):** Funds are partitioned and laundered through multiple hops across synthetic and compromised mule accounts within **45 minutes**.
-3. **Layer 5 (Cash-Out Liquidation):** Mules execute coordinated ATM withdrawals across physical geographic hotspots within **180–240 minutes**, permanently destroying fund traceability.
+In modern cyber-financial crime (e.g., UPI QR scams, Digital Arrest extortion, task-based investment fraud), illicit funds do not remain in the primary suspect account. Instead, syndicates execute rapid, multi-tier fund dissipation across synthetic and compromised mule accounts:
 
 ```
-[Victim Debit] ──(15 min)──> [Hop 1: Mule] ──(30 min)──> [Hop 2-3: Mule Ring] ──(180-240 min)──> [ATM Cash-Out Hotspots]
-                                                                                                           │
-Traditional Post-Complaint Response: 24 to 72 hours  ───> Funds permanently liquidated ❌                 │
-RakshaNet Dual-AI Predictive Interdiction: < 60 sec  ───> Pre-emptive Lien & Field Dispatch 🎯 ───────────┘
+[Citizen Victim] ──(15 min)──> [Layer 1 Mule] ──(30 min)──> [Layer 2-4 Mule Ring] ──(180-240 min)──> [ATM Cash-Out Hotspots]
+                                                                                                            │
+Traditional Response (24 - 72 hours) ────> Funds Permanently Liquidated ❌                                   │
+RakshaNet Dual-AI Interdiction (< 60s)  ────> Pre-emptive Lien & Police Beat Interception 🎯 ───────────────┘
 ```
 
-### The Core Value Proposition (UVP): Prediction vs. Detection
-* **Standard Fraud Detection Systems:** Evaluate historical behavioral anomalies on accounts that have *already* transacted. By the time an account exhibits anomalous behavior, the funds have often moved.
-* **RakshaNet Topological Prediction:** Evaluates the **structural position** of unflagged, zero-history accounts within the multi-hop transaction graph using inductive link prediction (GraphSAGE). A brand-new account with zero prior fraud complaints is identified as a high-risk mule target simply because of its topological bridge position between known fraud clusters. Simultaneously, geospatial algorithms forecast which specific ATMs/zones will experience withdrawal pressure.
+### The Critical "Golden Window" Challenge
+- **Dissipation Velocity:** Over 85% of defrauded funds are withdrawn as physical cash within **180 to 240 minutes** of initial debit.
+- **Traditional Limitation:** Standard banking antifraud evaluates individual account transaction histories in isolation. When a newly recruited mule account has zero prior complaints, traditional rule engines fail to flag it.
+- **The RakshaNet Paradigm:** RakshaNet shifts antifraud response from **reactive forensic accounting** to **proactive topological interdiction**. By evaluating structural position within an inductive transaction graph (GraphSAGE) and forecasting physical ATM withdrawal corridors (PostGIS + XGBoost), RakshaNet freezes downstream mule hops and alerts field patrol units **before** cash-out occurs.
 
 ---
 
-## 2. System Architecture & High-Level Flow
+## 2. Technical Architecture & Data Infrastructure
 
-RakshaNet employs a modular, decoupled architecture where each specialized engine and data store executes the workload it is natively optimized for:
+RakshaNet utilizes a polyglot, microservice-ready backend architecture paired with an authentic cyber command operations center.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 DATA INGESTION LAYER                                   │
-│            • Citizen Complaint Ingestion Feed   • Core Banking Webhooks                │
+│                                 INGESTION & TELEMETRY GATEWAY                          │
+│          • Citizen NCRP Complaint Portal Feed   • Core Banking Webhooks (ISO 20022)    │
 └───────────────────────────────────────────┬────────────────────────────────────────────┘
                                             ▼
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              POLYGLOT STORAGE LAYER                                    │
+│                               POLYGLOT STORAGE ENGINE                                  │
 │  ┌─────────────────────────────┐ ┌──────────────────────────┐ ┌──────────────────────┐ │
-│  │   PostgreSQL 16 + PostGIS   │ │    Neo4j 5 Community     │ │   Redis 7 (Alpine)   │ │
-│  │   Relational & Geospatial   │ │   Property Graph for     │ │   Hot State Cache    │ │
-│  │   System of Record          │ │   Multi-Hop Mule Chains  │ │   & Pub/Sub Broker   │ │
+│  │   PostgreSQL 16 + PostGIS   │ │    Neo4j Graph Database  │ │   Redis In-Memory    │ │
+│  │   • Relational Source-of-   │ │   • Multi-Hop Property   │ │   • Hot-State Cache  │ │
+│  │     Record & Audit Logs     │ │     Graph (Adamic-Adar)  │ │   • Sub-ms WebSocket │ │
+│  │   • Spatial ATM & Incident  │ │   • Rapid Subgraph Hop   │ │     Pub/Sub Event    │ │
+│  │     Geometries (SRID 4326)  │ │     Neighborhood Traversal│ │     Dispatcher       │ │
 │  └─────────────────────────────┘ └──────────────────────────┘ └──────────────────────┘ │
 └───────────────────────────────────────────┬────────────────────────────────────────────┘
                                             ▼
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                             DUAL AI INTERDICTION PIPELINE                              │
+│                             DUAL-BRANCH AI PREDICTIVE ENGINE                           │
 │  ┌──────────────────────────────────────┐     ┌──────────────────────────────────────┐ │
-│  │   Branch A: Graph Link Predictor     │     │  Branch B: Geo-Temporal Forecaster   │ │
-│  │   (GraphSAGE / PyTorch Geometric)    │     │  (HDBSCAN + XGBoost + Prophet)       │ │
-│  │   • Inductive Node Embeddings        │     │  • Spatial Density Hotspots          │ │
-│  │   • Adamic-Adar / Jaccard Proximity  │     │  • ATM Liquidation Probability       │ │
+│  │   Branch A: Graph Link Predictor     │     │  Branch B: Geo-Spatial Forecaster    │ │
+│  │   (GraphSAGE / PyTorch Geometric)    │     │  (HDBSCAN + XGBoost Spatial Weights) │ │
+│  │   • Inductive Node Embeddings        │     │  • Spatial Density Hotspot Clust.    │ │
+│  │   • Layering & Velocity Heuristics   │     │  • PostGIS Geofenced Cash-Out Points │ │
 │  └──────────────────┬───────────────────┘     └──────────────────┬───────────────────┘ │
 │                     └─────────────────────┬──────────────────────┘                     │
 │                                           ▼                                            │
 │  ┌──────────────────────────────────────────────────────────────────────────────────┐  │
-│  │  Intelligent Risk Fusion Engine:  R = w1·S_graph + w2·S_geo + w3·S_velocity      │  │
-│  │  Explainable AI (SHAP Engine):    Local feature attribution & legal audit logs   │  │
+│  │  Score Fusion Decision Engine:  R_fused = 0.60·S_graph + 0.40·S_geo              │  │
+│  │  SHAP Explainability Engine:    Court-Admissible Feature Attribution & Audit Card│  │
 │  └────────────────────────────────────────┬─────────────────────────────────────────┘  │
 └───────────────────────────────────────────┬────────────────────────────────────────────┘
                                             ▼
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        REAL-TIME DISPATCH & OPERATIONAL UI                             │
-│   • Socket.IO Event Broadcaster (Redis Pub/Sub adapter)                                │
-│   • Inter-Bank Webhook Dispatcher (Automated Lien / Freeze Requests)                   │
-│   • Tactical Command Center (React 18, Leaflet GeoJSON, Interactive Subgraphs)         │
+│                        TACTICAL INTERDICTION & OPERATIONAL UI                          │
+│   • Section 91 CrPC Automated Bank Lien Gateway (CFCFRMS Electronic Notices)           │
+│   • Dynamic Police Patrol Dispatching (Nearest Beat Marshal GPS Routing)               │
+│   • 3-Zone Interactive Command Studio (React 18, Leaflet GeoJSON, D3 Graph Canvas)    │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 3. End-to-End Data Lifecycle (One Concrete Trace)
+## 3. Dual-Branch AI & Explainability Engine
 
-```mermaid
-sequenceDiagram
-    participant C as Ingestion / Citizen Feed
-    participant API as FastAPI Backend
-    participant PG as PostgreSQL + PostGIS
-    participant NEO as Neo4j Graph DB
-    participant AI as Dual AI Pipeline
-    participant R as Redis Pub/Sub
-    participant UI as Command Center (React)
+### Branch A: Inductive Graph Neural Network (GraphSAGE)
+- **Topological Link Prediction:** Computes local neighborhood embeddings across directed transaction graphs $\mathcal{G} = (\mathcal{V}, \mathcal{E})$.
+- **Zero-History Detection:** Identifies mule bridge nodes using Adamic-Adar structural proximity and topological degree metrics:
+  $$\text{Score}_{\text{AA}}(u, v) = \sum_{w \in N(u) \cap N(v)} \frac{1}{\log |N(w)|}$$
+- **Velocity Tracking:** Quantifies rapid fund evacuation ratios ($\frac{\text{Outflow}}{\text{Inflow}}$ within 15-minute intervals).
 
-    C->>API: POST /api/v1/complaints (victim, initial suspect, amount, location)
-    API->>PG: INSERT complaint, update account records
-    API->>NEO: MERGE (:Account) nodes and [:TRANSFERRED] edges
-    
-    par Parallel AI Analysis
-        API->>AI: Trigger Geo-Spatial Pipeline (HDBSCAN on regional ATM density)
-        AI->>PG: Read nearby ATM locations & historical density
-        and
-        API->>AI: Trigger Graph Pipeline (PyTorch Geometric GraphSAGE)
-        AI->>NEO: Extract 2-hop neighborhood subgraph for target accounts
-    end
+### Branch B: Geo-Spatial ATM Hotspot Forecasting (HDBSCAN + XGBoost)
+- **Spatial Density Clustering:** Utilizes HDBSCAN on coordinate tuples $(\text{lat}, \text{lon})$ with the Haversine metric to locate emerging fraud epicenters without requiring manual cluster count hyperparameter tuning.
+- **XGBoost Cash-Out Classifier:** Ranks high-risk terminals using 6 spatial features:
+  1. `cluster_size`: Density of nearby ATMs in the active cluster.
+  2. `nearby_complaints`: Total citizen complaints within a 5 km radius.
+  3. `total_loss_nearby`: Cumulative stolen funds routed through the sector.
+  4. `cash_out_frequency`: Historical terminal transaction velocity.
+  5. `is_in_hotspot_city`: Geographic indicator for organized cybercrime corridors.
+  6. `atm_density_5km`: Local terminal redundancy ratio.
 
-    AI->>AI: Fuse scores: R = (w_graph * S_graph) + (w_geo * S_geo) + (w_vel * S_vel)
-    AI->>AI: Run SHAP explainer to compute feature contribution weights
-    AI->>PG: INSERT into alerts (tier, risk_score, shap_values, explanation)
-    AI->>R: PUBLISH alert:new channel
-    R-->>API: Pub/Sub message received
-    API-->>UI: Socket.IO push to active command rooms
-    
-    Note over UI: UI updates live heatmap, rings alert chime, renders case drawer
-    UI->>API: POST /api/v1/freeze (Log freeze request to beneficiary bank)
-    API->>PG: INSERT audit_log (timestamp, officer_id, bank, action)
-    API-->>UI: 200 OK ("Freeze Request Logged & Dispatched")
-```
+### Decision Engine & Explainable AI (SHAP)
+- **Risk Fusion:** Computes a calibrated threat composite score:
+  $$R_{\text{fused}} = 0.60 \cdot S_{\text{graph}} + 0.40 \cdot S_{\text{geo}}$$
+- **Forensic Explainability:** Generates court-admissible feature attribution breakdowns compliant with the Indian Evidence Act, explaining precisely *why* an account was flagged (e.g., proximity to complaint, evacuation ratio, and forecasted cash-out terminal).
 
 ---
 
-## 4. Polyglot Storage Architecture
+## 4. Key Functional Capabilities
 
-RakshaNet avoids stretching a single database across mismatched workloads. Each database handles its native domain:
+### 1. Three-Zone Cyber Command Studio
+- **Zone 1 (Threat Intelligence Feed):** Real-time stream of incoming NCRP complaints, automated severity categorization (Critical $\ge 0.75$, Elevated $\ge 0.40$), and suspect account metadata.
+- **Zone 2 (Multi-Hop Topology Graph):** Interactive D3/SVG canvas rendering transaction lineage across 1-hop, 2-hop, and 3-hop hops, color-coded by node archetype (Victim, Mule Collector, Layering Intermediary, ATM Terminal).
+- **Zone 3 (Predictive Interdiction Terminal):** Evidence docket displaying SHAP factor impact scores, target account risk analytics, statutory lien dispatch controls, and beat marshal GPS routing.
 
-### A. PostgreSQL 16 + PostGIS 3.4 (Relational & Spatial System of Record)
-* **`complaints`**: Primary crime record (`id`, `complaint_number`, `victim_account`, `initial_suspect_account`, `amount_lost`, `category`, `reported_at`, `location` as `GEOMETRY(Point, 4326)`).
-* **`accounts`**: Master entity for bank accounts (`id`, `account_number`, `bank_name`, `ifsc`, `opened_at`, `current_balance`, `mule_score`, `geo_risk_score`, `final_risk_score`, `risk_tier`, `is_frozen`).
-* **`transactions`**: High-frequency financial ledger (`id`, `from_account_id`, `to_account_id`, `amount`, `timestamp`, `channel`, `is_flagged`).
-* **`atm_locations`**: Physical ATM infrastructure catalog (`id`, `atm_id`, `bank_name`, `address`, `location` as `GEOMETRY(Point, 4326)`, `historical_withdrawal_density`, `cash_exhaustion_risk`).
-* **`alerts`**: High-priority tactical warnings (`id`, `target_account_id`, `predicted_atm_id`, `risk_tier`, `risk_score`, `shap_values` [JSONB], `explanation` [TEXT], `status`: `active | acknowledged | freeze_requested | freeze_confirmed`).
-* **`audit_log`**: Immutable chain of custody (`id`, `timestamp`, `actioned_by`, `action`, `target_entity`, `status_details`, `ip_address`).
+### 2. Live Incident Simulation Engine
+Pre-configured, benchmark-calibrated cybercrime attack scenarios designed for live demonstration:
+1. **Mumbai UPI QR Code Syndicate (₹1,20,000):** Rapid layering across SBI/ICICI mule tiers with cash-out predicted at Matunga / Dadar West ATM Hub.
+2. **Delhi-NCR Digital Arrest Extortion (₹4,50,000):** High-velocity corporate mule dispersal with multi-terminal withdrawal forecasting along Connaught Place.
+3. **Bengaluru Part-Time Job / Task Scam (₹2,80,000):** High out-degree fan-out tree across Whitefield & Koramangala IT corridor accounts.
 
-### B. Neo4j 5 Community (Property Graph Database)
-Maintains pure topological structure for multi-hop graph traversals. Relational metadata is left in PostgreSQL.
-* **Nodes**:
-  * `(:Account {id: STRING, account_number: STRING, bank: STRING, ifsc: STRING, is_fraud_labeled: BOOLEAN})`
-  * `(:ATMLocation {id: STRING, atm_id: STRING, lat: FLOAT, lng: FLOAT})`
-* **Relationships**:
-  * `(:Account)-[:TRANSFERRED {txn_id: STRING, amount: FLOAT, timestamp: DATETIME, is_suspicious: BOOLEAN}]->(:Account)`
-  * `(:Account)-[:WITHDREW_AT {txn_id: STRING, amount: FLOAT, timestamp: DATETIME}]->(:ATMLocation)`
-* **Core 2-Hop Cypher Traversal:**
-  ```cypher
-  MATCH path = (target:Account {id: $account_id})-[:TRANSFERRED*1..2]-(neighbor:Account)
-  RETURN path
-  ```
-
-### C. Redis 7 (In-Memory Hot State & Pub/Sub)
-* Fast session validation and token blocklisting.
-* Spatial indexing of active law enforcement patrols (`GEOADD`, `GEORADIUS`).
-* Pub/Sub message broker connecting background AI evaluation workers to the WebSocket gateway.
+### 3. Statutory Compliance & Interdiction Workflows
+- **Section 91 CrPC Automated Bank Liens:** Emits structured electronic notices to partner banks to lock suspect funds in transit.
+- **Section 457 CrPC Restitution Protocol:** Tracks frozen balances in digital escrow to facilitate rapid court-directed victim reimbursement.
+- **Police Beat Marshal Routing:** Automatically correlates the nearest active patrol vehicle with the target ATM cluster for physical interdiction.
 
 ---
 
-## 5. Dual AI Interdiction Pipeline
+## 5. Security Architecture & Standards Compliance
 
-### Branch A: GraphSAGE Inductive Link Prediction (`backend/app/ai/graph_predictor.py`)
-Standard Matrix Factorization and transductive algorithms fail when new accounts appear in real time. RakshaNet utilizes **GraphSAGE (PyTorch Geometric)** to generate inductive node embeddings by aggregating feature representations from an account’s local network neighborhood:
-$$\mathbf{h}_v^{(k)} = \sigma \left( \mathbf{W}^{(k)} \cdot \text{CONCAT}\left(\mathbf{h}_v^{(k-1)}, \text{AGGREGATE}_k \left( \left\{ \mathbf{h}_u^{(k-1)}, \forall u \in \mathcal{N}(v) \right\} \right)\right) \right)$$
-* **Feature Set**: Indegree, outdegree, transaction velocity, Adamic-Adar proximity to verified fraud rings, Jaccard network overlap, PageRank centrality, and shortest hop distance to known mules.
-* **UVP Invariance**: A newly registered account with zero past transactions scores critically high if it is situated topologically between two active fraud subgraphs.
-
-### Branch B: Geo-Temporal Hotspot Forecaster (`backend/app/ai/geo_hotspot.py`)
-Predicts physical cash-out locations by combining spatial density with temporal withdrawal velocity:
-1. **Spatial Clustering (HDBSCAN):** Groups recent victim debit points and historical ATM liquidation sites into spatial clusters, accounting for noise and varying density.
-2. **ATM Risk Classifier (XGBoost):** Classifies individual ATMs within active clusters based on distance to highway exits, unmonitored booth density, historical night cash-outs, and rapid-succession withdrawals.
-3. **Temporal Demand Regressor (Prophet):** Models time-series liquidation curves to predict the exact 30-minute window of peak ATM withdrawal pressure.
-
-### Risk Fusion & Threshold Calibration (`backend/app/ai/risk_fusion.py`)
-Combines multi-modal outputs into a unified score $R \in [0, 100]$:
-$$R = 100 \cdot \left( w_{\text{graph}} \cdot S_{\text{graph}} + w_{\text{geo}} \cdot S_{\text{geo}} + w_{\text{velocity}} \cdot S_{\text{velocity}} \right)$$
-* **Low Tier (0–39):** Passive observation, standard monitoring.
-* **Medium Tier (40–69):** Heightened alert, automated anomaly flag sent to branch risk officer.
-* **Critical Tier (70–100):** Real-time command center alert chime, automatic lien request dispatch, dynamic heatmap red-zone generation.
-
-### Explainable AI Engine (`backend/app/ai/shap_explainer.py`)
-Black-box ML predictions cannot stand as evidence for account freezing. RakshaNet runs **TreeSHAP / KernelSHAP** to compute feature attributions $\phi_i$ for every flagged entity:
-$$\sum_{i=1}^{M} \phi_i(x) = f(x) - \mathbb{E}[f(z)]$$
-Generates structured legal justification text:
-> *"Account XXXX9812 scored 91 (Critical). 2 hops from 3 confirmed fraud syndicates (+0.34 SHAP), ATM Cluster #4 historical cash-out correlation (+0.26 SHAP), account opened < 48 hours ago (+0.21 SHAP), multi-regional IFSC dispersal (+0.19 SHAP)."*
+- **Zero-Secret-Leakage Architecture:** Strict decoupling of application binaries from secrets. No credentials, tokens, or environment keys are committed to Git.
+- **Role-Based Access Control (RBAC):** Token-based authentication using cryptographically signed JWTs (`HS256`), supporting specialized law enforcement roles (Investigating Officer, SP/Superintendent, I4C National Coordinator).
+- **Forensic Audit Integrity:** All actions (login events, simulation triggers, freeze orders, patrol dispatches) are permanently written to an append-only `audit_logs` table with client IP, timestamp, and SHA-256 hash validation.
 
 ---
 
-## 6. Inter-Agency Workflow & Legal Honesty Standard
-
-In strict compliance with banking operations and legal standards:
-* **The System Does Not Unilaterally Freeze Bank Accounts.** Automated arbitrary freezing without institutional authorization violates banking protocols.
-* **Correct Terminology:**
-  * Action Button: `"Log Freeze Request"`
-  * Processing State: `"Dispatching to [Bank Name] API via CFCFRMS"`
-  * Final State: `"Freeze Request Logged — Awaiting Bank Lien Confirmation"`
-* Every action creates an immutable, SHA-256 verified entry in `audit_log` with operator identity, IP address, timestamp, and the exact SHAP explanation payload.
-
----
-
-## 7. REST API & WebSocket Specifications
-
-### REST Endpoints (FastAPI)
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/v1/complaints` | Ingest new citizen or portal complaints |
-| `GET` | `/api/v1/complaints` | Paginated complaint query with status filter |
-| `GET` | `/api/v1/accounts/{id}/risk` | Real-time topological and spatial risk assessment |
-| `GET` | `/api/v1/alerts` | Paginated tactical alert feed (tier, status, date) |
-| `GET` | `/api/v1/alerts/{id}/explain` | Return SHAP feature weights and plain-language reasoning |
-| `POST` | `/api/v1/freeze` | Issue formal lien/freeze request to beneficiary bank |
-| `GET` | `/api/v1/heatmap` | GeoJSON FeatureCollection of predicted cash-out hotspots |
-| `GET` | `/api/v1/stats` | Platform KPIs: funds at risk, prevented loss, recovery rate |
-| `POST` | `/api/v1/auth/token` | OAuth2 JWT token acquisition (Admin, Analyst, Officer) |
-
-#### Sample Contract: `GET /api/v1/alerts/{id}/explain`
-```json
-{
-  "alert_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
-  "tier": "critical",
-  "risk_score": 91.4,
-  "confidence": 0.94,
-  "explanation": "Account scored 91 (Critical). 2 hops from 3 known fraud rings (+0.32), ATM cluster #7 shows elevated historical fraud density (+0.24), account opened 48h ago (+0.18), unusual IFSC pattern (+0.17).",
-  "shap_values": {
-    "fraud_hop_count": 0.32,
-    "atm_cluster_density": 0.24,
-    "account_age_hours": 0.18,
-    "ifsc_diversity": 0.17,
-    "txn_velocity": 0.09
-  },
-  "graph_context": {
-    "hops_to_nearest_fraud": 2,
-    "fraud_neighbors_count": 3
-  }
-}
-```
-
-### WebSocket Real-Time Events (`ws://host:8000/socket.io`)
-* **`alert:new`**: Emitted when fusion engine calculates risk score $\ge 70$.
-* **`heatmap:update`**: Emitted when cluster centroids recompute following new complaint ingestion.
-* **`case:status_change`**: Broadcasts lien acknowledgement updates from banking partners.
-
----
-
-## 8. Complete Project File Structure & Contributor Guide
-
-The repository is structured so individual contributors can take ownership of discrete modules without cross-file merge conflicts:
+## 6. Repository Structure
 
 ```
 RakshaNet/
-├── .gitignore                          # Standard git exclusions (.env, __pycache__, node_modules)
-├── backend/
-│   ├── Dockerfile                      # Python 3.11 Debian Slim container configuration
-│   ├── requirements.txt                # FastAPI, PyG, PostGIS, Neo4j, Redis dependencies
-│   ├── alembic.ini                     # Database migration configuration
-│   ├── alembic/
-│   │   └── versions/.gitkeep           # Database migration revisions
-│   ├── generators/                     # Synthetic Data Engine
-│   │   ├── __init__.py
-│   │   ├── generate_all.py             # Orchestrator to generate & seed Postgres and Neo4j
-│   │   ├── complaint_gen.py            # Generates realistic citizen reports with Indian locales
-│   │   ├── transaction_gen.py          # Generates high-volume multi-layer transaction histories
-│   │   ├── account_gen.py              # Generates KYC accounts, IFSCs, and banks
-│   │   ├── atm_gen.py                  # Generates geolocated ATM records across metro clusters
-│   │   └── graph_gen.py                # Injects star, chain, and fan-out mule topologies
+├── backend/                            # FastAPI Microservices Backend
+│   ├── Dockerfile                      # Production container spec (Python 3.11-slim)
+│   ├── requirements.txt                # Python dependencies
 │   └── app/
-│       ├── __init__.py
-│       ├── main.py                     # FastAPI application factory, middleware, CORS, lifecycle
-│       ├── config.py                   # Pydantic BaseSettings loading environment variables
-│       ├── models/                     # SQLAlchemy 2.0 ORM Definitions
-│       │   ├── __init__.py
-│       │   ├── complaint.py            # Complaint ORM model with GeoAlchemy2 Point
-│       │   ├── account.py              # Account ORM model with risk score attributes
-│       │   ├── transaction.py          # Transaction ORM model with temporal indexes
-│       │   ├── atm_location.py         # ATM Location ORM model with PostGIS coordinates
-│       │   ├── alert.py                # Alert ORM model with JSONB SHAP storage
-│       │   └── audit_log.py            # Audit log ORM model with SHA-256 verification
-│       ├── schemas/                    # Pydantic Schemas (Validation & Serialization)
-│       │   ├── __init__.py
-│       │   ├── complaint.py            # ComplaintCreate, ComplaintRead
-│       │   ├── account.py              # AccountRead, AccountRiskUpdate
-│       │   ├── alert.py                # AlertRead, AlertExplainResponse
-│       │   ├── heatmap.py              # GeoJSON Feature and FeatureCollection models
-│       │   └── stats.py                # Dashboard platform KPI summaries
-│       ├── api/                        # FastAPI Route Handlers
-│       │   ├── __init__.py
-│       │   ├── router.py               # Master APIRouter mounting all sub-endpoints
-│       │   ├── complaints.py           # Ingestion & listing endpoints
-│       │   ├── accounts.py             # Account query & topological risk endpoints
-│       │   ├── alerts.py               # Alert feed, case drawer, & SHAP explain endpoint
-│       │   ├── heatmap.py              # Dynamic GeoJSON cluster coordinates endpoint
-│       │   ├── freeze.py               # Bank lien / freeze dispatch endpoints
-│       │   ├── stats.py                # System-wide interdiction metric endpoints
-│       │   └── auth.py                 # JWT login, refresh, & RBAC dependency injection
-│       ├── services/                   # Core Business Logic Layer
-│       │   ├── __init__.py
-│       │   ├── ingestion.py            # Parses incoming complaints & coordinates DB writes
-│       │   ├── graph_service.py        # Neo4j Cypher queries & subgraph extraction
-│       │   ├── geo_service.py          # PostGIS spatial radius & boundary query service
-│       │   ├── alert_service.py        # Evaluates thresholds & creates alert records
-│       │   └── explain_service.py      # Formats SHAP vectors into human-readable text
-│       ├── ai/                         # Machine Learning Pipeline
-│       │   ├── __init__.py
-│       │   ├── geo_hotspot.py          # HDBSCAN spatial clustering + XGBoost ATM scorer
-│       │   ├── graph_predictor.py      # PyTorch Geometric 2-Layer GraphSAGE link predictor
-│       │   ├── risk_fusion.py          # Calibrated multi-modal risk score fusion
-│       │   ├── shap_explainer.py       # SHAP TreeExplainer & feature attribution vectors
-│       │   └── models/.gitkeep         # Storage for trained model weights (.pt, .joblib)
-│       ├── realtime/                   # WebSocket & Pub/Sub Gateway
-│       │   ├── __init__.py
-│       │   ├── socket_server.py        # Socket.IO ASGI application mounted on FastAPI
-│       │   ├── events.py               # Event name definitions & room routing logic
-│       │   └── dispatcher.py           # Redis pub/sub listener pushing to WebSocket clients
-│       └── db/                         # Data Drivers & Connections
-│           ├── __init__.py
-│           ├── postgres.py             # Async SQLAlchemy engine & get_db session dependency
-│           ├── neo4j_driver.py         # Async Bolt Neo4j driver connection pool
-│           └── redis_client.py         # Redis connection pool & pub/sub helpers
+│       ├── main.py                     # FastAPI application entrypoint & background bootstrap
+│       ├── config.py                   # Pydantic Settings with dynamic URL normalization
+│       ├── api/                        # API route controllers
+│       │   ├── auth.py                 # LEA officer authentication & JWT issuance
+│       │   ├── alerts.py               # Threat intelligence queue & filtering
+│       │   ├── demo.py                 # Live Attack Simulation endpoints
+│       │   ├── freeze.py               # Section 91 CrPC statutory lien gateway
+│       │   ├── heatmap.py              # Geospatial ATM risk cluster endpoints
+│       │   ├── patrols.py              # Patrol unit tracking & beat dispatch
+│       │   ├── restitution.py          # Section 457 CrPC victim fund restitution
+│       │   └── stats.py                # Macro command overview analytics
+│       ├── ai/                         # Machine Learning & Explainable AI
+│       │   ├── graph_predictor.py      # Inductive GraphSAGE & link prediction
+│       │   ├── geo_hotspot.py          # HDBSCAN clustering & XGBoost ATM scoring
+│       │   ├── risk_fusion.py          # Dual-branch fusion decision engine
+│       │   ├── shap_explainer.py       # Court-admissible feature attribution
+│       │   └── models/                 # Pre-trained model weights (XGBoost)
+│       ├── db/                         # Multi-Database connectivity
+│       │   ├── postgres.py             # Async SQLAlchemy + PostGIS engine
+│       │   ├── neo4j_driver.py         # Async Neo4j Bolt driver pool
+│       │   ├── redis_client.py         # Async Redis client with TLS (rediss://)
+│       │   └── init_db.py              # Automated schema & index migration
+│       ├── generators/                 # Calibrated synthetic data generator
+│       └── models/                     # SQLAlchemy relational entity definitions
 │
-├── frontend/
-│   ├── Dockerfile                      # Multi-stage build (Node build -> NGINX serve)
-│   ├── package.json                    # React 18, Vite, Leaflet, Recharts, Socket.io-client
-│   ├── vite.config.js                  # Vite bundler configuration & dev server proxy
-│   ├── index.html                      # HTML entrypoint with viewport & font imports
-│   └── src/
-│       ├── main.jsx                    # React DOM root render
-│       ├── App.jsx                     # Application routing & context providers
-│       ├── index.css                   # Global styling, modern dark theme design system
-│       ├── contexts/                   # State Management Contexts
-│       │   ├── AuthContext.jsx         # User authentication, token lifecycle & user roles
-│       │   └── AlertContext.jsx        # Real-time alert store synced with WebSockets
-│       ├── hooks/                      # Custom React Hooks
-│       │   ├── useSocket.js            # Manages WebSocket connection & event listeners
-│       │   ├── useAlerts.js            # Fetches, filters, and paginates alert data
-│       │   └── useApi.js               # Axios wrapper with automatic Bearer token injection
-│       ├── pages/                      # Top-Level Page Views
-│       │   ├── LoginPage.jsx           # Secure authentication portal
-│       │   ├── DashboardPage.jsx       # Tactical Command Center (Map, Feed, Case Drawer)
-│       │   ├── CommandPage.jsx         # Executive macro view & jurisdictional analytics
-│       │   └── NotFoundPage.jsx        # 404 Route handler
-│       ├── components/                 # Reusable UI Components
-│       │   ├── layout/
-│       │   │   ├── Sidebar.jsx         # Navigation bar with route switches
-│       │   │   ├── TopBar.jsx          # Live clock, system status, active officer badge
-│       │   │   └── RoleBadge.jsx       # Visual tag displaying user security clearance
-│       │   ├── map/
-│       │   │   ├── HeatmapView.jsx     # Leaflet canvas rendering hotspot GeoJSON
-│       │   │   ├── ATMMarker.jsx       # Custom SVG map pin with risk-colored pulse
-│       │   │   └── ZoneOverlay.jsx     # Visual radius highlighting high-risk police zones
-│       │   ├── alerts/
-│       │   │   ├── AlertFeed.jsx       # Virtualized list of real-time alerts
-│       │   │   ├── AlertCard.jsx       # Compact card showing tier, account, and risk
-│       │   │   └── CaseDrawer.jsx      # Slide-out drawer with full case context
-│       │   ├── explain/
-│       │   │   ├── ShapChart.jsx       # Recharts bar graph displaying feature importances
-│       │   │   └── ExplainPanel.jsx    # Plain-language explanation container
-│       │   ├── graph/
-│       │   │   └── TxnGraph.jsx        # Force-directed 2-hop transaction network graph
-│       │   ├── analytics/
-│       │   │   ├── StatsBar.jsx        # Key metrics cards (Interdiction count, funds saved)
-│       │   │   ├── TrendChart.jsx      # Time-series chart of complaint volume vs cash-out
-│       │   │   └── TierDonut.jsx       # Distribution chart of active alerts by risk tier
-│       │   └── actions/
-│       │       ├── FreezeButton.jsx    # Standard-compliant "Log Freeze Request" trigger
-│       │       └── AuditTrail.jsx      # Historical action log for current case
-│       └── utils/                      # Helper Utilities
-│           ├── api.js                  # Pre-configured Axios instance with interceptors
-│           ├── socket.js               # Socket.IO client instance initialization
-│           └── constants.js            # Application constants, risk tiers, color palettes
+├── frontend/                           # Cyber Command Tactical Interface
+│   ├── Dockerfile                      # Production build container (Nginx Alpine)
+│   ├── package.json                    # React 18, Vite, Lucide Icons, Leaflet, Recharts
+│   ├── vite.config.js                  # Bundler configuration
+│   ├── vercel.json                     # SPA client-side routing rewrites
+│   ├── src/
+│   │   ├── App.jsx                     # Application root & role management
+│   │   ├── components/                 # Reusable tactical UI modules
+│   │   │   ├── alerts/                 # Threat intelligence feed & alert cards
+│   │   │   ├── docket/                 # Interdiction terminal & evidence docket
+│   │   │   ├── graph/                  # D3/SVG topological transaction graph
+│   │   │   ├── map/                    # Leaflet geospatial ATM hotspot canvas
+│   │   │   └── simulation/             # Live attack injection modal
+│   │   └── hooks/                      # WebSocket & state synchronization hooks
+│   └── nginx.conf                      # Production HTTP reverse proxy & security headers
 │
-└── scripts/
-    ├── seed_db.sh                      # Shell wrapper to execute synthetic database seeding
-    ├── train_models.sh                 # Shell script to train GraphSAGE and XGBoost models
-    └── demo_scenario.py                # End-to-end simulation script injecting live attack trace
+├── scripts/                            # Operational & verification toolkits
+│   ├── demo_scenario.py                # Headless end-to-end incident injection script
+│   ├── generate_technical_dossier.py   # PDF master technical report generator
+│   └── verify_phase*.py                # Automated verification test suites
+│
+├── docker-compose.yml                  # Full-stack local multi-database composition
+├── .env.example                        # Documented environment variable template
+└── .gitignore                          # Strict secret & credential exclusion rules
 ```
 
 ---
 
-## 9. Contributor Implementation Guide (Role Breakdown)
-
-When picking up an empty placeholder file, implement it according to these module boundaries:
-
-### 1. Database & Ingestion Engineers (`backend/app/db/`, `backend/app/models/`, `backend/generators/`)
-* **Primary Task:** Define SQLAlchemy ORM models with exact foreign key relationships.
-* **Requirements:**
-  * Use async sessions (`asyncpg` and `AsyncSession`).
-  * Ensure `atm_location.location` and `complaint.location` use GeoAlchemy2's `Geometry(geometry_type='POINT', srid=4326)`.
-  * Ensure `generators/generate_all.py` creates synchronized records across both PostgreSQL and Neo4j so IDs match 1-to-1.
-
-### 2. Graph & AI Engineers (`backend/app/ai/`, `backend/app/services/graph_service.py`)
-* **Primary Task:** Implement 2-layer GraphSAGE in `graph_predictor.py` and spatial clustering in `geo_hotspot.py`.
-* **Requirements:**
-  * In `graph_predictor.py`, export subgraphs using `torch_geometric.data.Data`.
-  * Train inductive link prediction using mean aggregation.
-  * In `shap_explainer.py`, wrap model inference in `shap.TreeExplainer` or `shap.KernelExplainer` and return a dictionary of feature attributions alongside formatted legal explanation text.
-
-### 3. API & Real-Time Engineers (`backend/app/api/`, `backend/app/realtime/`)
-* **Primary Task:** Wire route handlers and connect Redis Pub/Sub to Socket.IO.
-* **Requirements:**
-  * Route handlers must return Pydantic models from `backend/app/schemas/`.
-  * Inject database sessions using FastAPI's `Depends(get_db)`.
-  * On new critical alert creation, dispatch the payload to Redis channel `alerts:broadcast`.
-
-### 4. Frontend UI/UX Engineers (`frontend/src/`)
-* **Primary Task:** Build the tactical command center with Leaflet maps, force-directed graphs, and real-time feeds.
-* **Requirements:**
-  * Connect to Socket.IO in `AlertContext.jsx` and append incoming alerts dynamically.
-  * Render the 2-hop transaction graph in `TxnGraph.jsx` using `react-force-graph-2d`.
-  * Render SHAP feature weights in `ShapChart.jsx` using horizontal bar charts with diverging red/green colors.
-  * Ensure the freeze button copy strictly follows: `"Log Freeze Request"` and logs the result to `AuditTrail.jsx`.
-
----
-
-## 10. Local Development Environment
+## 7. Local Installation & Development Setup
 
 ### Prerequisites
-* Docker & Docker Compose
-* Python 3.11+
-* Node.js 18+ & npm
+- **Docker & Docker Compose** (v24+)
+- **Python 3.11+**
+- **Node.js 18+** & `npm`
 
-### 1. Multi-Database Infrastructure
-Launch the three backing services:
+### Step 1: Clone Repository & Create Environment Configuration
 ```bash
-docker compose up -d
+git clone https://github.com/parthkharat20/RakshaNet.git
+cd RakshaNet
+cp .env.example .env
 ```
-* **PostgreSQL (PostGIS):** `localhost:5432` (`user: raksha`, `db: rakshanet`)
-* **Neo4j 5 Community:** `http://localhost:7474` (Bolt: `localhost:7687`)
-* **Redis 7:** `localhost:6379`
+*(Configure `.env` with your desired database credentials).*
 
-### 2. Backend API Setup
+### Step 2: Launch Multi-Database Infrastructure (Docker Compose)
+```bash
+docker compose up -d postgres neo4j redis
+```
+This provisions:
+- **PostgreSQL 16 + PostGIS:** `localhost:5432`
+- **Neo4j 5 Graph Community:** `localhost:7474` (Bolt: `localhost:7687`)
+- **Redis 7 In-Memory Store:** `localhost:6379`
+
+### Step 3: Launch Backend Application
 ```bash
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# Run migrations
-alembic upgrade head
-
-# Start development server
-uvicorn app.main:app --reload --port 8000
+# Run server (tables and demo officers seed automatically on startup)
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-Interactive API documentation will be available at: `http://localhost:8000/docs`.
+API Gateway documentation is available at `http://localhost:8000/docs`.
 
-### 3. Frontend Dashboard Setup
+### Step 4: Launch Tactical Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Tactical Command Center will be available at: `http://localhost:5173`.
+Tactical Command Center is accessible at `http://localhost:5173`.
+
+---
+
+## 8. Demo Credentials & Simulation Walkthrough
+
+### Law Enforcement Officer Credentials (Demo)
+| Officer Name | Badge ID | Security PIN | Division |
+|---|---|---|---|
+| **Inspector Parth Kharat** | `LE-CYBER-MUM-4029` | `1234` | Maharashtra Cyber Cell (I4C) |
+| **SP Rajesh Kumar** | `LE-CYBER-DEL-1001` | `5678` | Delhi Cyber Crime Branch |
+| **ASP Priya Sharma** | `LE-CYBER-BLR-2045` | `9012` | Karnataka CID Cyber Division |
+| **DIG Vikram Singh** | `LE-I4C-HQ-0001` | `admin` | I4C National Command Centre |
+
+### Executing an End-to-End Live Attack Simulation
+1. Log into the command portal using any of the officer credentials above.
+2. Click the **"⚡ Simulate Attack"** button on the top navigation bar.
+3. Select an attack topology (e.g., **Mumbai UPI QR Code Syndicate**).
+4. Click **"Inject Incident into Live Network"**.
+5. Observe the live system:
+   - Real-time alert dispatched via WebSockets without page reload.
+   - Graph canvas expands with multi-hop transfer lineage.
+   - Predictive cash-out hotspot identifies the target ATM hub within the critical Golden Window.
+   - Click **"Freeze Target Accounts"** or **"Dispatch Beat Marshal"** to execute instant statutory interdiction.
+
+---
+
+## 9. License & Attribution
+
+Developed under the **Smart India Hackathon (SIH)** framework for cybercrime mitigation and public safety innovation. 
+Licensed under the [MIT License](LICENSE).
