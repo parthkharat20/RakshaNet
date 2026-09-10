@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+export const API_BASE = import.meta.env.VITE_API_URL
+  ? (import.meta.env.VITE_API_URL.endsWith('/api/v1')
+      ? import.meta.env.VITE_API_URL
+      : `${import.meta.env.VITE_API_URL.replace(/\/+$/, '')}/api/v1`)
+  : '/api/v1';
+
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE,
   headers: {
     'Content-Type': 'application/json'
   },
@@ -24,7 +30,7 @@ export const ensureOfficerSession = async () => {
 
   if (!token || !officer) {
     try {
-      const res = await axios.post('/api/v1/auth/login', {
+      const res = await axios.post(`${API_BASE}/auth/login`, {
         badge_id: DEMO_OFFICER.badge_id,
         pin: DEMO_OFFICER.pin
       });

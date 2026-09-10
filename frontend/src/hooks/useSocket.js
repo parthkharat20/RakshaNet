@@ -4,7 +4,23 @@
  */
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-const WS_BASE = `ws://${window.location.hostname}:8000/ws/alerts`;
+const getWsUrl = () => {
+  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
+  if (import.meta.env.VITE_API_URL) {
+    try {
+      const url = new URL(import.meta.env.VITE_API_URL);
+      const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${protocol}//${url.host}/ws/alerts`;
+    } catch (e) {
+      console.warn('Invalid VITE_API_URL for WebSocket derivation:', e);
+    }
+  }
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const port = window.location.port === '5173' ? ':8000' : (window.location.port ? `:${window.location.port}` : '');
+  return `${protocol}//${window.location.hostname}${port}/ws/alerts`;
+};
+
+const WS_BASE = getWsUrl();
 const RECONNECT_DELAY_MS = 3000;
 const PING_INTERVAL_MS = 25000;
 
