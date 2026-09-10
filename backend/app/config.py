@@ -1,5 +1,6 @@
 import warnings
 from typing import List
+from pydantic import Field, AliasChoices, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,9 +12,19 @@ class Settings(BaseSettings):
     # PostgreSQL + PostGIS Settings
     DATABASE_URL: str = "postgresql+asyncpg://raksha:rakshanet_secret@localhost:5432/rakshanet"
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def format_database_url(cls, v: str) -> str:
+        if isinstance(v, str):
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql+asyncpg://", 1)
+            elif v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
+                return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
+
     # Neo4j Graph Database Settings
     NEO4J_URI: str = "bolt://localhost:7687"
-    NEO4J_USER: str = "neo4j"
+    NEO4J_USER: str = Field(default="neo4j", validation_alias=AliasChoices("NEO4J_USER", "NEO4J_USERNAME"))
     NEO4J_PASSWORD: str = "rakshanet_secret"
 
     # Redis Cache & Pub/Sub Settings
