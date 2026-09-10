@@ -38,7 +38,7 @@ Cryptographically Prepared for Evidence Submission under Section 65B Indian Evid
       <div className="p-3.5 rounded-xl bg-slate-950/80 border border-white/10 space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-slate-400 text-[11px] uppercase tracking-wider">AI Classification Verdict</span>
-          <span className="pill pill-critical font-bold text-[10px]">
+          <span className="badge-status-critical font-bold text-[10px]">
             <ShieldAlert className="w-3 h-3" /> {verdict}
           </span>
         </div>

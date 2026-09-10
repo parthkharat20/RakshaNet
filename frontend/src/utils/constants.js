@@ -22,19 +22,19 @@ export const ALERT_TYPE_META = {
   MULE_RING: {
     label: 'Critical Mule Ring',
     color: '#EF4444',
-    badgeClass: 'pill-critical',
+    badgeClass: 'badge-status-critical',
     icon: 'AlertTriangle'
   },
   SURVEILLANCE: {
     label: 'Surveillance Advisory',
     color: '#F59E0B',
-    badgeClass: 'pill-elevated',
+    badgeClass: 'badge-status-amber',
     icon: 'Eye'
   },
   ATM_CASHOUT_SURGE: {
     label: 'ATM Cash-Out Surge',
     color: '#10B981',
-    badgeClass: 'pill-success',
+    badgeClass: 'badge-status-success',
     icon: 'Zap'
   }
 };

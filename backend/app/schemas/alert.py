@@ -12,6 +12,8 @@ class AlertResponse(BaseModel):
     target_account_id: Optional[UUID] = None
     target_account_number: Optional[str] = None
     target_holder_name: Optional[str] = None
+    bank_name: Optional[str] = None
+    city: Optional[str] = None
     target_atm_id: Optional[UUID] = None
     risk_score: float
     graph_score: float

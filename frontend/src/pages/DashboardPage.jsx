@@ -20,7 +20,6 @@ import {
   Radio,
   Coins,
   ShieldAlert,
-  Lock,
   Building,
   CheckCircle2
 } from 'lucide-react';
@@ -36,9 +35,10 @@ export const DashboardPage = () => {
   const [dossierModalOpen, setDossierModalOpen] = useState(false);
   const [restitutionModalOpen, setRestitutionModalOpen] = useState(false);
 
-  // Active target fallback: selected alert or top critical alert
+  // Active target fallback: selected alert or top alert
   const currentTarget = selectedAlert || (alerts && alerts.length > 0 ? alerts[0] : null);
-  const isCritical = currentTarget?.risk_score >= 0.75;
+  const isCritical = currentTarget?.risk_score >= 0.85;
+  const isElevated = currentTarget?.risk_score >= 0.70 && currentTarget?.risk_score < 0.85;
   const isFrozen = currentTarget?.status === 'FREEZE_DISPATCHED' || currentTarget?.status === 'FREEZE_CONFIRMED';
 
   const handleOpenCommand = (alert) => {
@@ -56,13 +56,13 @@ export const DashboardPage = () => {
   };
 
   return (
-    <div className="p-5 max-w-[1780px] mx-auto space-y-5 animate-in fade-in duration-300">
-      {/* Top National Telemetry KPI Cards */}
+    <div className="p-4 max-w-[1780px] mx-auto space-y-4 animate-in fade-in duration-200 select-none">
+      {/* Top Operational Telemetry Strip */}
       <StatsBar />
 
       {/* Main Operations Grid: 12-Column Responsive Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[800px]">
-        {/* Left Column: Real-Time Prioritized Alert Stream (5 Columns) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[780px]">
+        {/* Left Column: Real-Time Incident Feed (5 Columns) */}
         <div className="lg:col-span-5 h-full">
           <AlertFeed
             onFreezeClick={handleFreezeFromFeed}
@@ -70,72 +70,73 @@ export const DashboardPage = () => {
           />
         </div>
 
-        {/* Right Column: Multi-Modal Visualization & Investigation Theater (7 Columns) */}
+        {/* Right Column: Case Investigation Workbench (7 Columns) */}
         <div className="lg:col-span-7 h-full flex flex-col space-y-3">
-          {/* Universal LEA Interdiction Action Bar */}
+          {/* Integrated Suspect Intelligence Banner */}
           {currentTarget && (
-            <div className="p-3 rounded-xl bg-slate-900/90 border border-white/10 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+            <div className="command-panel p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0B101D] border-white/10">
+              {/* Suspect Info */}
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${isCritical ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-blue-500/20 text-blue-400 border border-blue-500/40'}`}>
+                <div className={`p-2 rounded-lg ${isCritical ? 'bg-red-950/80 text-red-400 border border-red-500/40' : 'bg-blue-950/80 text-blue-400 border border-blue-500/40'}`}>
                   <ShieldAlert className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white text-xs font-mono">
+                    <h3 className="font-sans font-bold text-white text-sm">
                       {currentTarget.target_holder_name || 'Suspect Account'}
-                    </span>
+                    </h3>
                     <span className="text-[11px] font-mono text-slate-400">
-                      ({maskAccountNumber(currentTarget.target_account_number)})
+                      {maskAccountNumber(currentTarget.target_account_number)}
                     </span>
                     <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-slate-300 border border-white/10">
-                      {currentTarget.bank_name || 'Active Node'}
+                      {currentTarget.bank_name || 'Active Bank Node'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 mt-0.5 text-[10px] font-mono">
-                    <span className="text-slate-400">Fused Risk:</span>
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 mt-0.5">
+                    <span>Fused Risk:</span>
                     <span className={`font-bold ${isCritical ? 'text-red-400' : 'text-amber-400'}`}>
                       {(currentTarget.risk_score * 100).toFixed(1)}%
                     </span>
                     <span className="text-slate-600">•</span>
-                    <span className="text-slate-400">Status:</span>
+                    <span>Status:</span>
                     {isFrozen ? (
-                      <span className="text-emerald-400 font-bold flex items-center gap-0.5">
-                        <CheckCircle2 className="w-2.5 h-2.5" /> SEC 91 FROZEN
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Section 91 Lien Active
                       </span>
                     ) : (
-                      <span className="text-red-400 font-bold">ACTION PENDING</span>
+                      <span className="text-red-400 font-semibold">Action Required</span>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* 4 Core Indian Law Enforcement Tactical Action Buttons */}
-              <div className="flex items-center gap-2">
+              {/* Integrated Action Toolbar */}
+              <div className="flex items-center gap-1.5 shrink-0">
                 <button
                   onClick={() => setDossierModalOpen(true)}
-                  className="px-2.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                  title="Generate court-admissible Section 65B Electronic Evidence Brief"
+                  className="btn-command-secondary text-xs cursor-pointer"
+                  title="Export Section 65B Electronic Evidence Brief"
                 >
-                  <FileText className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="hidden sm:inline">Sec 65B Dossier</span>
+                  <FileText className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="hidden sm:inline">65B Dossier</span>
                 </button>
 
                 <button
                   onClick={() => setRestitutionModalOpen(true)}
-                  className="px-2.5 py-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                  title="Draft and execute Section 457 Cr.P.C. / BNSS 503 Magisterial Restitution"
+                  className="btn-command-secondary text-xs cursor-pointer"
+                  title="Draft Section 457 Cr.P.C. Restitution Order"
                 >
-                  <Coins className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="hidden sm:inline">Sec 457 Restitution</span>
+                  <Coins className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="hidden sm:inline">457 Restitution</span>
                 </button>
 
                 <button
                   onClick={() => setPatrolModalOpen(true)}
-                  className="px-2.5 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                  title="Dispatch nearest police beat marshal to predicted ATM cash-out point"
+                  className="btn-command-secondary text-xs cursor-pointer"
+                  title="Dispatch Beat Patrol to ATM"
                 >
-                  <Radio className="w-3.5 h-3.5 text-red-400 animate-pulse" />
-                  <span className="hidden sm:inline">Dispatch Patrol</span>
+                  <Radio className="w-3.5 h-3.5 text-red-400" />
+                  <span className="hidden sm:inline">Patrol</span>
                 </button>
 
                 <FreezeButton
@@ -147,26 +148,26 @@ export const DashboardPage = () => {
             </div>
           )}
 
-          {/* Visual Mode Selector Tabs */}
-          <div className="flex items-center justify-between bg-slate-900/70 p-1.5 rounded-xl border border-white/10 shrink-0">
+          {/* Workbench Tab Navigation Bar */}
+          <div className="flex items-center justify-between p-1 rounded-lg bg-[#070A12] border border-white/10 shrink-0">
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setActiveTab('GRAPH')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
                   activeTab === 'GRAPH'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <Network className="w-3.5 h-3.5" />
-                <span>Multi-Hop Graph</span>
+                <span>Topology Graph</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('MAP')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
                   activeTab === 'MAP'
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -176,41 +177,41 @@ export const DashboardPage = () => {
 
               <button
                 onClick={() => setActiveTab('DOSSIER')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
                   activeTab === 'DOSSIER'
-                    ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>SHAP Evidence Dossier</span>
+                <span>Forensic SHAP Evidence</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('SYNDICATES')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
                   activeTab === 'SYNDICATES'
-                    ? 'bg-red-600 text-white shadow-md shadow-red-500/30'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <Flame className="w-3.5 h-3.5" />
-                <span>Organized Syndicates</span>
+                <span>Syndicate Clusters</span>
               </button>
             </div>
 
             {/* Jump to Fullscreen Tactical Command */}
             <button
               onClick={() => handleOpenCommand(currentTarget)}
-              className="px-3 py-1.5 rounded-lg text-xs font-mono text-blue-400 hover:text-blue-300 hover:bg-blue-950/40 flex items-center gap-1 transition-colors cursor-pointer"
+              className="px-2.5 py-1 text-xs font-mono text-slate-400 hover:text-blue-400 flex items-center gap-1 transition-colors cursor-pointer"
             >
-              <span>Full Tactical Mode</span>
+              <span>Full Tactical Theater</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Active Visualization Container */}
-          <div className="flex-1 overflow-hidden relative rounded-xl border border-white/10">
+          <div className="flex-1 overflow-hidden relative rounded-lg border border-white/10 command-panel">
             {activeTab === 'GRAPH' && (
               <TxnGraph
                 accountId={currentTarget?.target_account_id}
@@ -240,7 +241,7 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Global Modals triggered from Universal Action Bar */}
+      {/* Global Modals */}
       {currentTarget && (
         <>
           <PatrolDispatchModal
@@ -250,8 +251,8 @@ export const DashboardPage = () => {
               alert_id: currentTarget.id,
               terminal_id: currentTarget.target_terminal_id || 'ATM_MUM_001',
               name: currentTarget.target_atm_name || 'State Bank of India - Matunga East ATM',
-              lat: currentTarget.target_lat || (currentTarget.city === 'Delhi' ? 28.6290 : currentTarget.city === 'Bengaluru' ? 12.9352 : 19.0270),
-              lon: currentTarget.target_lon || (currentTarget.city === 'Delhi' ? 77.2260 : currentTarget.city === 'Bengaluru' ? 77.6245 : 72.8550)
+              lat: currentTarget.target_lat || 19.0270,
+              lon: currentTarget.target_lon || 72.8550
             }}
           />
 
@@ -271,4 +272,3 @@ export const DashboardPage = () => {
     </div>
   );
 };
-

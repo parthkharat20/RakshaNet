@@ -3,52 +3,39 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   RakshaNet Design System — Tactical Cybercrime Command Center
-   Aesthetic: Utilitarian / High-Density Technical with Sleek Dark Glass
+   RakshaNet Sovereign Cyber Command Design System
+   Aesthetic: Palantir Gotham / Mission-Critical Defense / MHA-I4C Operational
    ========================================================================== */
 
 :root {
   /* Surface Tokens */
-  --bg-primary: #07090e;
-  --bg-secondary: #0d111a;
-  --bg-tertiary: #131926;
-  --bg-card: rgba(19, 25, 38, 0.75);
-  --bg-card-hover: rgba(26, 35, 53, 0.85);
-  --bg-overlay: rgba(7, 9, 14, 0.85);
+  --surface-ground: #070a12;
+  --surface-header: #0b101d;
+  --surface-card: #0e1526;
+  --surface-elevated: #151f38;
+  --surface-hover: #1c294a;
 
-  /* Border & Line Tokens */
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.14);
-  --border-active: rgba(59, 130, 246, 0.5);
-  --border-critical: rgba(239, 68, 68, 0.5);
+  /* Border Tokens */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-focus: #3b82f6;
+  --border-critical: rgba(239, 68, 68, 0.6);
 
-  /* Text & Foreground */
+  /* Typography Colors */
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  --text-white: #ffffff;
 
-  /* Accent & Tactical Palette */
-  --accent-blue: #3b82f6;
-  --accent-blue-glow: rgba(59, 130, 246, 0.25);
-  --accent-cyan: #06b6d4;
-  --accent-red: #ef4444;
-  --accent-red-glow: rgba(239, 68, 68, 0.3);
-  --accent-orange: #f97316;
-  --accent-amber: #f59e0b;
-  --accent-green: #10b981;
-  --accent-green-glow: rgba(16, 185, 129, 0.25);
-  --accent-purple: #8b5cf6;
+  /* Semantic Palettes */
+  --accent-blue: #2563eb;
+  --accent-red: #dc2626;
+  --accent-amber: #d97706;
+  --accent-emerald: #059669;
 
-  /* Typography */
-  --font-display: 'Outfit', -apple-system, sans-serif;
+  /* Fonts */
   --font-sans: 'Inter', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --font-display: 'Outfit', 'Inter', sans-serif;
 }
 
 * {
@@ -68,226 +55,54 @@ button {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-primary);
+  background-color: var(--surface-ground);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(239, 68, 68, 0.04) 0%, transparent 40%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--surface-ground);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.28);
 }
 
-/* Glassmorphism Panel Utilities */
-.glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Command Center Panel Architecture */
+.command-panel {
+  background: var(--surface-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  transition: border-color var(--transition-normal), transform var(--transition-normal);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.glass-panel:hover {
+.command-panel:hover {
   border-color: var(--border-medium);
 }
 
-.glass-panel-critical {
-  border-color: var(--border-critical);
-  box-shadow: 0 0 24px -4px var(--accent-red-glow);
+.command-panel-elevated {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-medium);
 }
 
-.glass-panel-active {
-  border-color: var(--border-active);
-  box-shadow: 0 0 20px -4px var(--accent-blue-glow);
-}
-
-/* Typography Utilities */
-.font-display { font-family: var(--font-display); }
-.font-mono { font-family: var(--font-mono); }
-
-/* Glow Animations */
-@keyframes pulse-glow-red {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
-    border-color: rgba(239, 68, 68, 0.8);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(239, 68, 68, 0.65);
-    border-color: rgba(239, 68, 68, 1);
-  }
-}
-
-.animate-critical-pulse {
-  animation: pulse-glow-red 2s infinite ease-in-out;
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(1000%); }
-}
-
-.scanline-effect::after {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 2;
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
-}
-
-/* Badges & Pills */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.65rem;
-  border-radius: 9999px;
-  font-size: 0.725rem;
-  font-weight: 600;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
-}
-
-.pill-critical {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-}
-
-.pill-elevated {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.4);
-}
-
-.pill-success {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.4);
-}
-
-.pill-info {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.4);
-}
-
-.pill-neutral {
-  background: rgba(100, 116, 139, 0.2);
-  color: #94a3b8;
-  border: 1px solid rgba(100, 116, 139, 0.3);
-}
-
-/* Interactive Buttons */
-.btn-primary {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  box-shadow: 0 0 15px var(--accent-blue-glow);
-  transform: translateY(-1px);
-}
-
-.btn-critical {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  color: #ffffff;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-critical:hover {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 0 20px var(--accent-red-glow);
-  transform: translateY(-1px);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  padding: 0.5rem 0.85rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  border-color: var(--border-medium);
-}
-
-/* Leaflet Map overrides for dark mode */
-.leaflet-container {
-  background: #0d111a !important;
-  font-family: var(--font-sans) !important;
-}
-
-.leaflet-popup-content-wrapper {
-  background: var(--bg-tertiary) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid var(--border-medium) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-}
-
-.leaflet-popup-tip {
-  background: var(--bg-tertiary) !important;
-}
-
-/* ==========================================================================
-   National Cyber Command Center — Indian LEA Design Elements
-   ========================================================================== */
-
-/* Tiranga National Accent Ribbon (Saffron, White, India Green) */
-.tiranga-ribbon {
-  height: 4px;
+/* Refined Sovereign Tiranga Ribbon */
+.tiranga-strip {
+  height: 3px;
   width: 100%;
   background: linear-gradient(
     90deg,
@@ -298,81 +113,154 @@ body {
     #138808 66.66%,
     #138808 100%
   );
-  box-shadow: 0 0 12px rgba(255, 153, 51, 0.4), 0 0 12px rgba(19, 136, 8, 0.4);
   position: relative;
-  z-index: 100;
+  z-index: 50;
 }
 
-/* Ashoka Navy Accent Badge */
-.ashoka-badge {
-  background: rgba(0, 0, 128, 0.35);
-  border: 1px solid rgba(59, 130, 246, 0.4);
-  color: #93c5fd;
+/* Mission-Critical Button Architecture */
+.btn-command-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.15s ease;
+  cursor: pointer;
 }
 
-/* Tactical Corner Brackets (HUD Reticle Frame) */
-.tactical-frame {
-  position: relative;
+.btn-command-primary:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
 }
 
-.tactical-frame::before,
-.tactical-frame::after {
-  content: '';
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  pointer-events: none;
-  z-index: 10;
+.btn-command-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #dc2626;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.15s ease;
+  cursor: pointer;
 }
 
-.tactical-frame::before {
-  top: 0;
-  left: 0;
-  border-top: 2px solid rgba(59, 130, 246, 0.7);
-  border-left: 2px solid rgba(59, 130, 246, 0.7);
+.btn-command-danger:hover {
+  background-color: #b91c1c;
+  box-shadow: 0 0 14px rgba(220, 38, 38, 0.4);
 }
 
-.tactical-frame::after {
-  bottom: 0;
-  right: 0;
-  border-bottom: 2px solid rgba(59, 130, 246, 0.7);
-  border-right: 2px solid rgba(59, 130, 246, 0.7);
+.btn-command-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  transition: all 0.15s ease;
+  cursor: pointer;
 }
 
-.tactical-frame-critical::before {
-  border-top-color: rgba(239, 68, 68, 0.85);
-  border-left-color: rgba(239, 68, 68, 0.85);
+.btn-command-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-medium);
+  color: #ffffff;
 }
 
-.tactical-frame-critical::after {
-  border-bottom-color: rgba(239, 68, 68, 0.85);
-  border-right-color: rgba(239, 68, 68, 0.85);
+.btn-command-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  cursor: pointer;
 }
 
-/* Police / LEA Classification Banner */
-.lea-classification-banner {
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(239, 68, 68, 0.12),
-    rgba(239, 68, 68, 0.12) 10px,
-    rgba(0, 0, 0, 0.3) 10px,
-    rgba(0, 0, 0, 0.3) 20px
-  );
-  border-bottom: 1px solid rgba(239, 68, 68, 0.25);
+.btn-command-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
 }
 
-/* Gold / Amber Police Insignia Accent */
-.gold-badge {
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(180, 83, 9, 0.1));
-  border: 1px solid rgba(245, 158, 11, 0.5);
-  color: #fcd34d;
+/* Precision Semantic Badges */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
-/* Grid overlay background */
-.tactical-grid-bg {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+.badge-status-critical {
+  background: rgba(220, 38, 38, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(220, 38, 38, 0.4);
 }
 
+.badge-status-warning {
+  background: rgba(217, 119, 6, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(217, 119, 6, 0.4);
+}
+
+.badge-status-success {
+  background: rgba(5, 150, 105, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(5, 150, 105, 0.4);
+}
+
+.badge-status-info {
+  background: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(37, 99, 235, 0.4);
+}
+
+.badge-status-neutral {
+  background: rgba(100, 116, 139, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+/* Leaflet Map overrides for dark mode */
+.leaflet-container {
+  background: #070a12 !important;
+  font-family: var(--font-sans) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #0e1526 !important;
+  color: #f8fafc !important;
+  border: 1px solid var(--border-medium) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+}
+
+.leaflet-popup-tip {
+  background: #0e1526 !important;
+}

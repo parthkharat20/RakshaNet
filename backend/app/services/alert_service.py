@@ -21,23 +21,45 @@ logger = logging.getLogger("alert_service")
 class AlertService:
     @staticmethod
     async def get_alerts(limit: int = 50, status_filter: Optional[str] = None) -> List[AlertResponse]:
-        """Fetches active intelligence alerts with joined target account details."""
+        """Fetches active intelligence alerts with joined target account details, deduplicated by suspect account."""
         async with AsyncSessionLocal() as session:
             query = select(Alert, Account).outerjoin(Account, Alert.target_account_id == Account.id)
             if status_filter:
                 query = query.where(Alert.status == status_filter)
-            query = query.order_by(Alert.risk_score.desc(), Alert.created_at.desc()).limit(limit)
+            else:
+                query = query.where(Alert.status.in_(["NEW", "INVESTIGATING", "FREEZE_DISPATCHED", "FREEZE_CONFIRMED"]))
+            # Fetch extra records to account for deduplication
+            query = query.order_by(Alert.risk_score.desc(), Alert.created_at.desc()).limit(limit * 3)
 
             results = (await session.execute(query)).all()
 
+            seen_accounts = set()
             alerts = []
             for alert, acc in results:
+                # Key by account ID or alert ID
+                acc_key = str(alert.target_account_id) if alert.target_account_id else str(alert.id)
+                if acc_key in seen_accounts:
+                    continue
+                seen_accounts.add(acc_key)
+
+                # City inference from IFSC or explanation
+                city = "Mumbai"
+                if acc and acc.ifsc_code:
+                    if acc.ifsc_code.startswith("DEL") or "DEL" in acc.ifsc_code:
+                        city = "Delhi"
+                    elif acc.ifsc_code.startswith("BLR") or "BLR" in acc.ifsc_code:
+                        city = "Bengaluru"
+                    elif acc.ifsc_code.startswith("HYD") or "HYD" in acc.ifsc_code:
+                        city = "Hyderabad"
+
                 alerts.append(AlertResponse(
                     id=alert.id,
                     alert_type=alert.alert_type,
                     target_account_id=alert.target_account_id,
                     target_account_number=acc.account_number if acc else None,
                     target_holder_name=acc.holder_name if acc else None,
+                    bank_name=acc.bank_name if acc else "Core Banking Node",
+                    city=city,
                     target_atm_id=alert.target_atm_id,
                     risk_score=float(alert.risk_score),
                     graph_score=float(alert.graph_score),
@@ -46,6 +68,9 @@ class AlertService:
                     status=alert.status,
                     created_at=alert.created_at
                 ))
+                if len(alerts) >= limit:
+                    break
+
             return alerts
 
     @staticmethod

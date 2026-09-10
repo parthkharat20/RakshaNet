@@ -66,9 +66,9 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
 
   if (isFrozen) {
     return (
-      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 font-mono text-xs font-semibold">
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-mono text-xs font-semibold">
         <CheckCircle2 className="w-3.5 h-3.5" />
-        <span>ACCOUNT FROZEN</span>
+        <span>FROZEN (SEC 91)</span>
       </div>
     );
   }
@@ -77,7 +77,8 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
     <>
       <button
         onClick={handleOpen}
-        className="btn-critical text-xs py-1.5 px-3 flex items-center gap-1.5 shadow-lg shadow-red-500/20"
+        className="btn-command-danger text-xs py-1.5 px-3 cursor-pointer"
+        title="Execute emergency Section 91 CrPC Bank Lien Freeze"
       >
         <Lock className="w-3.5 h-3.5" />
         <span>Dispatch Freeze Order</span>
