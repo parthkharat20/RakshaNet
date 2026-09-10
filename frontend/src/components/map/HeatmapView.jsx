@@ -89,9 +89,9 @@ export const HeatmapView = () => {
   };
 
   return (
-    <div className="glass-panel flex flex-col h-full overflow-hidden relative border-white/10">
+    <div className="command-panel flex flex-col h-full overflow-hidden relative border-[#1E293B]">
       {/* Header & Corridor Switcher */}
-      <div className="p-3.5 border-b border-white/10 flex flex-wrap items-center justify-between gap-2 z-10 bg-slate-950/70 backdrop-blur-sm">
+      <div className="p-3 border-b border-[#1E293B] flex flex-wrap items-center justify-between gap-2 z-10 bg-[#0B101D]/90 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-emerald-400" />
           <h3 className="font-display font-bold text-white text-sm">

@@ -45,9 +45,9 @@ export const SyndicateHub = () => {
   const overallDisruption = totalDetected > 0 ? ((totalIntercepted / totalDetected) * 100).toFixed(1) : 0;
 
   return (
-    <div className="glass-panel p-4 flex flex-col space-y-4 border-white/10">
+    <div className="command-panel p-4 flex flex-col space-y-4 border-[#1E293B]">
       {/* Top Banner & Disruption KPI */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#1E293B] pb-3">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400">
             <Network className="w-4 h-4" />
