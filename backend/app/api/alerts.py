@@ -3,7 +3,7 @@ import logging
 from typing import List, Optional
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from sqlalchemy import select
+from sqlalchemy import select, update
 from app.db.postgres import AsyncSessionLocal
 from app.models import Alert, Account
 from app.schemas.account import AccountFreezeRequest, AccountFreezeResponse
@@ -76,6 +76,66 @@ async def freeze_alert_target(
     return await AlertService.freeze_account(str(alert.target_account_id), request_body, client_ip=client_ip)
 
 
+async def _do_update_alert_status(alert_id: UUID, new_status: str) -> AlertResponse:
+    async with AsyncSessionLocal() as session:
+        # 1. Execute explicit SQL UPDATE in PostgreSQL database
+        stmt = update(Alert).where(Alert.id == alert_id).values(status=new_status)
+        result = await session.execute(stmt)
+        await session.commit()
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Alert '{alert_id}' not found.")
+
+        # 2. Re-query updated alert with joined account details
+        query = select(Alert, Account).outerjoin(Account, Alert.target_account_id == Account.id).where(Alert.id == alert_id)
+        res = (await session.execute(query)).first()
+        alert, acc = res
+
+        return AlertResponse(
+            id=alert.id,
+            alert_type=alert.alert_type,
+            target_account_id=alert.target_account_id,
+            target_account_number=acc.account_number if acc else None,
+            target_holder_name=acc.holder_name if acc else None,
+            target_atm_id=alert.target_atm_id,
+            risk_score=float(alert.risk_score),
+            graph_score=float(alert.graph_score),
+            geo_score=float(alert.geo_score),
+            explanation=alert.explanation,
+            status=alert.status,
+            created_at=alert.created_at
+        )
+
+
+@router.patch("/{alert_id}/status", response_model=AlertResponse)
+async def update_alert_status(
+    alert_id: UUID,
+    status_update: AlertStatusUpdate,
+    officer: Optional[dict] = Depends(get_optional_officer)
+):
+    """Updates the status of an intelligence alert (e.g. RESOLVED, SOLVED, CLOSED). Saves to PostgreSQL."""
+    return await _do_update_alert_status(alert_id, status_update.status)
+
+
+@router.post("/{alert_id}/status", response_model=AlertResponse)
+async def update_alert_status_post(
+    alert_id: UUID,
+    status_update: AlertStatusUpdate,
+    officer: Optional[dict] = Depends(get_optional_officer)
+):
+    """Updates the status of an intelligence alert via POST. Saves to PostgreSQL."""
+    return await _do_update_alert_status(alert_id, status_update.status)
+
+
+@router.post("/{alert_id}/resolve", response_model=AlertResponse)
+async def resolve_alert_post(
+    alert_id: UUID,
+    officer: Optional[dict] = Depends(get_optional_officer)
+):
+    """Marks an alert as RESOLVED in PostgreSQL database."""
+    return await _do_update_alert_status(alert_id, "RESOLVED")
+
+
 @router.post("/run-scoring")
 async def trigger_scoring_pipeline(officer: dict = Depends(get_current_officer)):
     """
@@ -93,3 +153,4 @@ async def trigger_scoring_pipeline(officer: dict = Depends(get_current_officer))
         logger.info(f"AI pipeline triggered by officer: {officer['badge_id']} ({officer['name']})")
         summary = await run_full_scoring_pipeline()
         return {"status": "SUCCESS", "triggered_by": officer["badge_id"], "summary": summary}
+

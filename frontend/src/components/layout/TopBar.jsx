@@ -30,14 +30,11 @@ export const TopBar = () => {
     wsConnected,
     wsNotification,
     isAudioMuted,
-    toggleMuteAudio,
-    theme,
-    toggleTheme
+    toggleMuteAudio
   } = useAlertContext();
   const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false);
   const location = useLocation();
   const officer = getStoredOfficer();
-  const isDark = theme === 'dark';
 
   return (
     <>
@@ -114,12 +111,14 @@ export const TopBar = () => {
             )}
           </div>
 
+
+
           {/* Tactical Audio Toggle */}
           <button
             onClick={toggleMuteAudio}
             className={`p-2 rounded-lg border transition-colors ${
               isAudioMuted
-                ? (isDark ? 'text-slate-500 border-white/5 hover:text-slate-300 hover:bg-white/5' : 'text-slate-400 border-slate-200 hover:bg-slate-100')
+                ? 'text-slate-500 border-white/5 hover:text-slate-300 hover:bg-white/5'
                 : 'text-amber-400 border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20'
             }`}
             title={isAudioMuted ? 'Unmute Tactical Chimes' : 'Mute Tactical Chimes'}

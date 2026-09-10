@@ -53,25 +53,16 @@
   --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-html[data-theme="light"],
-.light {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --bg-tertiary: #e2e8f0;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-card-hover: rgba(248, 250, 252, 1);
-  --bg-overlay: rgba(241, 245, 249, 0.9);
 
-  --border-subtle: rgba(0, 0, 0, 0.1);
-  --border-medium: rgba(0, 0, 0, 0.2);
-  --border-active: rgba(37, 99, 235, 0.6);
-  --border-critical: rgba(239, 68, 68, 0.6);
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --text-white: #0f172a;
+html {
+  font-size: 90%;
 }
+
+body {
+  margin: 0;
+}
+
 
 * {
   margin: 0;

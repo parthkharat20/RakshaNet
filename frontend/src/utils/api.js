@@ -159,6 +159,23 @@ export const dispatchPatrolApi = async (unitId, payload) => {
   return res.data;
 };
 
+export const updateAlertStatusApi = async (alertId, status = 'RESOLVED', notes = '') => {
+  try {
+    const res = await api.patch(`/alerts/${alertId}/status`, { status, notes });
+    return res.data;
+  } catch (err) {
+    console.warn('PATCH status failed, attempting POST fallback:', err);
+    try {
+      const res = await api.post(`/alerts/${alertId}/status`, { status, notes });
+      return res.data;
+    } catch (err2) {
+      const res = await api.post(`/alerts/${alertId}/resolve`);
+      return res.data;
+    }
+  }
+};
+
 export default api;
+
 
 

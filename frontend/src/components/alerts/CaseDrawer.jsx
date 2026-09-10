@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2, Radio } from 'lucide-react';
+import { X, ShieldAlert, User, Building, Calendar, Lock, ArrowUpRight, CheckCircle2, Radio, CheckSquare } from 'lucide-react';
 import { useAlertContext } from '../../contexts/AlertContext';
 import { ExplainPanel } from '../explain/ExplainPanel';
 import { FreezeButton } from '../actions/FreezeButton';
@@ -7,14 +7,28 @@ import { PatrolDispatchModal } from '../patrols/PatrolDispatchModal';
 import { maskAccountNumber, formatDateTime, formatINR } from '../../utils/constants';
 
 export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
-  const { selectedAlert } = useAlertContext();
+  const { selectedAlert, resolveAlert } = useAlertContext();
   const [patrolModalOpen, setPatrolModalOpen] = useState(false);
-
+  const [isResolving, setIsResolving] = useState(false);
 
   if (!selectedAlert) return null;
 
   const isCritical = selectedAlert.risk_score >= 0.75;
   const isFrozen = selectedAlert.status === 'FREEZE_DISPATCHED' || selectedAlert.status === 'FREEZE_CONFIRMED';
+  const isSolved = selectedAlert.status === 'RESOLVED' || selectedAlert.status === 'SOLVED';
+
+  const handleResolveCase = async () => {
+    try {
+      setIsResolving(true);
+      await resolveAlert(selectedAlert.id, 'Case successfully resolved and saved to PostgreSQL database');
+      if (onClose) onClose();
+    } catch (err) {
+      console.error('Failed to resolve case:', err);
+    } finally {
+      setIsResolving(false);
+    }
+  };
+
   const hasLienRef = selectedAlert.bank_lien_reference || (isFrozen && 'SBI-CFCFRMS-CONFIRMED');
 
   return (
@@ -123,9 +137,22 @@ export const CaseDrawer = ({ onClose, onOpenCommandCenter }) => {
               accountHolder={selectedAlert.target_holder_name}
               isFrozen={isFrozen}
             />
+
+            <button
+              onClick={handleResolveCase}
+              disabled={isResolving || isSolved}
+              className={`px-3 py-1.5 rounded-lg border text-xs font-bold font-mono flex items-center gap-1.5 transition-all shadow-sm ${
+                isSolved
+                  ? 'bg-emerald-950/60 text-emerald-400 border-emerald-500/40 cursor-default'
+                  : 'bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border-emerald-500/40 hover:border-emerald-400 active:scale-95'
+              }`}
+              title="Mark Case Solved & Save Status to PostgreSQL Database"
+            >
+              <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{isSolved ? 'Case Solved' : isResolving ? 'Saving DB...' : 'Mark Case Solved'}</span>
+            </button>
           </div>
         </div>
-
 
         {/* Tactical Deep Dive Link */}
         {onOpenCommandCenter && (

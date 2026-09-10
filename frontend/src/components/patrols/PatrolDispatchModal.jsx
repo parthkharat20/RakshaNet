@@ -126,7 +126,7 @@ export const PatrolDispatchModal = ({
         </div>
 
         {/* Modal Content */}
-        <div className="p-5 overflow-y-auto space-y-4 font-mono text-xs flex-1">
+        <div className="p-5 overflow-y-auto space-y-4 font-mono text-xs flex-1 min-h-0 scrollbar-thin scrollbar-thumb-white/20">
           {/* Target ATM Hotspot Summary Card */}
           <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
             <div className="text-[11px] text-slate-400 uppercase tracking-wider font-bold flex items-center gap-1.5">
@@ -205,7 +205,7 @@ export const PatrolDispatchModal = ({
                     No active patrol units located within 15 km perimeter.
                   </div>
                 ) : (
-                  <div className="space-y-1.5 max-h-[260px] overflow-y-auto overscroll-contain pr-1.5 border border-white/10 rounded-xl p-2 bg-black/30">
+                  <div className="space-y-2 max-h-[350px] min-h-[120px] overflow-y-auto pr-2 border border-white/10 rounded-xl p-2.5 bg-black/40 shadow-inner scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                     {nearbyUnits.map((unit, idx) => {
                       const isSelected = selectedUnitId === unit.id;
                       return (
@@ -224,7 +224,7 @@ export const PatrolDispatchModal = ({
                             <div>
                               <div className="font-bold text-white text-xs flex items-center gap-2">
                                 <span>{unit.callsign}</span>
-                                <span className="px-1.5 py-0.2 rounded text-[9px] bg-slate-800 text-slate-300">
+                                <span className="px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-slate-300 font-mono">
                                   {unit.unit_type.replace('_', ' ')}
                                 </span>
                               </div>

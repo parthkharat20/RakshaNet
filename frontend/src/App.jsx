@@ -8,13 +8,8 @@ import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 const AppContent = () => {
-  const { theme } = useAlertContext();
-  const isDark = theme === 'dark';
-
   return (
-    <div className={`h-screen flex flex-col font-sans overflow-hidden transition-colors duration-200 ${
-      isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'
-    }`}>
+    <div className="h-screen flex flex-col font-sans overflow-hidden bg-slate-950 text-slate-100">
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route

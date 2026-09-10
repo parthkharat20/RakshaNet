@@ -9,8 +9,8 @@ export const StatsBar = () => {
   const cards = [
     {
       title: 'NCRP Complaints',
-      value: stats?.total_complaints || 0,
-      subValue: `Reported Loss: ${formatINR(stats?.total_loss_reported || 0)}`,
+      value: stats?.total_complaints ?? 0,
+      subValue: `Reported Loss: ${formatINR(stats?.total_loss_reported_inr ?? stats?.total_loss_reported ?? 0)}`,
       icon: ShieldAlert,
       color: 'from-blue-500 to-indigo-600',
       textColor: 'text-blue-400',
@@ -18,8 +18,8 @@ export const StatsBar = () => {
     },
     {
       title: 'Monitored Accounts',
-      value: stats?.total_accounts_monitored || 500,
-      subValue: `${stats?.total_transactions || 2526} Transactions Analyzed`,
+      value: stats?.total_accounts_monitored ?? 0,
+      subValue: `${stats?.total_transactions_analyzed ?? stats?.total_transactions ?? 0} Transactions Analyzed`,
       icon: Users,
       color: 'from-cyan-500 to-blue-600',
       textColor: 'text-cyan-400',
@@ -27,7 +27,7 @@ export const StatsBar = () => {
     },
     {
       title: 'Active Fraud Rings',
-      value: stats?.active_mule_rings || 3,
+      value: stats?.active_mule_rings_count ?? stats?.active_mule_rings ?? 0,
       subValue: 'Star Hub • Chain • Smurfing',
       icon: Network,
       color: 'from-rose-500 to-red-600',
@@ -37,7 +37,7 @@ export const StatsBar = () => {
     },
     {
       title: 'High-Risk ATM Terminals',
-      value: stats?.high_risk_atms_count || 6,
+      value: stats?.high_risk_atms_count ?? 0,
       subValue: 'Flagged Cash-Out Terminals',
       icon: MapPin,
       color: 'from-amber-500 to-orange-600',
@@ -46,7 +46,7 @@ export const StatsBar = () => {
     },
     {
       title: 'Frozen Accounts',
-      value: stats?.frozen_accounts_count || 0,
+      value: stats?.frozen_accounts_count ?? 0,
       subValue: 'Interdiction Orders Dispatched',
       icon: Lock,
       color: 'from-emerald-500 to-teal-600',
@@ -55,7 +55,7 @@ export const StatsBar = () => {
     },
     {
       title: 'Intercepted Funds',
-      value: formatINR(stats?.total_funds_intercepted || 0),
+      value: formatINR(stats?.total_funds_intercepted_inr ?? stats?.total_funds_intercepted ?? 0),
       subValue: 'Recovered for Fraud Victims',
       icon: DollarSign,
       color: 'from-emerald-400 to-green-600',

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Navigation, AlertTriangle, Zap, Shield, RefreshCw, Radio, Layers } from 'lucide-react';
+import { MapPin, Navigation, AlertTriangle, Zap, Shield, RefreshCw, Radio, Layers, Sun, Moon } from 'lucide-react';
 import { fetchHeatmapGeoJSON, fetchPatrols } from '../../utils/api';
 import { formatINR } from '../../utils/constants';
 import { PatrolMarker } from './PatrolMarker';
@@ -34,6 +34,7 @@ export const HeatmapView = () => {
   const [patrols, setPatrols] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCorridor, setSelectedCorridor] = useState(CORRIDORS[0]);
+  const [mapTheme, setMapTheme] = useState('light'); // Default to light mode
 
   // Layer toggles
   const [showPatrols, setShowPatrols] = useState(true);
@@ -68,6 +69,9 @@ export const HeatmapView = () => {
   const complaintFeatures = features.filter(f => f.properties?.type === 'COMPLAINT');
   const hotspotATMs = atmFeatures.filter(f => f.properties?.is_hotspot || f.properties?.risk_score > 0.7);
 
+  const activeCenter = selectedCorridor.coords;
+  const activeZoom = selectedCorridor.zoom;
+
   const handleOpenDispatchForATM = (feat) => {
     const [lon, lat] = feat.geometry.coordinates;
     setTargetHotspot({
@@ -80,7 +84,6 @@ export const HeatmapView = () => {
   };
 
   const handlePatrolSelectForDispatch = (unit) => {
-    // If we have hotspot ATMs, pick the nearest one, or use first hotspot
     if (hotspotATMs.length > 0) {
       handleOpenDispatchForATM(hotspotATMs[0]);
     } else if (atmFeatures.length > 0) {
@@ -92,7 +95,7 @@ export const HeatmapView = () => {
     <div className="glass-panel flex flex-col h-full overflow-hidden relative border-white/10">
       {/* Header & Corridor Switcher */}
       <div className="p-3.5 border-b border-white/10 flex flex-wrap items-center justify-between gap-2 z-10 bg-slate-950/70 backdrop-blur-sm">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <MapPin className="w-4 h-4 text-emerald-400" />
           <h3 className="font-display font-bold text-white text-sm">
             Geo-Spatial Hotspots & Tactical Geofencing
@@ -102,15 +105,27 @@ export const HeatmapView = () => {
           </span>
         </div>
 
-        {/* Controls: Corridor Switcher & Layer Toggles */}
+        {/* Controls: Corridor Switcher & Layer Toggles & Map Theme Toggle */}
         <div className="flex items-center gap-2">
+          {/* Map Theme Switcher (Dark / Light) */}
+          <button
+            onClick={() => setMapTheme(mapTheme === 'dark' ? 'light' : 'dark')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 border shadow-sm ${mapTheme === 'dark'
+              ? 'bg-slate-900 text-blue-400 border-blue-500/40 hover:bg-slate-800'
+              : 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+              }`}
+            title="Switch Map Tiles between Dark & Light themes"
+          >
+            {mapTheme === 'dark' ? <Moon className="w-3.5 h-3.5 text-blue-400" /> : <Sun className="w-3.5 h-3.5 text-amber-600" />}
+            <span>{mapTheme === 'dark' ? 'Dark Theme' : 'Light Theme'}</span>
+          </button>
+
           {/* Layer toggles */}
           <div className="flex items-center gap-1 bg-black/40 p-1 rounded-lg border border-white/10 text-xs font-mono">
             <button
               onClick={() => setShowPatrols(!showPatrols)}
-              className={`px-2 py-0.5 rounded transition-colors flex items-center gap-1 ${
-                showPatrols ? 'bg-blue-600 text-white font-bold' : 'text-slate-400 hover:text-white'
-              }`}
+              className={`px-2 py-0.5 rounded transition-colors flex items-center gap-1 ${showPatrols ? 'bg-blue-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                }`}
               title="Toggle Patrol Fleet Overlay"
             >
               <Shield className="w-3 h-3" />
@@ -118,9 +133,8 @@ export const HeatmapView = () => {
             </button>
             <button
               onClick={() => setShowGeofences(!showGeofences)}
-              className={`px-2 py-0.5 rounded transition-colors flex items-center gap-1 ${
-                showGeofences ? 'bg-red-600 text-white font-bold' : 'text-slate-400 hover:text-white'
-              }`}
+              className={`px-2 py-0.5 rounded transition-colors flex items-center gap-1 ${showGeofences ? 'bg-red-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                }`}
               title="Toggle 750m Containment Geofences"
             >
               <Radio className="w-3 h-3" />
@@ -134,11 +148,10 @@ export const HeatmapView = () => {
               <button
                 key={corridor.name}
                 onClick={() => setSelectedCorridor(corridor)}
-                className={`px-2 py-1 rounded text-xs font-mono transition-colors whitespace-nowrap ${
-                  selectedCorridor.name === corridor.name
-                    ? 'bg-emerald-600 text-white font-bold'
-                    : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2 py-1 rounded text-xs font-mono transition-colors whitespace-nowrap ${selectedCorridor.name === corridor.name
+                  ? 'bg-emerald-600 text-white font-bold'
+                  : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {corridor.name}
               </button>
@@ -164,17 +177,24 @@ export const HeatmapView = () => {
         )}
 
         <MapContainer
-          center={selectedCorridor.coords}
-          zoom={selectedCorridor.zoom}
+          center={activeCenter}
+          zoom={activeZoom}
           style={{ width: '100%', height: '100%', minHeight: '100%' }}
           zoomControl={true}
         >
-          <MapController center={selectedCorridor.coords} zoom={selectedCorridor.zoom} />
+          <MapController center={activeCenter} zoom={activeZoom} />
 
-          {/* CartoDB Dark Matter Tiles */}
+          {/* Dynamic CARTO Map Tiles (Dark / Light Theme Switcher) */}
           <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            key={mapTheme}
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url={
+              mapTheme === 'dark'
+                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_3g9n_1_7fa029c5a75a317e9b55c758'
+                : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_3g9n_1_7fa029c5a75a317e9b55c758'
+            }
+            subdomains="abcd"
+            maxZoom={20}
           />
 
           {/* 750m Tactical Geofencing Circles around Hotspot ATMs */}
