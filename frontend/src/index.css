@@ -16,21 +16,19 @@
   --surface-hover: #1e1e24;
 
   /* Border Tokens - Precise Hairlines */
-  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-subtle: rgba(255, 255, 255, 0.06);
   --border-medium: rgba(255, 255, 255, 0.12);
-  --border-focus: #3b82f6;
-  --border-critical: rgba(239, 68, 68, 0.4);
+  --border-focus: rgba(255, 255, 255, 0.3);
+  --border-critical: rgba(225, 29, 72, 0.4);
 
   /* Typography Colors */
   --text-primary: #f4f4f5;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
 
-  /* Semantic Palettes */
-  --accent-blue: #6366f1;
-  --accent-red: #f43f5e;
-  --accent-amber: #f59e0b;
-  --accent-emerald: #10b981;
+  /* Strict Semantic Accents (Minimalist: Crimson strictly for threats, neutral for all else) */
+  --accent-threat: #e11d48;
+  --accent-neutral: #71717a;
 
   /* Fonts */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -119,27 +117,27 @@ body {
 }
 
 .alert-card-selected {
-  background: #181820 !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 1px #3b82f6 !important;
+  background: rgba(39, 39, 42, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
 }
 
-/* Slim Micro Accent Ribbon */
+/* Ultra-Subtle Sovereign Stripe */
 .tiranga-strip {
-  height: 2px;
+  height: 1.5px;
   width: 100%;
   background: linear-gradient(
     90deg,
-    #ff9933 0%,
-    #ff9933 33.33%,
-    #ffffff 33.33%,
-    #ffffff 66.66%,
-    #138808 66.66%,
-    #138808 100%
+    rgba(255, 153, 51, 0.5) 0%,
+    rgba(255, 153, 51, 0.5) 33.33%,
+    rgba(255, 255, 255, 0.5) 33.33%,
+    rgba(255, 255, 255, 0.5) 66.66%,
+    rgba(19, 136, 8, 0.5) 66.66%,
+    rgba(19, 136, 8, 0.5) 100%
   );
   position: relative;
   z-index: 50;
-  opacity: 0.85;
+  opacity: 0.6;
 }
 
 /* Mission-Critical Button Architecture */

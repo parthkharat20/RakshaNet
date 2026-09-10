@@ -84,7 +84,7 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
             placeholder="Search suspects, accounts, banks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-indigo-500/50 transition-colors"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-white/20 transition-colors"
           />
         </div>
 
@@ -96,7 +96,7 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
               onClick={() => setFilter(tab.id)}
               className={`flex-1 py-1 rounded-md text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                 filter === tab.id
-                  ? 'bg-zinc-800 text-white shadow-sm border border-white/[0.08]'
+                  ? 'bg-zinc-800 text-white shadow-xs border border-white/[0.08]'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
               }`}
             >
@@ -113,12 +113,12 @@ export const AlertFeed = ({ onFreezeClick, onInspectClick }) => {
       <div className="flex-1 overflow-y-auto p-2.5 space-y-2 min-h-[300px]">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-48 text-zinc-500 gap-2">
-            <RefreshCw className="w-4 h-4 animate-spin text-indigo-400" />
+            <RefreshCw className="w-4 h-4 animate-spin text-zinc-400" />
             <p className="text-xs font-mono">Syncing incidents...</p>
           </div>
         ) : displayedAlerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-zinc-500 text-center p-6">
-            <ShieldCheck className="w-7 h-7 text-emerald-400/80 mb-2" />
+            <ShieldCheck className="w-7 h-7 text-zinc-500 mb-2" />
             <p className="text-xs font-medium text-zinc-300">No Incidents in Queue</p>
             <p className="text-[11px] text-zinc-500 mt-0.5 font-mono">
               Filtered criteria returned zero active alerts.

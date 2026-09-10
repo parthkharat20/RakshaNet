@@ -13,7 +13,7 @@ export const StatsBar = () => {
       sub: `Loss ${formatINR(stats?.total_loss_reported || stats?.total_loss_reported_inr || 3472242)}`,
       icon: ShieldAlert,
       badge: 'NCRP',
-      badgeColor: 'text-rose-400 bg-rose-500/10'
+      badgeColor: 'text-zinc-300 bg-zinc-800/90 border border-zinc-700/50'
     },
     {
       label: 'Accounts Monitored',
@@ -21,7 +21,7 @@ export const StatsBar = () => {
       sub: `${(stats?.total_transactions || 2526).toLocaleString('en-IN')} Txns`,
       icon: Users,
       badge: 'Live',
-      badgeColor: 'text-zinc-400 bg-zinc-800/60'
+      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
     },
     {
       label: 'Mule Syndicates',
@@ -29,7 +29,7 @@ export const StatsBar = () => {
       sub: 'Graph Detected',
       icon: Network,
       badge: 'Rings',
-      badgeColor: 'text-amber-400 bg-amber-500/10'
+      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
     },
     {
       label: 'ATM Hotspots',
@@ -37,7 +37,7 @@ export const StatsBar = () => {
       sub: 'Geofenced High Risk',
       icon: MapPin,
       badge: 'Cordon',
-      badgeColor: 'text-indigo-400 bg-indigo-500/10'
+      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
     },
     {
       label: 'Accounts Frozen',
@@ -45,7 +45,7 @@ export const StatsBar = () => {
       sub: 'Sec 91 Liens',
       icon: Lock,
       badge: 'Sec 91',
-      badgeColor: 'text-emerald-400 bg-emerald-500/10'
+      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
     },
     {
       label: 'Funds Intercepted',
@@ -53,7 +53,7 @@ export const StatsBar = () => {
       sub: 'Held for Restitution',
       icon: IndianRupee,
       badge: 'Sec 457',
-      badgeColor: 'text-emerald-300 bg-emerald-500/10'
+      badgeColor: 'text-zinc-400 bg-zinc-800/70 border border-zinc-700/40'
     }
   ];
 

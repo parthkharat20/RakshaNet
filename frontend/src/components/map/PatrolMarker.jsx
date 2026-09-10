@@ -8,32 +8,20 @@ import { Shield, Radio, Navigation, Clock, UserCheck, AlertOctagon } from 'lucid
  */
 const createPatrolIcon = (unit) => {
   const isDispatched = unit.status === 'DISPATCHED_INTERDICTION';
-  const isMotorcycle = unit.unit_type === 'MOTORCYCLE_MARSHAL';
-  const isInterceptor = unit.unit_type === 'INTERCEPTOR_MOBILE';
 
-  const badgeColor = isDispatched ? '#EF4444' : '#3B82F6';
-  const pulseClass = isDispatched ? 'patrol-pulse-dispatched' : 'patrol-pulse-active';
+  const badgeBorder = isDispatched ? '#e11d48' : 'rgba(255, 255, 255, 0.3)';
+  const badgeBg = isDispatched ? '#18181b' : '#18181b';
 
   const svgIcon = `
     <div class="relative flex items-center justify-center cursor-pointer group">
-      <div class="absolute -inset-2 rounded-full ${isDispatched ? 'bg-red-500/30 animate-ping' : 'bg-blue-500/20'}"></div>
-      <div class="relative flex items-center justify-center w-8 h-8 rounded-full border-2 shadow-lg"
-           style="background: #0f172a; border-color: ${badgeColor}; box-shadow: 0 0 12px ${badgeColor}88;">
-        ${
-          isDispatched
-            ? `<svg class="w-4 h-4 text-red-400 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-               </svg>`
-            : isMotorcycle
-            ? `<svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-               </svg>`
-            : `<svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-               </svg>`
-        }
+      ${isDispatched ? '<div class="absolute -inset-1.5 rounded-full bg-rose-500/25 animate-ping"></div>' : ''}
+      <div class="relative flex items-center justify-center w-7 h-7 rounded-full border shadow-sm"
+           style="background: ${badgeBg}; border-color: ${badgeBorder};">
+        <svg class="w-3.5 h-3.5 ${isDispatched ? 'text-rose-400 animate-spin' : 'text-zinc-300'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
       </div>
-      <div class="absolute -bottom-5 px-1.5 py-0.5 rounded bg-slate-900/90 border border-white/20 text-[9px] font-mono text-white font-bold whitespace-nowrap shadow">
+      <div class="absolute -bottom-4 px-1.5 py-0.2 rounded bg-zinc-950/95 border border-white/10 text-[9px] font-mono text-zinc-300 font-medium whitespace-nowrap shadow-xs">
         ${unit.callsign.split('-').slice(-2).join('-')}
       </div>
     </div>
@@ -42,9 +30,9 @@ const createPatrolIcon = (unit) => {
   return L.divIcon({
     html: svgIcon,
     className: 'leaflet-patrol-icon',
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -20]
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -18]
   });
 };
 

@@ -14,9 +14,7 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
       onClick={onSelect}
       className={`p-3 rounded-lg cursor-pointer transition-all border text-xs relative select-none ${
         isSelected
-          ? 'bg-zinc-800/90 border-indigo-500/60 shadow-sm'
-          : isFrozen
-          ? 'bg-zinc-900/40 border-emerald-500/20 hover:border-emerald-500/40 hover:bg-zinc-800/40'
+          ? 'bg-zinc-800/90 border-zinc-500 shadow-xs'
           : isCritical
           ? 'bg-zinc-900/40 border-rose-500/20 hover:border-rose-500/40 hover:bg-zinc-800/40'
           : 'bg-zinc-900/40 border-white/[0.04] hover:border-white/[0.1] hover:bg-zinc-800/30'
@@ -28,10 +26,10 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
           <span
             className={`px-1.5 py-0.5 rounded text-[9px] font-semibold tracking-wider shrink-0 ${
               isFrozen
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                ? 'bg-zinc-800 text-zinc-300 border border-zinc-700/60'
                 : isCritical
-                ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                ? 'bg-rose-950/60 text-rose-300 border border-rose-800/40'
+                : 'bg-zinc-800 text-zinc-400 border border-zinc-700/50'
             }`}
           >
             {isFrozen ? 'FROZEN' : isCritical ? 'CRITICAL' : 'ELEVATED'}
@@ -45,8 +43,6 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
           className={`font-mono font-bold text-xs px-1.5 py-0.5 rounded shrink-0 ${
             isCritical
               ? 'text-rose-400 bg-rose-500/10'
-              : isElevated
-              ? 'text-amber-400 bg-amber-500/10'
               : 'text-zinc-300 bg-zinc-800'
           }`}
         >
@@ -74,7 +70,7 @@ export const AlertCard = ({ alert, isSelected, onSelect }) => {
           <span className="truncate text-zinc-300">
             {topFactor.factor}: <span className="text-zinc-500">{topFactor.detail}</span>
           </span>
-          <span className="text-amber-400 font-semibold shrink-0 text-[9px]">
+          <span className="text-zinc-300 font-mono font-medium shrink-0 text-[10px]">
             {topFactor.impact}
           </span>
         </div>

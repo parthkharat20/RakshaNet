@@ -66,8 +66,8 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
 
   if (isFrozen) {
     return (
-      <div className="w-full py-2 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-mono text-xs font-medium flex items-center justify-center gap-1.5 select-none">
-        <CheckCircle2 className="w-3.5 h-3.5" />
+      <div className="w-full py-2 px-3 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700/60 font-mono text-xs font-medium flex items-center justify-center gap-1.5 select-none">
+        <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400" />
         <span>FROZEN (SEC 91 ACTIVE)</span>
       </div>
     );
@@ -77,7 +77,7 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
     <>
       <button
         onClick={handleOpen}
-        className="w-full py-2 px-4 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono font-medium text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+        className="w-full py-2 px-4 rounded-lg bg-red-700 hover:bg-red-600 text-white font-mono font-medium text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
         title="Execute emergency Section 91 CrPC Bank Lien Freeze"
       >
         <Lock className="w-3.5 h-3.5" />
@@ -132,39 +132,39 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
                     type="text"
                     value={officerBadge}
                     onChange={(e) => setOfficerBadge(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-white/10 text-white font-mono focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/10 text-white font-mono focus:border-white/20 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wider">
+                  <label className="block text-zinc-300 font-semibold mb-1 text-[11px] uppercase tracking-wider">
                     Statutory Reason / Directive:
                   </label>
                   <input
                     type="text"
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-white/10 text-white font-mono focus:border-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/10 text-white font-mono focus:border-white/20 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1 text-[11px] uppercase tracking-wider">
+                  <label className="block text-zinc-300 font-semibold mb-1 text-[11px] uppercase tracking-wider">
                     Tactical Case Notes:
                   </label>
                   <textarea
                     rows={2}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-white/10 text-white font-mono focus:border-blue-500 focus:outline-none resize-none"
+                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/10 text-white font-mono focus:border-white/20 focus:outline-none resize-none"
                   />
                 </div>
 
-                <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/40 text-amber-300 text-[11px] space-y-1">
-                  <p className="font-bold flex items-center gap-1">
-                    <AlertTriangle className="w-3.5 h-3.5" /> LEGAL DIRECTIVE NOTICE:
+                <div className="p-3 rounded-lg bg-zinc-950/80 border border-zinc-700/60 text-zinc-300 text-[11px] space-y-1">
+                  <p className="font-bold flex items-center gap-1 text-zinc-200">
+                    <AlertTriangle className="w-3.5 h-3.5 text-zinc-400" /> LEGAL DIRECTIVE NOTICE:
                   </p>
-                  <p className="text-amber-200/80">
+                  <p className="text-zinc-400">
                     Executing this order will synchronously flag the account as frozen in PostgreSQL & Neo4j,
                     lock debit capabilities, and generate a tamper-proof SHA-256 evidence log.
                   </p>
@@ -190,40 +190,40 @@ Status: SECTION 91 CRPC INTER-BANK LIEN CONFIRMED & DISPATCHED VIA CFCFRMS`;
             ) : (
               /* Cryptographic Evidence Receipt */
               <div className="space-y-3.5 animate-in fade-in duration-200">
-                <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
-                    <CheckCircle2 className="w-4 h-4" />
+                <div className="p-3.5 rounded-xl bg-zinc-800/80 border border-zinc-700/60 text-zinc-200 space-y-2">
+                  <div className="flex items-center gap-2 text-zinc-100 font-bold text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-zinc-300" />
                     <span>INTERDICTION CONFIRMED</span>
                   </div>
-                  <p className="text-xs text-slate-300">
+                  <p className="text-xs text-zinc-300">
                     Account <strong>{receipt.account_number}</strong> has been successfully frozen across banking nodes.
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-white/10 space-y-2 text-[11px]">
+                <div className="p-3.5 rounded-xl bg-zinc-950 border border-white/10 space-y-2 text-[11px]">
                   {receipt.bank_lien_reference && (
-                    <div className="flex justify-between items-center py-1 px-2 rounded bg-blue-950/60 border border-blue-800/40">
-                      <span className="text-blue-300 font-bold">Bank Lien Ref:</span>
+                    <div className="flex justify-between items-center py-1 px-2 rounded bg-zinc-900 border border-zinc-700/60">
+                      <span className="text-zinc-300 font-bold">Bank Lien Ref:</span>
                       <span className="text-white font-mono font-extrabold text-[12px]">{receipt.bank_lien_reference}</span>
                     </div>
                   )}
                   {receipt.funds_retained && (
                     <div className="flex justify-between items-center py-0.5">
-                      <span className="text-slate-400">Funds Retained (Lien):</span>
-                      <span className="text-emerald-400 font-mono font-bold">₹{Number(receipt.funds_retained).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                      <span className="text-zinc-400">Funds Retained (Lien):</span>
+                      <span className="text-white font-mono font-bold">₹{Number(receipt.funds_retained).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Audit Log ID:</span>
+                    <span className="text-zinc-400">Audit Log ID:</span>
                     <span className="text-white font-mono">{receipt.audit_log_id}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Executed At:</span>
+                    <span className="text-zinc-400">Executed At:</span>
                     <span className="text-white font-mono">{new Date(receipt.action_taken_at || receipt.timestamp).toLocaleString()}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-1">Cryptographic Evidence SHA-256 Signature:</span>
-                    <div className="p-2 rounded bg-slate-900 border border-white/15 text-blue-300 font-mono break-all text-[10px]">
+                    <span className="text-zinc-400 block mb-1">Cryptographic Evidence SHA-256 Signature:</span>
+                    <div className="p-2 rounded bg-zinc-900 border border-white/10 text-zinc-300 font-mono break-all text-[10px]">
                       {receipt.hash_signature}
                     </div>
                   </div>

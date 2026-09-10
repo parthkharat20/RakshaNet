@@ -56,11 +56,11 @@ export const DashboardPage = () => {
                 onClick={() => setActiveCanvas('GRAPH')}
                 className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeCanvas === 'GRAPH'
-                    ? 'bg-zinc-800 text-white border border-white/10 shadow-sm'
+                    ? 'bg-zinc-800 text-white border border-white/10 shadow-xs'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <Network className="w-3.5 h-3.5 text-indigo-400" />
+                <Network className="w-3.5 h-3.5 text-zinc-400" />
                 <span>Topology Graph</span>
               </button>
 
@@ -68,11 +68,11 @@ export const DashboardPage = () => {
                 onClick={() => setActiveCanvas('MAP')}
                 className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeCanvas === 'MAP'
-                    ? 'bg-zinc-800 text-white border border-white/10 shadow-sm'
+                    ? 'bg-zinc-800 text-white border border-white/10 shadow-xs'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                <MapPin className="w-3.5 h-3.5 text-zinc-400" />
                 <span>ATM Map</span>
               </button>
 
@@ -80,11 +80,11 @@ export const DashboardPage = () => {
                 onClick={() => setActiveCanvas('SYNDICATES')}
                 className={`px-3 py-1 rounded-md text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   activeCanvas === 'SYNDICATES'
-                    ? 'bg-zinc-800 text-white border border-white/10 shadow-sm'
+                    ? 'bg-zinc-800 text-white border border-white/10 shadow-xs'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
                 }`}
               >
-                <Flame className="w-3.5 h-3.5 text-amber-400" />
+                <Flame className="w-3.5 h-3.5 text-zinc-400" />
                 <span>Syndicates</span>
               </button>
             </div>
