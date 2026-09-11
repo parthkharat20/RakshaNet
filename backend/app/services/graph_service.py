@@ -625,8 +625,8 @@ class GraphService:
                                             ring_id=r_props.get("ring_id")
                                         ))
 
-                    # If Neo4j has rich multi-hop data, return it
-                    if len(nodes_dict) > 1 and len(links_list) > 0:
+                    # If Neo4j has rich multi-hop data (>2 nodes and >1 links), return it
+                    if len(nodes_dict) > 2 and len(links_list) > 1:
                         return GraphResponse(
                             root_id=root_id,
                             max_hops=max_hops,
@@ -638,10 +638,20 @@ class GraphService:
         except Exception as e:
             logger.warning(f"Neo4j query warning: {e}")
 
-        # 4. Fallback to Preset Scenario Topology if matched
-        if matched_preset_key and matched_preset_key in PRESET_TOPOLOGIES:
-            logger.info(f"Serving calibrated high-fidelity topology for scenario key: {matched_preset_key}")
-            return cls._build_preset_graph(matched_preset_key, max_hops=max_hops)
+        # 4. Fallback to Preset Scenario Topology if matched or identifiable by number/UUID
+        target_preset = matched_preset_key
+        if not target_preset:
+            identifier_str = f"{account_identifier} {resolved_acc_num or ''} {resolved_uuid_str or ''}"
+            if "1142" in identifier_str or "delhi" in identifier_str.lower():
+                target_preset = "86174411142"
+            elif "1143" in identifier_str or "blr" in identifier_str.lower() or "bengaluru" in identifier_str.lower():
+                target_preset = "86174411143"
+            elif "1141" in identifier_str or "mum" in identifier_str.lower():
+                target_preset = "86174411141"
+
+        if target_preset and target_preset in PRESET_TOPOLOGIES:
+            logger.info(f"Serving calibrated high-fidelity topology for scenario key: {target_preset}")
+            return cls._build_preset_graph(target_preset, max_hops=max_hops)
 
         # 5. Default Fallback: Always return Anand Mohan Verma flagship topology if nothing else matches
         logger.info(f"Defaulting to flagship multi-hop topology for identifier: {account_identifier}")

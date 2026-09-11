@@ -86,7 +86,10 @@ DEMO_SCENARIOS = [
             "NCR cyber syndicate, and geo-engine forecasts multi-ATM withdrawals along CP Metro Ring."
         ),
         "hops": [
-            {"from": "10000000002", "to": "86174411142", "amount": 450000.0, "layer": 1}
+            {"from": "10000000002", "to": "86174411151", "amount": 450000.0, "layer": 1},
+            {"from": "86174411151", "to": "86174411152", "amount": 250000.0, "layer": 2},
+            {"from": "86174411152", "to": "86174411142", "amount": 240000.0, "layer": 3},
+            {"from": "86174411142", "to": "ATM-DEL-003", "amount": 100000.0, "layer": 4}
         ]
     },
     {
@@ -113,7 +116,10 @@ DEMO_SCENARIOS = [
             "mules reach nearby tech-park ATMs."
         ),
         "hops": [
-            {"from": "10000000003", "to": "86174411143", "amount": 280000.0, "layer": 1}
+            {"from": "10000000003", "to": "86174411161", "amount": 280000.0, "layer": 1},
+            {"from": "86174411161", "to": "86174411162", "amount": 160000.0, "layer": 2},
+            {"from": "86174411162", "to": "86174411143", "amount": 150000.0, "layer": 3},
+            {"from": "86174411143", "to": "ATM-BLR-002", "amount": 90000.0, "layer": 4}
         ]
     }
 ]
@@ -287,28 +293,49 @@ class SimulationService:
                     bank=scenario["suspect_bank"]
                 )
 
-                # Inject transfer hops
+                # Inject transfer hops with realistic identities
+                NODE_META = {
+                    "86174411138": {"name": "Suresh Kulkarni (L1)", "bank": "HDFC Bank", "is_mule": True, "risk": 0.78},
+                    "86174411139": {"name": "Rajesh Shinde (L2-A)", "bank": "ICICI Bank", "is_mule": True, "risk": 0.82},
+                    "86174411140": {"name": "Vikram Patil (L2-B)", "bank": "Axis Bank", "is_mule": True, "risk": 0.84},
+                    "ATM-MUM-001": {"name": "Matunga Stn ATM Hub", "bank": "SBI ATM #402", "is_mule": False, "risk": 0.95},
+                    "86174411151": {"name": "Tarun Mehra (L1)", "bank": "Canara Bank", "is_mule": True, "risk": 0.78},
+                    "86174411152": {"name": "Rohit Bansal (L2)", "bank": "HDFC Bank", "is_mule": True, "risk": 0.85},
+                    "ATM-DEL-003": {"name": "Connaught Place ATM Hub", "bank": "PNB ATM #108", "is_mule": False, "risk": 0.96},
+                    "86174411161": {"name": "Manjunath Hegde (L1)", "bank": "Kotak Mahindra Bank", "is_mule": True, "risk": 0.76},
+                    "86174411162": {"name": "Pradeep Gowda (L2)", "bank": "Axis Bank", "is_mule": True, "risk": 0.83},
+                    "ATM-BLR-002": {"name": "Whitefield ATM Hub", "bank": "HDFC ATM #02", "is_mule": False, "risk": 0.94}
+                }
+
                 for hop in scenario.get("hops", []):
+                    src_m = NODE_META.get(hop["from"], {})
+                    dst_m = NODE_META.get(hop["to"], {})
+
+                    src_name = src_m.get("name") or ("Dr. Sunita Deshmukh" if hop["from"] == "10000000002" else "Victim" if "1000" in hop["from"] else f"Mule {hop['from'][-4:]}")
+                    src_bank = src_m.get("bank") or ("State Bank of India" if "1000" in hop["from"] else "HDFC Bank")
+                    dst_name = dst_m.get("name") or (scenario["suspect_holder"] if hop["to"] == scenario["suspect_account"] else f"Mule {hop['to'][-4:]}")
+                    dst_bank = dst_m.get("bank") or (scenario["suspect_bank"] if hop["to"] == scenario["suspect_account"] else "ICICI Bank")
+
                     await n_session.run(
                         """
                         MERGE (src:Account {account_number: $src_acc})
                         SET src.id = coalesce(src.id, $src_id),
-                            src.holder_name = coalesce(src.holder_name, 'Intermediary Mule ' + right($src_acc, 4)),
-                            src.bank_name = coalesce(src.bank_name, 'HDFC Bank'),
-                            src.is_mule = true,
-                            src.risk_score = coalesce(src.risk_score, 0.82)
+                            src.holder_name = coalesce(src.holder_name, $src_name),
+                            src.bank_name = coalesce(src.bank_name, $src_bank),
+                            src.is_mule = $src_is_mule,
+                            src.risk_score = coalesce(src.risk_score, $src_risk)
                         MERGE (dst:Account {account_number: $dst_acc})
                         SET dst.id = coalesce(dst.id, $dst_id),
-                            dst.holder_name = coalesce(dst.holder_name, 'Layer Mule ' + right($dst_acc, 4)),
-                            dst.bank_name = coalesce(dst.bank_name, 'ICICI Bank'),
-                            dst.is_mule = true,
-                            dst.risk_score = coalesce(dst.risk_score, 0.88)
+                            dst.holder_name = coalesce(dst.holder_name, $dst_name),
+                            dst.bank_name = coalesce(dst.bank_name, $dst_bank),
+                            dst.is_mule = $dst_is_mule,
+                            dst.risk_score = coalesce(dst.risk_score, $dst_risk)
                         CREATE (src)-[:TRANSFERRED {
                             txn_ref: $txn_id,
                             txn_id: $txn_id,
                             amount: $amount,
                             timestamp: $ts,
-                            channel: 'IMPS',
+                            channel: $channel,
                             is_flagged: true,
                             is_suspicious: true,
                             layer: $layer,
@@ -319,8 +346,17 @@ class SimulationService:
                         dst_acc=hop["to"],
                         src_id=str(uuid.uuid4()),
                         dst_id=str(uuid.uuid4()),
+                        src_name=src_name,
+                        src_bank=src_bank,
+                        src_is_mule=src_m.get("is_mule", "1000" not in hop["from"] and not hop["from"].startswith("ATM")),
+                        src_risk=src_m.get("risk", 0.05 if "1000" in hop["from"] else 0.82),
+                        dst_name=dst_name,
+                        dst_bank=dst_bank,
+                        dst_is_mule=dst_m.get("is_mule", not hop["to"].startswith("ATM")),
+                        dst_risk=dst_m.get("risk", 0.95 if hop["to"].startswith("ATM") else 0.88),
                         txn_id=f"TXN_{uuid.uuid4().hex[:10].upper()}",
                         amount=float(hop["amount"]),
+                        channel="ATM_WITHDRAWAL" if hop["to"].startswith("ATM") else ("RTGS" if hop.get("layer") == 1 else "IMPS"),
                         ts=datetime.now(timezone.utc).isoformat(),
                         layer=hop.get("layer", 1)
                     )
