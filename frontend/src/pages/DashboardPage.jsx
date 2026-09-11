@@ -114,7 +114,7 @@ export const DashboardPage = () => {
             )}
 
             {activeCanvas === 'MAP' && (
-              <HeatmapView />
+              <HeatmapView targetAlert={currentTarget} />
             )}
 
             {activeCanvas === 'SYNDICATES' && (

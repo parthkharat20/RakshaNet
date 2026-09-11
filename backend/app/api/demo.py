@@ -99,8 +99,9 @@ async def trigger_live_attack_simulation(
                 "status": "NEW",
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "target_atm_name": f"{scenario.get('target_atm_cluster', 'Dadar West')} ATM Hub",
-                "target_lat": 19.0270 if scenario.get("city") != "Delhi" else 28.6290,
-                "target_lon": 72.8550 if scenario.get("city") != "Delhi" else 77.2260,
+                "target_terminal_id": scenario.get("predicted_hotspot_atms", ["ATM_MUM_001"])[0],
+                "target_lat": 12.9716 if scenario.get("city") == "Bengaluru" else (28.6290 if scenario.get("city") == "Delhi" or scenario.get("city") == "New Delhi" else 19.0270),
+                "target_lon": 77.5946 if scenario.get("city") == "Bengaluru" else (77.2260 if scenario.get("city") == "Delhi" or scenario.get("city") == "New Delhi" else 72.8550),
                 "explanation": {
                     "verdict": "CRITICAL",
                     "fused_risk_score": 0.94,
@@ -153,8 +154,9 @@ async def trigger_live_attack_simulation(
                 "status": "NEW",
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "target_atm_name": f"{scenario.get('target_atm_cluster', 'Dadar West')} ATM Hub",
-                "target_lat": 19.0270 if scenario.get("city") != "Delhi" else 28.6290,
-                "target_lon": 72.8550 if scenario.get("city") != "Delhi" else 77.2260,
+                "target_terminal_id": scenario.get("predicted_hotspot_atms", ["ATM_MUM_001"])[0],
+                "target_lat": 12.9716 if scenario.get("city") == "Bengaluru" else (28.6290 if scenario.get("city") == "Delhi" or scenario.get("city") == "New Delhi" else 19.0270),
+                "target_lon": 77.5946 if scenario.get("city") == "Bengaluru" else (77.2260 if scenario.get("city") == "Delhi" or scenario.get("city") == "New Delhi" else 72.8550),
                 "explanation": {
                     "verdict": "CRITICAL",
                     "fused_risk_score": 0.94,

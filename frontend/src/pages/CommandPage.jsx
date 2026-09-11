@@ -183,7 +183,7 @@ export const CommandPage = () => {
 
             {/* Screen 2: PostGIS ATM Cash-Out Hotspot Map (4 Cols / ~33%) */}
             <div className="lg:col-span-4 h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
-              <HeatmapView />
+              <HeatmapView targetAlert={currentTarget} />
             </div>
 
             {/* Screen 3: Dedicated Full-Height AI Forensic & SHAP Attribution Suite (4 Cols / ~34%) */}
@@ -226,7 +226,7 @@ export const CommandPage = () => {
 
             {/* 50% Map */}
             <div className="h-full rounded-xl overflow-hidden border border-white/[0.06] bg-zinc-900/60 relative">
-              <HeatmapView />
+              <HeatmapView targetAlert={currentTarget} />
             </div>
           </div>
         )}

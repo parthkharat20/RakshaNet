@@ -15,6 +15,10 @@ class AlertResponse(BaseModel):
     bank_name: Optional[str] = None
     city: Optional[str] = None
     target_atm_id: Optional[UUID] = None
+    target_atm_name: Optional[str] = None
+    target_terminal_id: Optional[str] = None
+    target_lat: Optional[float] = None
+    target_lon: Optional[float] = None
     risk_score: float
     graph_score: float
     geo_score: float
