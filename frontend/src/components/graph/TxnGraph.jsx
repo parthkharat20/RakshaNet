@@ -26,10 +26,10 @@ const CLIENT_TOPOLOGY_FALLBACKS = {
   },
   "86174411142": {
     nodes: [
-      { id: "hub_1142", holder_name: "Karan Singhal", account_number: "86174411142", bank_name: "Punjab National Bank", role: "MULE_HUB", risk_score: 0.95, hop: 0 },
-      { id: "vic_0002", holder_name: "Dr. Sunita Deshmukh", account_number: "10000000002", bank_name: "State Bank of India", role: "VICTIM", risk_score: 0.05, hop: 3 },
-      { id: "mule_1151", holder_name: "Tarun Mehra (L1)", account_number: "86174411151", bank_name: "Canara Bank", role: "MULE_NODE", risk_score: 0.78, hop: 2 },
-      { id: "mule_1152", holder_name: "Rohit Bansal (L2)", account_number: "86174411152", bank_name: "HDFC Bank", role: "MULE_NODE", risk_score: 0.85, hop: 1 },
+      { id: "hub_1142", holder_name: "Synthetic Suspect Node DEL-42 (Karan S.)", account_number: "86174411142", bank_name: "Punjab National Bank", role: "MULE_HUB", risk_score: 0.94, hop: 0 },
+      { id: "vic_0002", holder_name: "Simulated Citizen V-02 (Dr. Sunita D.)", account_number: "10000000002", bank_name: "State Bank of India", role: "VICTIM", risk_score: 0.05, hop: 3 },
+      { id: "mule_1151", holder_name: "Synthetic Mule L1 (Tarun M.)", account_number: "86174411151", bank_name: "Canara Bank", role: "MULE_NODE", risk_score: 0.78, hop: 2 },
+      { id: "mule_1152", holder_name: "Synthetic Mule L2 (Rohit B.)", account_number: "86174411152", bank_name: "HDFC Bank", role: "MULE_NODE", risk_score: 0.85, hop: 1 },
       { id: "atm_del_003", holder_name: "Connaught Place ATM Hub", account_number: "ATM-DEL-003", bank_name: "PNB ATM", role: "ATM", risk_score: 0.96, hop: 1 }
     ],
     links: [
@@ -41,10 +41,10 @@ const CLIENT_TOPOLOGY_FALLBACKS = {
   },
   "86174411143": {
     nodes: [
-      { id: "hub_1143", holder_name: "Deepak Rajshekhar", account_number: "86174411143", bank_name: "HDFC Bank", role: "MULE_HUB", risk_score: 0.93, hop: 0 },
-      { id: "vic_0003", holder_name: "Arjun Nair", account_number: "10000000003", bank_name: "ICICI Bank", role: "VICTIM", risk_score: 0.05, hop: 3 },
-      { id: "mule_1161", holder_name: "Manjunath Hegde (L1)", account_number: "86174411161", bank_name: "Kotak Mahindra Bank", role: "MULE_NODE", risk_score: 0.76, hop: 2 },
-      { id: "mule_1162", holder_name: "Pradeep Gowda (L2)", account_number: "86174411162", bank_name: "Axis Bank", role: "MULE_NODE", risk_score: 0.83, hop: 1 },
+      { id: "hub_1143", holder_name: "Synthetic Suspect Node BLR-43 (Deepak R.)", account_number: "86174411143", bank_name: "HDFC Bank", role: "MULE_HUB", risk_score: 0.93, hop: 0 },
+      { id: "vic_0003", holder_name: "Simulated Citizen V-03 (Arjun N.)", account_number: "10000000003", bank_name: "ICICI Bank", role: "VICTIM", risk_score: 0.05, hop: 3 },
+      { id: "mule_1161", holder_name: "Synthetic Mule L1 (Manjunath H.)", account_number: "86174411161", bank_name: "Kotak Mahindra Bank", role: "MULE_NODE", risk_score: 0.76, hop: 2 },
+      { id: "mule_1162", holder_name: "Synthetic Mule L2 (Pradeep G.)", account_number: "86174411162", bank_name: "Axis Bank", role: "MULE_NODE", risk_score: 0.83, hop: 1 },
       { id: "atm_blr_002", holder_name: "Whitefield ATM Hub", account_number: "ATM-BLR-002", bank_name: "HDFC ATM", role: "ATM", risk_score: 0.94, hop: 1 }
     ],
     links: [

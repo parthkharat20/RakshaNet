@@ -11,7 +11,8 @@ from uuid import UUID
 from sqlalchemy import select, update
 from app.db.postgres import AsyncSessionLocal
 from app.db.neo4j_driver import get_neo4j_driver
-from app.models import Account, Alert, AuditLog
+from app.models import Account, Alert, AuditLog, ATMLocation
+from geoalchemy2.functions import ST_X, ST_Y
 from app.schemas.account import AccountFreezeRequest, AccountFreezeResponse
 from app.schemas.alert import AlertResponse
 
@@ -23,7 +24,17 @@ class AlertService:
     async def get_alerts(limit: int = 50, status_filter: Optional[str] = None) -> List[AlertResponse]:
         """Fetches active intelligence alerts with joined target account details, deduplicated by suspect account."""
         async with AsyncSessionLocal() as session:
-            query = select(Alert, Account).outerjoin(Account, Alert.target_account_id == Account.id)
+            query = (
+                select(
+                    Alert,
+                    Account,
+                    ATMLocation,
+                    ST_Y(ATMLocation.location).label("atm_lat"),
+                    ST_X(ATMLocation.location).label("atm_lon")
+                )
+                .outerjoin(Account, Alert.target_account_id == Account.id)
+                .outerjoin(ATMLocation, Alert.target_atm_id == ATMLocation.id)
+            )
             if status_filter:
                 query = query.where(Alert.status == status_filter)
             else:
@@ -35,32 +46,23 @@ class AlertService:
 
             seen_accounts = set()
             alerts = []
-            for alert, acc in results:
+            for alert, acc, atm, atm_lat, atm_lon in results:
                 # Key by account ID or alert ID
                 acc_key = str(alert.target_account_id) if alert.target_account_id else str(alert.id)
                 if acc_key in seen_accounts:
                     continue
                 seen_accounts.add(acc_key)
 
-                # Target ATM & Location inference
-                acc_num = acc.account_number if acc else ""
-                holder = acc.holder_name if acc else ""
-
-                if "1142" in acc_num or "Singhal" in holder:
-                    city = "Delhi"
-                    target_atm_name = "Connaught Place Inner Circle ATM Hub"
-                    target_terminal_id = "ATM-DEL-003"
-                    target_lat = 28.6290
-                    target_lon = 77.2260
-                elif "1143" in acc_num or "Rajshekhar" in holder:
-                    city = "Bengaluru"
-                    target_atm_name = "Whitefield IT Corridor / Koramangala ATM Hub"
-                    target_terminal_id = "ATM-BLR-002"
-                    target_lat = 12.9716
-                    target_lon = 77.5946
+                # Database-driven Target ATM resolution via PostGIS
+                if atm:
+                    city = atm.city or (acc.city if acc else "Metro Sector")
+                    target_atm_name = f"{atm.bank_name} - {atm.address}"
+                    target_terminal_id = atm.terminal_id
+                    target_lat = float(atm_lat) if atm_lat is not None else None
+                    target_lon = float(atm_lon) if atm_lon is not None else None
                 else:
-                    city = "Mumbai"
-                    target_atm_name = "State Bank of India - Matunga East ATM"
+                    city = acc.city if acc else "Mumbai"
+                    target_atm_name = "State Bank of India - Matunga East ATM Hub"
                     target_terminal_id = "ATM-MUM-001"
                     target_lat = 19.0270
                     target_lon = 72.8550

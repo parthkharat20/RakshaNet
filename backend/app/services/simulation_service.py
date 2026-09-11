@@ -41,17 +41,17 @@ DEMO_SCENARIOS = [
         "lat": 19.0760,
         "lon": 72.8777,
         "loss_amount": 120000.00,
-        "victim_name": "Ramesh Chandra Sharma (Retd. Central Govt Officer)",
+        "victim_name": "Simulated Citizen V-01 (Ramesh S.)",
         "victim_account": "10000000001",
         "suspect_account": "86174411141",
-        "suspect_holder": "Anand Mohan Verma",
+        "suspect_holder": "Synthetic Suspect Node MUM-41 (Anand V.)",
         "suspect_bank": "State Bank of India",
         "target_atm_cluster": "Matunga Station / Dadar West ATM Hub",
         "predicted_hotspot_atms": ["ATM_MUM_001", "ATM_MUM_002"],
         "narrative": (
-            "Victim received a spoofed SMS regarding immediate disconnection of MSEDCL electricity service. "
+            "Victim received a spoofed SMS regarding immediate disconnection of electricity service. "
             "Coerced into scanning an emergency payment QR code. ₹1,20,000 debit divided into 3 rapid hops "
-            "across State Bank of India and ICICI mule accounts. Inductive GraphSAGE flags Node 4 as high-risk "
+            "across mule accounts. Inductive GraphSAGE flags Node 4 as high-risk "
             "bridge mule, while PostGIS ATM spatial clustering predicts cash-out within 45 minutes at Matunga."
         ),
         "hops": [
@@ -64,7 +64,7 @@ DEMO_SCENARIOS = [
     },
     {
         "id": "delhi_digital_arrest",
-        "title": "Delhi-NCR Digital Arrest & CBI Impersonation",
+        "title": "Delhi-NCR Digital Arrest & Impersonation",
         "category": "Digital Arrest / Law Enforcement Impersonation",
         "scam_type": "Multi-Bank Coerced RTGS Transfer",
         "city": "New Delhi",
@@ -72,16 +72,16 @@ DEMO_SCENARIOS = [
         "lat": 28.6139,
         "lon": 77.2090,
         "loss_amount": 450000.00,
-        "victim_name": "Dr. Sunita Deshmukh (AIIMS Senior Consultant)",
+        "victim_name": "Simulated Citizen V-02 (Dr. Sunita D.)",
         "victim_account": "10000000002",
         "suspect_account": "86174411142",
-        "suspect_holder": "Karan Singhal",
+        "suspect_holder": "Synthetic Suspect Node DEL-42 (Karan S.)",
         "suspect_bank": "Punjab National Bank",
         "target_atm_cluster": "Connaught Place Inner Circle ATM Hub",
         "predicted_hotspot_atms": ["ATM_DEL_003", "ATM_DEL_005"],
         "narrative": (
-            "Victim coerced during a 5-hour video call by fraudsters dressed in police uniforms claiming an illegal "
-            "FedEx narcotic parcel was linked to her Aadhaar. Transferred ₹4,50,000 for 'RBI clearance verification'. "
+            "Victim coerced during a video call by fraudsters posing as authorities claiming an illegal "
+            "narcotic parcel was linked to her Aadhaar. Transferred ₹4,50,000 for clearance verification. "
             "Funds layered into high-turnover current accounts. Graph link predictor detects Adamic-Adar proximity to "
             "NCR cyber syndicate, and geo-engine forecasts multi-ATM withdrawals along CP Metro Ring."
         ),
@@ -94,7 +94,7 @@ DEMO_SCENARIOS = [
     },
     {
         "id": "bengaluru_task_scam",
-        "title": "Bengaluru Work-From-Home / Part-Time Job Trap",
+        "title": "Bengaluru Work-From-Home / Task Scam",
         "category": "Investment / Part-Time Job Scam",
         "scam_type": "Dispersal Tree to Distributed Mules",
         "city": "Bengaluru",
@@ -102,10 +102,10 @@ DEMO_SCENARIOS = [
         "lat": 12.9716,
         "lon": 77.5946,
         "loss_amount": 280000.00,
-        "victim_name": "Arjun Nair (Cloud Systems Engineer)",
+        "victim_name": "Simulated Citizen V-03 (Arjun N.)",
         "victim_account": "10000000003",
         "suspect_account": "86174411143",
-        "suspect_holder": "Deepak Rajshekhar",
+        "suspect_holder": "Synthetic Suspect Node BLR-43 (Deepak R.)",
         "suspect_bank": "HDFC Bank",
         "target_atm_cluster": "Whitefield IT Corridor / Koramangala Hub",
         "predicted_hotspot_atms": ["ATM_BLR_002", "ATM_BLR_004"],

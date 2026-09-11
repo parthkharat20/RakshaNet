@@ -109,13 +109,13 @@ export const PatrolDispatchModal = ({
             </div>
             <div>
               <h3 className="font-display font-bold text-white text-base flex items-center gap-2">
-                Police Beat Dispatch & Mobile Interdiction
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/30">
-                  TACTICAL FLASH
+                Police Beat Dispatch & Mobile Interdiction Request
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  DEMO • SIMULATED ACTION
                 </span>
               </h3>
               <p className="text-xs text-slate-400 font-mono">
-                PostGIS Spherical Geofence • LEA Beat Marshalling
+                PostGIS Spherical Geofence • Simulated LEA Beat Logging
               </p>
             </div>
           </div>
@@ -152,9 +152,9 @@ export const PatrolDispatchModal = ({
             <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 space-y-3 animate-fade-in">
               <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
                 <CheckCircle2 className="w-5 h-5" />
-                <span>Tactical Interdiction Flash Dispatched!</span>
+                <span>Patrol Interdiction Request Logged & Notified!</span>
               </div>
-              <p className="text-slate-200">{dispatchReceipt.message}</p>
+              <p className="text-slate-200">Simulated dispatch order recorded in immutable audit log with cryptographic SHA-256 evidence signature.</p>
 
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-emerald-500/20 text-[11px]">
                 <div>
@@ -312,7 +312,7 @@ export const PatrolDispatchModal = ({
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>Transmit Interdiction Flash</span>
+                      <span>Log Patrol Dispatch Request</span>
                     </>
                   )}
                 </button>

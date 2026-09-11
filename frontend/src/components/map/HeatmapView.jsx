@@ -265,6 +265,10 @@ export const HeatmapView = ({ targetAlert: propTargetAlert }) => {
           <span className="text-[10px] font-mono text-zinc-400 hidden sm:inline bg-zinc-800/80 px-2 py-0.5 rounded border border-white/[0.06]">
             750m Cordon Active
           </span>
+          <span className="text-[10px] font-mono text-amber-300 bg-amber-950/90 border border-amber-500/50 px-2 py-0.5 rounded flex items-center gap-1 font-bold shadow-xs">
+            <AlertTriangle className="w-3 h-3 text-amber-400" />
+            <span>DEMO MODE • SYNTHETIC DATA</span>
+          </span>
         </div>
 
         {/* Controls & Quick Corridor Jump */}
@@ -361,10 +365,10 @@ export const HeatmapView = ({ targetAlert: propTargetAlert }) => {
           <button
             onClick={() => handleOpenDispatchForATM(activeTargetDetails)}
             className="px-2.5 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-semibold flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
-            title="Dispatch immediate beat patrol unit"
+            title="Log patrol interdiction request in audit system"
           >
             <Radio className="w-3.5 h-3.5 animate-pulse" />
-            <span>Dispatch Patrol</span>
+            <span>Log Patrol Request</span>
           </button>
         </div>
       </div>
@@ -483,7 +487,7 @@ export const HeatmapView = ({ targetAlert: propTargetAlert }) => {
                     className="w-full py-1.5 px-2 rounded bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
                   >
                     <Radio className="w-3.5 h-3.5" />
-                    <span>🚨 Dispatch Mobile Beat Unit</span>
+                    <span>🚨 Log Beat Patrol Dispatch Request</span>
                   </button>
                 </div>
               </div>
@@ -551,7 +555,7 @@ export const HeatmapView = ({ targetAlert: propTargetAlert }) => {
                           className="w-full py-1 px-2 rounded bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <Radio className="w-3 h-3" />
-                          <span>Dispatch Patrol</span>
+                          <span>Log Patrol Request</span>
                         </button>
                       </div>
                     )}
